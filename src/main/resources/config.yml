@@ -1,0 +1,38 @@
+debug: true
+
+# MYSQL Database
+username: root
+database: pickmc
+password: password
+ip: localhost
+port: 3306
+
+# Kick message when a players profile has failed to save
+FailedProfileSave: "&cError saving your profile. If this consists please contact &c&lZxoir"
+
+# Error message when selecting same kit
+SameKitError: "&cYou already have that Kit selected!"
+
+# Error when a player leaves spawn without selecting a Kit
+NoKitError: "&c&lERROR > &8You must select a Kit!"
+
+# Message when you are killed (Placeholders: %killer% %killed% %points_removed%)
+killed_message: "&cYou have been killed by %killer%"
+killed_actionbar: "&c-%points_removed%"
+
+# Message when you kill someone (Placeholders: %killer% %killed% %points_gained% %xp_gained%)
+kill_message: "&aYou killed %killed%"
+kill_actionbar: "&a+%points_gained% &9+%xp_gained%"
+
+# Combatlog messages (Placeholders: %player_hit% %time%)
+combat_countdown: true
+combat_message: ""
+combat_actionbar: "&c&lCOMBATLOG > &8You're in combat for %time% seconds!"
+combatlog_kill_message: ""
+combatlog_finish_message: "&c&lCOMBATLOG > &aYou're no longer in Combat!"
+combat_time: 15
+
+# Message when you level up (Placeholders: %player% %new_level% %old_level%)
+levelUp_title: "&a&lYou have leveled up"
+levelUp_subtitle: "&9%old_level% &8-> &9%new_level%"
+levelUp_broadcast: "&a&l%player% &9has leveled up to &9&l%new_level%&9!"

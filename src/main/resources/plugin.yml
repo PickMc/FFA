@@ -1,0 +1,10 @@
+name: PickMcFFA
+version: '${project.version}'
+main: me.zxoir.pickmcffa.PickMcFFA
+api-version: 1.18
+author: Zxoir
+depend: [WorldGuard, WorldEdit]
+commands:
+  kit:
+    usage: "/kit"
+    description: Kit command
