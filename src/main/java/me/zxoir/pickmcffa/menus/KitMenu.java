@@ -152,6 +152,7 @@ public class KitMenu implements Listener {
 
         }
 
+        user.setSelectedKit(null);
         user.setSelectedKit(kit);
         player.closeInventory();
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 2);
@@ -172,9 +173,18 @@ public class KitMenu implements Listener {
         inventory.setItem(16, KitManager.getPremiumPlusKit().getIcon());
         kitSlots.put(16, KitManager.getPremiumPlusKit());
 
-        inventory.setItem(12, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
-        inventory.setItem(13, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
-        inventory.setItem(14, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
+        inventory.setItem(12, KitManager.getSpeedKit().getIcon());
+        kitSlots.put(12, KitManager.getSpeedKit());
+
+        inventory.setItem(13, KitManager.getTankKit().getIcon());
+        kitSlots.put(13, KitManager.getTankKit());
+
+        inventory.setItem(14, KitManager.getStrengthKit().getIcon());
+        kitSlots.put(14, KitManager.getStrengthKit());
+
+        //inventory.setItem(12, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
+        //inventory.setItem(13, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
+        //inventory.setItem(14, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
 
         setBoarders();
     }

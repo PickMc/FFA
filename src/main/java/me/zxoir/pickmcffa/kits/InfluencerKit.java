@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -32,8 +33,7 @@ public class InfluencerKit extends Kit {
         super("Influencer", "Influencer Kit", null, null, new ItemStackBuilder(Material.STONE_AXE).withName("&5&lInfluencer Kit").resetFlags().build(), null, items, armour, "group.influencer");
     }
 
-    @Override
-    public void killAction(@Nullable User killed, User killer) {
+    public void killAction(@Nullable User killed, @NotNull User killer) {
 
     }
 }

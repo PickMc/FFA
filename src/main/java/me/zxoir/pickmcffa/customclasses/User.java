@@ -5,6 +5,7 @@ import me.zxoir.pickmcffa.database.UsersDBManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,15 +87,21 @@ public class User {
             player.getInventory().setLeggings(null);
             player.getInventory().setBoots(null);
             player.getInventory().clear();
-            player.getActivePotionEffects().clear();
+            player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
             return;
         }
 
         player.getInventory().setContents(selectedKit.getItems());
         player.getInventory().setArmorContents(selectedKit.getArmour());
 
-        if (selectedKit.getPermanentPotions() != null)
-            player.addPotionEffects(selectedKit.getPermanentPotions());
+        if (selectedKit.getPermanentPotions() != null && !selectedKit.getPermanentPotions().isEmpty()) {
+
+            for (Effect effect : selectedKit.getPermanentPotions()) {
+                PotionEffect potionEffect = new PotionEffect(effect.getPotionEffectType(), 1000000000, effect.getAmplifier());
+                player.addPotionEffect(potionEffect);
+            }
+
+        }
     }
 
     public void save() {

@@ -24,10 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -45,8 +42,10 @@ public class GeneralListener implements Listener {
     public void onJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (PickMcFFA.getCachedUsers().asMap().containsKey(player.getUniqueId()))
+        if (PickMcFFA.getCachedUsers().asMap().containsKey(player.getUniqueId())) {
+            PickMcFFA.getCachedUsers().asMap().get(player.getUniqueId()).setSelectedKit(null);
             return;
+        }
 
         User user = new User(player);
         UsersDBManager.saveToDB(user);

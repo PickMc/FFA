@@ -36,7 +36,8 @@ public class PremiumPlusKit extends Kit {
 
     public PremiumPlusKit() {
         super("Premium+",
-                "Premium+ Kit", null,
+                "Premium+ Kit",
+                null,
                 null,
                 new ItemStackBuilder(Material.DIAMOND_AXE).withName("&2&lPremium+ Kit").resetFlags().build(),
                 null,
@@ -46,8 +47,7 @@ public class PremiumPlusKit extends Kit {
         );
     }
 
-    @Override
-    public void killAction(@Nullable User killed, User killer) {
+    public void killAction(@NotNull User killed, @NotNull User killer) {
 
     }
 }

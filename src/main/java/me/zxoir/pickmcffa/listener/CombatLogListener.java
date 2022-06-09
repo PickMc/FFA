@@ -140,7 +140,7 @@ public class CombatLogListener implements Listener {
 
                     Utils.runTaskSync(() -> lastHit.getPlayer().sendMessage(ConfigManager.getKillMessage(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
                     Utils.runTaskSync(() -> Utils.sendActionText(lastHit.getPlayer() , ConfigManager.getKillActionbar(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
-                    return;
+                    break;
                 }
 
             }

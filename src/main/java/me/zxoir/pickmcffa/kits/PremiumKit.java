@@ -36,7 +36,8 @@ public class PremiumKit extends Kit {
 
     public PremiumKit() {
         super("Premium",
-                "Premium Kit", null,
+                "Premium Kit",
+                null,
                 null,
                 new ItemStackBuilder(Material.IRON_AXE).withName("&a&lPremium Kit").resetFlags().build(),
                 null,
@@ -46,8 +47,7 @@ public class PremiumKit extends Kit {
                 );
     }
 
-    @Override
-    public void killAction(@Nullable User killed, User killer) {
+    public void killAction(@NotNull User killed, @NotNull User killer) {
 
     }
 }

@@ -30,7 +30,8 @@ public class DefaultKit extends Kit {
 
     public DefaultKit() {
         super("Default",
-                "Default Kit", null,
+                "Default Kit",
+                null,
                 null,
                 new ItemStackBuilder(Material.WOOD_AXE).withName("&8&lDefault Kit").resetFlags().build(),
                 null,
@@ -39,9 +40,6 @@ public class DefaultKit extends Kit {
         );
     }
 
-    @Override
-    public void killAction(User killed, @NotNull User killer) {
-        //killed.getPlayer().sendMessage("You died bruv!");
-        killer.getPlayer().sendMessage("Good job! You achieved a kill.");
+    public void killAction(@NotNull User killed, @NotNull User killer) {
     }
 }

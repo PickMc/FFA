@@ -29,7 +29,7 @@ public abstract class Kit {
     @Nullable
     private final BigDecimal price;
     @Nullable
-    private final Duration expireTime;
+    private final Integer level;
     @NotNull
     private final ItemStack[] items;
     @NotNull
@@ -39,13 +39,13 @@ public abstract class Kit {
     @Nullable
     private final List<String> permissions;
     @Nullable
-    private final HashSet<PotionEffect> permanentPotions;
+    private final HashSet<Effect> permanentPotions;
 
-    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Duration expireTime, @NotNull ItemStack icon, @Nullable HashSet<PotionEffect> permanentPotions, @Nullable String... permissions) {
+    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.expireTime = expireTime;
+        this.level = level;
         this.icon = icon;
         this.permissions = permissions == null ? new ArrayList<>() : Arrays.asList(permissions);
         this.permanentPotions = permanentPotions == null ? new HashSet<>() : permanentPotions;
@@ -53,11 +53,11 @@ public abstract class Kit {
         this.armour = new ItemStack[]{};
     }
 
-    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Duration expireTime, @NotNull ItemStack icon, @Nullable HashSet<PotionEffect> permanentPotions, @NotNull ItemStack[] items, @NotNull ItemStack[] armour, @Nullable String... permissions) {
+    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @NotNull ItemStack[] items, @NotNull ItemStack[] armour, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.expireTime = expireTime;
+        this.level = level;
         this.icon = icon;
         this.permissions = permissions == null ? new ArrayList<>() : Arrays.asList(permissions);
         this.permanentPotions = permanentPotions == null ? new HashSet<>() : permanentPotions;
@@ -65,5 +65,5 @@ public abstract class Kit {
         this.armour = armour;
     }
 
-    public abstract void killAction(@Nullable User killed, User killer);
+    public abstract void killAction(User killed, @NotNull User killer);
 }
