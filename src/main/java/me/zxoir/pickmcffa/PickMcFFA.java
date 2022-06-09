@@ -4,15 +4,21 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
 import me.zxoir.pickmcffa.commands.KitCommand;
+import me.zxoir.pickmcffa.commands.SpawnShopCommand;
+import me.zxoir.pickmcffa.customclasses.EntityNPC;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.database.DataFile;
 import me.zxoir.pickmcffa.database.FFADatabase;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.listener.*;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.menus.KitMenu;
+import me.zxoir.pickmcffa.menus.ShopMenu;
+import net.minecraft.server.v1_8_R3.EntityVillager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
@@ -23,10 +29,13 @@ public final class PickMcFFA extends JavaPlugin {
     private static PickMcFFA instance;
 
     @Getter
+    private static DataFile dataFile;
+
+    @Getter
     private static Cache<UUID, User> cachedUsers;
 
     @Getter
-    private static final Logger ffaLogger = LogManager.getLogger("ToxicFFA");
+    private static final Logger ffaLogger = LogManager.getLogger("PickMc FFA");
 
     @Override
     public void onEnable() {
@@ -35,8 +44,10 @@ public final class PickMcFFA extends JavaPlugin {
         ffaLogger.info("Initializing plugin setup...");
 
         instance = this;
-        cachedUsers = CacheBuilder.newBuilder().build();
         ConfigManager.setup();
+        dataFile = new DataFile();
+        dataFile.setup();
+        cachedUsers = CacheBuilder.newBuilder().build();
 
         ffaLogger.info("Initializing database setup...");
         FFADatabase.createTable("CREATE TABLE IF NOT EXISTS users(" +
@@ -63,6 +74,14 @@ public final class PickMcFFA extends JavaPlugin {
         loadCachedUsers();
         ffaLogger.info("Cached users successfully. Took " + (System.currentTimeMillis() - start) + "ms");
 
+        if (SpawnShopCommand.getShopNPC() == null) {
+            start = System.currentTimeMillis();
+            ffaLogger.info("Registering NPC...");
+            EntityNPC npc = new EntityNPC(((CraftWorld) Bukkit.getWorld("world")).getHandle());
+            npc.registerEntity(ConfigManager.getShopVillagerName(), 120, EntityVillager.class, EntityNPC.class);
+            ffaLogger.info("Registered NPC successfully. Took " + (System.currentTimeMillis() - start) + "ms");
+        }
+
         start = System.currentTimeMillis();
         ffaLogger.info("Registering Listeners...");
         registerEvents();
@@ -76,6 +95,7 @@ public final class PickMcFFA extends JavaPlugin {
         start = System.currentTimeMillis();
         ffaLogger.info("Loading menus...");
         KitMenu.loadMenu();
+        ShopMenu.loadMenu();
         ffaLogger.info("Menus loaded. Took " + (System.currentTimeMillis() - start) + "ms");
 
         ffaLogger.info("Plugin loaded and initialized successfully. Took " + (System.currentTimeMillis() - startTime) + "ms");
@@ -87,6 +107,9 @@ public final class PickMcFFA extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (SpawnShopCommand.getShopNPC() != null)
+            SpawnShopCommand.getShopNPC().remove();
+
         cachedUsers.asMap().forEach((uuid, user) -> {
             user.setSelectedKit(null);
             user.save();
@@ -101,10 +124,12 @@ public final class PickMcFFA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new LaunchPad(), this);
         getServer().getPluginManager().registerEvents(new SnowballDelay(), this);
         getServer().getPluginManager().registerEvents(new CombatLogListener(), this);
+        getServer().getPluginManager().registerEvents(new ShopVillager(), this);
     }
 
     private void registerCommands() {
         getCommand("kit").setExecutor(new KitCommand());
+        getCommand("spawnshop").setExecutor(new SpawnShopCommand());
     }
 
     private void loadCachedUsers() {

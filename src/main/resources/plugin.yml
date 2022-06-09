@@ -8,3 +8,6 @@ commands:
   kit:
     usage: "/kit"
     description: Kit command
+  spawnshop:
+    usage: "/spawnshop"
+    description: Spawnshop command

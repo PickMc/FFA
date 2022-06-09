@@ -34,6 +34,12 @@ public class ConfigManager {
     private static String port;
 
     @Getter
+    private static String ShopVillagerName;
+
+    @Getter
+    private static String InvalidPermission;
+
+    @Getter
     private static String FailedProfileSave;
 
     @Getter
@@ -83,6 +89,8 @@ public class ConfigManager {
         password = main.getConfig().getString("password");
         ip = main.getConfig().getString("ip");
         port = main.getConfig().getString("port");
+        ShopVillagerName = colorize(main.getConfig().getString("ShopVillagerName"));
+        InvalidPermission = colorize(main.getConfig().getString("InvalidPermission"));
         FailedProfileSave = colorize(main.getConfig().getString("FailedProfileSave"));
         SameKitError = colorize(main.getConfig().getString("SameKitError"));
         NoKitError = colorize(main.getConfig().getString("NoKitError"));

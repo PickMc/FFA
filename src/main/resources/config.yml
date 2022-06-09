@@ -7,6 +7,12 @@ password: password
 ip: localhost
 port: 3306
 
+# Shop Villager name
+ShopVillagerName: "&a&lSHOP"
+
+# No Permission Message
+InvalidPermission: "&c&lERROR > &8You don't have permission to use this command."
+
 # Kick message when a players profile has failed to save
 FailedProfileSave: "&cError saving your profile. If this consists please contact &c&lZxoir"
 
