@@ -26,7 +26,7 @@ public class DefaultKit extends Kit {
     private static final ItemStack snowballs = new ItemStack(Material.SNOW_BALL, 16);
 
     private static final ItemStack[] armour = {boots, leggings, chestplate, helmet};
-    private static final ItemStack[] items = {axe, bow, arrows, snowballs};
+    private static final ItemStack[] items = {axe, bow, snowballs, arrows};
 
     public DefaultKit() {
         super("Default",

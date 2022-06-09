@@ -75,7 +75,13 @@ public class KitMenu implements Listener {
 
             }
 
-            kitItem = new ItemStackBuilder(kitItem.clone()).clearLore().withLore("").withLore(hasPermission ? "&7⩥ &eClick to equip!" : "&7⩥ &cYou don't have access to this Kit").withLore("").build();
+            kitItem = new ItemStackBuilder(kitItem.clone())
+                    .clearLore()
+                    .withLore("")
+                    .withLore(hasPermission ? "&7⩥ &eClick to equip!" : "&7⩥ &cYou don't have access to this Kit")
+                    .withLore("&8Right click to edit layout (SOON)")
+                    .withLore("")
+                    .build();
             inventory.setItem(i, kitItem);
         }
     }
@@ -114,6 +120,32 @@ public class KitMenu implements Listener {
                     player.sendMessage(ConfigManager.getNoKitAccessError());
                     player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 10, 2);
                     return;
+                }
+
+            }
+
+        }
+
+        boolean isPremiumPlus = player.hasPermission("group.premiumplus");
+        boolean isPremium = player.hasPermission("group.premium");
+        boolean isInfluencer = player.hasPermission("group.influencer");
+
+        if (isPremiumPlus || isPremium || isInfluencer) {
+
+            if (kit.getItems().length > 0) {
+
+                for (ItemStack itemStack : kit.getItems()) {
+
+                    if (itemStack == null || !itemStack.getType().equals(Material.SNOW_BALL))
+                        continue;
+
+                    if (isPremiumPlus)
+                        itemStack.setAmount(25);
+                    else if (isPremium)
+                        itemStack.setAmount(20);
+                    else
+                        itemStack.setAmount(18);
+
                 }
 
             }

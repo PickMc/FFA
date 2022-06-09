@@ -32,13 +32,13 @@ public class PremiumPlusKit extends Kit {
     private static final ItemStack snowballs = new ItemStack(Material.SNOW_BALL, 25);
 
     private static final ItemStack[] armour = {boots, leggings, chestplate, helmet};
-    private static final ItemStack[] items = {axe, bow, arrows, snowballs};
+    private static final ItemStack[] items = {axe, bow, snowballs, arrows};
 
     public PremiumPlusKit() {
         super("Premium+",
                 "Premium+ Kit", null,
                 null,
-                new ItemStackBuilder(Material.DIAMOND_AXE).withName("&8&lPremium+ Kit").resetFlags().build(),
+                new ItemStackBuilder(Material.DIAMOND_AXE).withName("&2&lPremium+ Kit").resetFlags().build(),
                 null,
                 items,
                 armour,
