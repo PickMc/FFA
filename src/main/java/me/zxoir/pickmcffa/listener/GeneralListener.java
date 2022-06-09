@@ -87,6 +87,8 @@ public class GeneralListener implements Listener {
         Player player = event.getEntity();
         Player killer = player.getKiller();
 
+        event.setDeathMessage(null);
+
         if (killer == null)
             return;
 

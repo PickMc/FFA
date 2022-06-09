@@ -42,6 +42,9 @@ public class ConfigManager {
     @Getter
     private static String NoKitError;
 
+    @Getter
+    private static String NoKitAccessError;
+
     private static String killedMessage;
 
     private static String killMessage;
@@ -80,6 +83,7 @@ public class ConfigManager {
         FailedProfileSave = colorize(main.getConfig().getString("FailedProfileSave"));
         SameKitError = colorize(main.getConfig().getString("SameKitError"));
         NoKitError = colorize(main.getConfig().getString("NoKitError"));
+        NoKitAccessError = colorize(main.getConfig().getString("NoKitAccessError"));
         killedMessage = colorize(main.getConfig().getString("killed_message"));
         killMessage = colorize(main.getConfig().getString("kill_message"));
         killedActionbar = colorize(main.getConfig().getString("killed_actionbar"));

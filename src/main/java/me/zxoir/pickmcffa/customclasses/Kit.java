@@ -1,8 +1,6 @@
 package me.zxoir.pickmcffa.customclasses;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -42,25 +41,25 @@ public abstract class Kit {
     @Nullable
     private final HashSet<PotionEffect> permanentPotions;
 
-    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Duration expireTime, @NotNull ItemStack icon, @Nullable List<String> permissions, @Nullable HashSet<PotionEffect> permanentPotions) {
+    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Duration expireTime, @NotNull ItemStack icon, @Nullable HashSet<PotionEffect> permanentPotions, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.expireTime = expireTime;
         this.icon = icon;
-        this.permissions = permissions == null ? new ArrayList<>() : permissions;
+        this.permissions = permissions == null ? new ArrayList<>() : Arrays.asList(permissions);
         this.permanentPotions = permanentPotions == null ? new HashSet<>() : permanentPotions;
         this.items = new ItemStack[]{};
         this.armour = new ItemStack[]{};
     }
 
-    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Duration expireTime, @NotNull ItemStack icon, @Nullable List<String> permissions, @Nullable HashSet<PotionEffect> permanentPotions, @NotNull ItemStack[] items, @NotNull ItemStack[] armour) {
+    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Duration expireTime, @NotNull ItemStack icon, @Nullable HashSet<PotionEffect> permanentPotions, @NotNull ItemStack[] items, @NotNull ItemStack[] armour, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.expireTime = expireTime;
         this.icon = icon;
-        this.permissions = permissions == null ? new ArrayList<>() : permissions;
+        this.permissions = permissions == null ? new ArrayList<>() : Arrays.asList(permissions);
         this.permanentPotions = permanentPotions == null ? new HashSet<>() : permanentPotions;
         this.items = items;
         this.armour = armour;

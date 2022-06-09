@@ -158,6 +158,10 @@ public class CombatLogListener implements Listener {
         Player player = (Player) event.getEntity();
         Player damager = (Player) ((Arrow) event.getDamager()).getShooter();
 
+        // If the player hits himself, return
+        if (player.equals(damager))
+            return;
+
         // If the damage is cancelled, return
         if (event.isCancelled() || event.getFinalDamage() == 0)
             return;
@@ -173,6 +177,10 @@ public class CombatLogListener implements Listener {
 
         Player player = (Player) event.getEntity();
         Player damager = (Player) ((Snowball) event.getDamager()).getShooter();
+
+        // If the player hits himself, return
+        if (player.equals(damager))
+            return;
 
         // If the damage is cancelled, return
         if (event.isCancelled())

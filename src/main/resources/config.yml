@@ -11,10 +11,13 @@ port: 3306
 FailedProfileSave: "&cError saving your profile. If this consists please contact &c&lZxoir"
 
 # Error message when selecting same kit
-SameKitError: "&cYou already have that Kit selected!"
+SameKitError: "&c&lERROR > &8You already have that Kit selected!"
 
 # Error when a player leaves spawn without selecting a Kit
 NoKitError: "&c&lERROR > &8You must select a Kit!"
+
+# Error when a player tries to access a kit he doesn't have access to
+NoKitAccessError: "&c&lERROR > &8You don't have access to that Kit!"
 
 # Message when you are killed (Placeholders: %killer% %killed% %points_removed%)
 killed_message: "&cYou have been killed by %killer%"
