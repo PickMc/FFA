@@ -45,8 +45,7 @@ public final class PickMcFFA extends JavaPlugin {
                 "stats TEXT" +
                 ");");
 
-        /* soon maybe
-        FFADatabase.createTable("CREATE TABLE IF NOT EXISTS kits(" +
+        /* FFADatabase.createTable("CREATE TABLE IF NOT EXISTS kits(" +
                 "name VARCHAR(36) PRIMARY KEY NOT NULL," +
                 "description VARCHAR(36) NOT NULL," +
                 "price DECIMAL," +
