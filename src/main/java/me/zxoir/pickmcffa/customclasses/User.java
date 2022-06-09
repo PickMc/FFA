@@ -98,7 +98,7 @@ public class User {
 
             for (Effect effect : selectedKit.getPermanentPotions()) {
                 PotionEffect potionEffect = new PotionEffect(effect.getPotionEffectType(), 1000000000, effect.getAmplifier());
-                player.addPotionEffect(potionEffect);
+                player.addPotionEffect(potionEffect, true);
             }
 
         }

@@ -15,6 +15,7 @@ import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
@@ -127,7 +128,7 @@ public class GeneralListener implements Listener {
         if (user == null)
             return;
 
-        user.setSelectedKit(user.getSelectedKit());
+        Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), () -> user.setSelectedKit(user.getSelectedKit()), 1);
     }
 
     /* Remove Hunger */

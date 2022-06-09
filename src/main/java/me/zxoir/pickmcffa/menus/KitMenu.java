@@ -43,7 +43,7 @@ public class KitMenu implements Listener {
         Player player = (Player) event.getPlayer();
         Inventory inventory = event.getInventory();
 
-        if (!inventory.getHolder().getClass().equals(MenuHolder.class))
+        if (inventory.getHolder() == null || !inventory.getHolder().getClass().equals(MenuHolder.class))
             return;
 
         if (!inventory.getName().equalsIgnoreCase(inventoryName))
@@ -91,7 +91,7 @@ public class KitMenu implements Listener {
         Player player = (Player) event.getWhoClicked();
         Inventory inventory = event.getInventory();
 
-        if (!inventory.getHolder().getClass().equals(MenuHolder.class))
+        if (inventory.getHolder() == null || !inventory.getHolder().getClass().equals(MenuHolder.class))
             return;
 
         User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());

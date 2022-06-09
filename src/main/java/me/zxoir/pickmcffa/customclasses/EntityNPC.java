@@ -3,6 +3,7 @@ package me.zxoir.pickmcffa.customclasses;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.util.UnsafeList;
 import org.bukkit.entity.Villager;
@@ -69,6 +70,7 @@ public class EntityNPC extends EntityVillager {
         customEnt.setInvisible(true);
         customEnt.setCustomName(customName);
         customEnt.setCustomNameVisible(true);
+        customEnt.getBukkitEntity().getHandle().b(true);
         Vector dirBetweenLocations = loc.toVector().subtract(loc.toVector());
         Location locs = customEnt.bukkitEntity.getLocation();
         loc.setDirection(dirBetweenLocations);
