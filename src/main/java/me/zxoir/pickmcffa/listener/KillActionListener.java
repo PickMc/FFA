@@ -26,6 +26,8 @@ public class KillActionListener implements Listener {
         Player player = event.getEntity();
         Player killer = event.getEntity().getKiller();
 
+        event.getDrops().clear();
+
         if (killer == null)
             return;
 
@@ -44,48 +46,54 @@ public class KillActionListener implements Listener {
         if (killerUser.getSelectedKit() != null)
             killerUser.getSelectedKit().killAction(playerUser, killerUser);
 
-        boolean isPremiumPlus = player.hasPermission("group.premiumplus");
-        boolean isPremium = player.hasPermission("group.premium");
-        boolean isInfluencer = player.hasPermission("group.influencer");
-        ItemStack snowballs = getSnowballs(player.getInventory());
+        boolean isPremiumPlus = killer.hasPermission("group.premiumplus");
+        boolean isPremium = killer.hasPermission("group.premium");
+        boolean isInfluencer = killer.hasPermission("group.influencer");
+        ItemStack snowballs = getSnowballs(killer.getInventory());
 
         if (isPremiumPlus) {
 
             killer.setHealth(Math.min(20, killer.getHealth() + 12));
             if (snowballs == null)
-                player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 24));
+                killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 24));
             else
                 snowballs.setAmount(24);
-            player.getInventory().addItem(new ItemStack(Material.ARROW, 2));
+
+            if (killer.getInventory().contains(Material.BOW))
+                killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
 
         } else if (isPremium) {
             killer.setHealth(Math.min(20, killer.getHealth() + 10));
             if (snowballs == null)
-                player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 20));
+                killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 20));
             else
                 snowballs.setAmount(20);
-            player.getInventory().addItem(new ItemStack(Material.ARROW, 2));
+
+            if (killer.getInventory().contains(Material.BOW))
+                killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
         } else if (isInfluencer) {
             killer.setHealth(Math.min(20, killer.getHealth() + 10));
             if (snowballs == null)
-                player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 20));
+                killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 20));
             else
                 snowballs.setAmount(20);
-            player.getInventory().addItem(new ItemStack(Material.ARROW, 2));
+
+            if (killer.getInventory().contains(Material.BOW))
+                killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
         } else {
             killer.setHealth(Math.min(20, killer.getHealth() + 8));
             if (snowballs == null)
-                player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 16));
+                killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 16));
             else
                 snowballs.setAmount(16);
-            player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
-        }
 
-        event.getDrops().clear();
+            if (killer.getInventory().contains(Material.BOW))
+                killer.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+        }
     }
 
     @Nullable
-    private ItemStack getSnowballs(PlayerInventory inventory) {
+    private ItemStack getSnowballs(@NotNull PlayerInventory inventory) {
         boolean snowballsFound = false;
         ItemStack snowballs = null;
 

@@ -11,3 +11,19 @@ commands:
   spawnshop:
     usage: "/spawnshop"
     description: Spawnshop command
+  pickmc:
+    usage: "/pickmc"
+    description: Main server command
+permissions:
+  kit.speed:
+    default: op
+    description: "Speed Kit"
+  kit.tank:
+    default: op
+    description: "Tank Kit"
+  kit.strength:
+    default: op
+    description: "Strength Kit"
+  perk.explosion:
+    default: op
+    description: "Explosion Perk"

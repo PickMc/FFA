@@ -121,7 +121,7 @@ public class GeneralListener implements Listener {
 
     /* Regive Kit on respawn */
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent event) {
+    public void onRespawn(@NotNull PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
 

@@ -40,6 +40,19 @@ public class ConfigManager {
     private static String InvalidPermission;
 
     @Getter
+    private static int ExplosionChance;
+
+    @Getter
+    private static String ExplosionActivated;
+
+    @Getter
+    private static String ExplosionActivatedActionbar;
+
+    private static String ExplosionDamage;
+
+    private static String ExplosionDamageActionbar;
+
+    @Getter
     private static String FailedProfileSave;
 
     @Getter
@@ -91,6 +104,11 @@ public class ConfigManager {
         port = main.getConfig().getString("port");
         ShopVillagerName = colorize(main.getConfig().getString("ShopVillagerName"));
         InvalidPermission = colorize(main.getConfig().getString("InvalidPermission"));
+        ExplosionChance = main.getConfig().getInt("ExplosionChance");
+        ExplosionActivated = colorize(main.getConfig().getString("ExplosionActivated"));
+        ExplosionActivatedActionbar = colorize(main.getConfig().getString("ExplosionActivatedActionbar"));
+        ExplosionDamage = colorize(main.getConfig().getString("ExplosionDamage"));
+        ExplosionDamageActionbar = colorize(main.getConfig().getString("ExplosionDamageActionbar"));
         FailedProfileSave = colorize(main.getConfig().getString("FailedProfileSave"));
         SameKitError = colorize(main.getConfig().getString("SameKitError"));
         NoKitError = colorize(main.getConfig().getString("NoKitError"));
@@ -118,7 +136,18 @@ public class ConfigManager {
 
     public static void reloadConfig() {
         main.reloadConfig();
+        PickMcFFA.getDataFile().reloadConfig();
         getConfigData();
+    }
+
+    @NotNull
+    public static String getExplosionDamage(String player) {
+        return ExplosionDamage.replace("%player%", player);
+    }
+
+    @NotNull
+    public static String getExplosionDamageActionbar(String player) {
+        return ExplosionDamageActionbar.replace("%player%", player);
     }
 
     @NotNull

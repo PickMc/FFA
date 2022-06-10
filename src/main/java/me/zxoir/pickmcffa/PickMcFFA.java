@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
 import me.zxoir.pickmcffa.commands.KitCommand;
+import me.zxoir.pickmcffa.commands.MainCommand;
 import me.zxoir.pickmcffa.commands.SpawnShopCommand;
 import me.zxoir.pickmcffa.customclasses.EntityNPC;
 import me.zxoir.pickmcffa.customclasses.User;
@@ -26,16 +27,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class PickMcFFA extends JavaPlugin {
     @Getter
+    private static final Logger ffaLogger = LogManager.getLogger("PickMc FFA");
+    @Getter
     private static PickMcFFA instance;
-
     @Getter
     private static DataFile dataFile;
-
     @Getter
     private static Cache<UUID, User> cachedUsers;
-
-    @Getter
-    private static final Logger ffaLogger = LogManager.getLogger("PickMc FFA");
 
     @Override
     public void onEnable() {
@@ -110,10 +108,11 @@ public final class PickMcFFA extends JavaPlugin {
         if (SpawnShopCommand.getShopNPC() != null)
             SpawnShopCommand.getShopNPC().remove();
 
-        cachedUsers.asMap().forEach((uuid, user) -> {
-            user.setSelectedKit(null);
-            user.save();
-        });
+        if (cachedUsers != null && cachedUsers.size() >= 1)
+            cachedUsers.asMap().forEach((uuid, user) -> {
+                user.setSelectedKit(null);
+                user.save();
+            });
     }
 
     private void registerEvents() {
@@ -125,11 +124,13 @@ public final class PickMcFFA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SnowballDelay(), this);
         getServer().getPluginManager().registerEvents(new CombatLogListener(), this);
         getServer().getPluginManager().registerEvents(new ShopVillager(), this);
+        getServer().getPluginManager().registerEvents(new PerkListener(), this);
     }
 
     private void registerCommands() {
         getCommand("kit").setExecutor(new KitCommand());
         getCommand("spawnshop").setExecutor(new SpawnShopCommand());
+        getCommand("pickmc").setExecutor(new MainCommand());
     }
 
     private void loadCachedUsers() {

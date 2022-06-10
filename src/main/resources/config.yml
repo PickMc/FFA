@@ -13,6 +13,13 @@ ShopVillagerName: "&a&lSHOP"
 # No Permission Message
 InvalidPermission: "&c&lERROR > &8You don't have permission to use this command."
 
+# Explosion Perk (placeholder: %player%)
+ExplosionChance: 10
+ExplosionActivated: "&6&lPERK > &2Explosion Perk activated!"
+ExplosionActivatedActionbar: ""
+ExplosionDamage: "&6&lPERK > &cYou have been damaged by &4&l%player%&c's Explosion Perk!"
+ExplosionDamageActionbar: ""
+
 # Kick message when a players profile has failed to save
 FailedProfileSave: "&cError saving your profile. If this consists please contact &c&lZxoir"
 
