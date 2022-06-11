@@ -13,9 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Random;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -24,15 +22,14 @@ import java.util.Random;
  * @since 6/9/2022
  */
 public class ExplosionPerk extends Perk {
-    Random random = new Random();
 
     public ExplosionPerk() {
-        super("Explosion", "Explosion Perk", new BigDecimal(100), 5, new ItemStackBuilder(Material.TNT).withName("&c&lExplosion Perk").resetFlags().build(), "perk.explosion");
+        super("Explosion", "Explosion Perk", 100, 5, new ItemStackBuilder(Material.TNT).withName("&c&lExplosion Perk").resetFlags().build(), "perk.explosion");
     }
 
     @Override
     public void killAction(User killed, @NotNull User killer) {
-        float chance = random.nextFloat();
+        float chance = getRandom().nextFloat();
         float explosionChance = (float) ConfigManager.getExplosionChance() / 100;
 
         Player player = killer.getPlayer();
@@ -63,7 +60,7 @@ public class ExplosionPerk extends Perk {
             if (nearbyPlayer.equals(player) || (killed != null && nearbyPlayer.getUniqueId().equals(killed.getUuid())))
                 continue;
 
-            nearbyPlayer.damage(4, player);
+            nearbyPlayer.setHealth(Math.max(0, nearbyPlayer.getHealth() - 5));
 
             if (!ConfigManager.getExplosionDamage(player.getName()).isEmpty())
                 nearbyPlayer.sendMessage(ConfigManager.getExplosionDamage(player.getName()));

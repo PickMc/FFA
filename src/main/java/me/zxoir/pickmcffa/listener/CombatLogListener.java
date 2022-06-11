@@ -14,6 +14,7 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -82,7 +83,7 @@ public class CombatLogListener implements Listener {
                     }
 
                     Utils.runTaskSync(() -> lastHit.getPlayer().sendMessage(ConfigManager.getKillMessage(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
-                    Utils.runTaskSync(() -> Utils.sendActionText(lastHit.getPlayer() , ConfigManager.getKillActionbar(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
+                    Utils.runTaskSync(() -> Utils.sendActionText(lastHit.getPlayer(), ConfigManager.getKillActionbar(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
                     return;
                 }
 
@@ -139,7 +140,7 @@ public class CombatLogListener implements Listener {
                     }
 
                     Utils.runTaskSync(() -> lastHit.getPlayer().sendMessage(ConfigManager.getKillMessage(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
-                    Utils.runTaskSync(() -> Utils.sendActionText(lastHit.getPlayer() , ConfigManager.getKillActionbar(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
+                    Utils.runTaskSync(() -> Utils.sendActionText(lastHit.getPlayer(), ConfigManager.getKillActionbar(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
                     break;
                 }
 
@@ -167,6 +168,17 @@ public class CombatLogListener implements Listener {
             return;
 
         startCombatLog(player, damager);
+    }
+
+    @EventHandler
+    public void onDeath(@NotNull PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
+
+        if (user == null)
+            return;
+
+        combatLogs.remove(user);
     }
 
     @EventHandler
@@ -224,7 +236,8 @@ public class CombatLogListener implements Listener {
 
         if (combatLogs.containsKey(damageUser))
             combatLogs.put(damageUser, new CombatLog(damagerCombatlog.getLastHit(), timerTask(damager, damageUser, player.getName()), damageUser));
-        else combatLogs.put(damageUser, new CombatLog(null, timerTask(damager, damageUser, player.getName()), damageUser));
+        else
+            combatLogs.put(damageUser, new CombatLog(playerUser, timerTask(damager, damageUser, player.getName()), damageUser));
 
         if (!ConfigManager.getCombatMessage(damager.getName()).isEmpty())
             player.sendMessage(ConfigManager.getCombatMessage(damager.getName()));

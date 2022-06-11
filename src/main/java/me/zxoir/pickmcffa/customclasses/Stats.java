@@ -89,7 +89,7 @@ public class Stats {
 
     public void addXp(int xp) {
         this.xp += xp;
-        
+
         if (this.xp >= getLevelUpXp())
             UserManager.levelUp(uuid);
     }

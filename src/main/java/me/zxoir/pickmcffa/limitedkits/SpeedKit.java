@@ -6,7 +6,6 @@ import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -16,11 +15,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -31,7 +26,7 @@ import java.util.HashSet;
  * @since 6/9/2022
  */
 public class SpeedKit extends Kit {
-    private static final ItemStack helmet =  new ItemStackBuilder(Material.CHAINMAIL_HELMET).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
+    private static final ItemStack helmet = new ItemStackBuilder(Material.CHAINMAIL_HELMET).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     private static final ItemStack chestplate = new ItemStackBuilder(Material.CHAINMAIL_CHESTPLATE).withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     private static final ItemStack leggings = new ItemStackBuilder(Material.CHAINMAIL_LEGGINGS).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     private static final ItemStack boots = new ItemStackBuilder(Material.CHAINMAIL_BOOTS).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
@@ -45,7 +40,7 @@ public class SpeedKit extends Kit {
         super(
                 "Speed",
                 "Speed Kit",
-                new BigDecimal(100),
+                100,
                 5,
                 new ItemStackBuilder(new ItemStack(Material.POTION, 1, (short) 8194)).withName("&6&o&lSpeed Kit").resetFlags().build(),
                 new HashSet<>(Collections.singletonList(new Effect(PotionEffectType.SPEED, 0))),

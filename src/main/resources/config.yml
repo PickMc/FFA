@@ -14,11 +14,23 @@ ShopVillagerName: "&a&lSHOP"
 InvalidPermission: "&c&lERROR > &8You don't have permission to use this command."
 
 # Explosion Perk (placeholder: %player%)
-ExplosionChance: 10
+ExplosionChance: 30
 ExplosionActivated: "&6&lPERK > &2Explosion Perk activated!"
 ExplosionActivatedActionbar: ""
 ExplosionDamage: "&6&lPERK > &cYou have been damaged by &4&l%player%&c's Explosion Perk!"
 ExplosionDamageActionbar: ""
+
+# Absorption Perk
+AbsorptionChance: 35
+AbsorptionDuration: 11
+AbsorptionActivated: "&6&lPERK > &2Absorption Perk activated!"
+AbsorptionActivatedActionbar: ""
+
+# Speed Perk
+SpeedChance: 100
+SpeedDuration: 5
+SpeedActivated: "&6&lPERK > &2Speed Perk activated!"
+SpeedActivatedActionbar: ""
 
 # Kick message when a players profile has failed to save
 FailedProfileSave: "&cError saving your profile. If this consists please contact &c&lZxoir"

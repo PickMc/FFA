@@ -53,6 +53,30 @@ public class ConfigManager {
     private static String ExplosionDamageActionbar;
 
     @Getter
+    private static int AbsorptionChance;
+
+    @Getter
+    private static int AbsorptionDuration;
+
+    @Getter
+    private static String AbsorptionActivated;
+
+    @Getter
+    private static String AbsorptionActivatedActionbar;
+
+    @Getter
+    private static int SpeedChance;
+
+    @Getter
+    private static int SpeedDuration;
+
+    @Getter
+    private static String SpeedActivated;
+
+    @Getter
+    private static String SpeedActivatedActionbar;
+
+    @Getter
     private static String FailedProfileSave;
 
     @Getter
@@ -109,6 +133,14 @@ public class ConfigManager {
         ExplosionActivatedActionbar = colorize(main.getConfig().getString("ExplosionActivatedActionbar"));
         ExplosionDamage = colorize(main.getConfig().getString("ExplosionDamage"));
         ExplosionDamageActionbar = colorize(main.getConfig().getString("ExplosionDamageActionbar"));
+        AbsorptionChance = main.getConfig().getInt("AbsorptionChance");
+        AbsorptionDuration = main.getConfig().getInt("AbsorptionDuration");
+        AbsorptionActivated = colorize(main.getConfig().getString("AbsorptionActivated"));
+        AbsorptionActivatedActionbar = colorize(main.getConfig().getString("AbsorptionActivatedActionbar"));
+        SpeedChance = main.getConfig().getInt("SpeedChance");
+        SpeedDuration = main.getConfig().getInt("SpeedDuration");
+        SpeedActivated = colorize(main.getConfig().getString("SpeedActivated"));
+        SpeedActivatedActionbar = colorize(main.getConfig().getString("SpeedActivatedActionbar"));
         FailedProfileSave = colorize(main.getConfig().getString("FailedProfileSave"));
         SameKitError = colorize(main.getConfig().getString("SameKitError"));
         NoKitError = colorize(main.getConfig().getString("NoKitError"));

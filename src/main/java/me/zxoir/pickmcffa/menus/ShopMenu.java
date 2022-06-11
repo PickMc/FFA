@@ -18,9 +18,9 @@ import static me.zxoir.pickmcffa.utils.Utils.colorize;
  */
 public class ShopMenu {
     @Getter
-    private static Inventory inventory;
-    @Getter
     private static final String inventoryName = colorize("&7Shop");
+    @Getter
+    private static Inventory inventory;
 
     public static void loadMenu() {
         inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);

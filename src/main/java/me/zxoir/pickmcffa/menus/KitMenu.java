@@ -34,9 +34,54 @@ public class KitMenu implements Listener {
     @Getter
     private static final HashMap<Integer, Kit> kitSlots = new HashMap<>();
     @Getter
-    private static Inventory inventory;
-    @Getter
     private static final String inventoryName = colorize("&7Select a Kit");
+    @Getter
+    private static Inventory inventory;
+
+    public static void loadMenu() {
+        inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);
+
+        inventory.setItem(10, KitManager.getDefaultKit().getIcon());
+        kitSlots.put(10, KitManager.getDefaultKit());
+
+        inventory.setItem(2, KitManager.getInfluencerKit().getIcon());
+        kitSlots.put(2, KitManager.getInfluencerKit());
+
+        inventory.setItem(6, KitManager.getPremiumKit().getIcon());
+        kitSlots.put(6, KitManager.getPremiumKit());
+
+        inventory.setItem(16, KitManager.getPremiumPlusKit().getIcon());
+        kitSlots.put(16, KitManager.getPremiumPlusKit());
+
+        inventory.setItem(12, KitManager.getSpeedKit().getIcon());
+        kitSlots.put(12, KitManager.getSpeedKit());
+
+        inventory.setItem(13, KitManager.getTankKit().getIcon());
+        kitSlots.put(13, KitManager.getTankKit());
+
+        inventory.setItem(14, KitManager.getStrengthKit().getIcon());
+        kitSlots.put(14, KitManager.getStrengthKit());
+
+        //inventory.setItem(12, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
+        //inventory.setItem(13, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
+        //inventory.setItem(14, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
+
+        setBoarders();
+    }
+
+    private static void setBoarders() {
+        ItemStack glass = new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).resetFlags().withName(colorize("&a")).build();
+
+        int[] kitPositions = {2, 6, 10, 12, 13, 14, 16};
+
+        for (int i = 0; i < 27; i++) {
+
+            if (ArrayUtils.contains(kitPositions, i))
+                continue;
+
+            inventory.setItem(i, glass);
+        }
+    }
 
     @EventHandler
     public void onInventoryOpen(@NotNull InventoryOpenEvent event) {
@@ -92,6 +137,9 @@ public class KitMenu implements Listener {
         Inventory inventory = event.getInventory();
 
         if (inventory.getHolder() == null || !inventory.getHolder().getClass().equals(MenuHolder.class))
+            return;
+
+        if (!inventory.getName().equalsIgnoreCase(inventoryName))
             return;
 
         User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
@@ -156,50 +204,5 @@ public class KitMenu implements Listener {
         user.setSelectedKit(kit);
         player.closeInventory();
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 2);
-    }
-
-    public static void loadMenu() {
-        inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);
-
-        inventory.setItem(10, KitManager.getDefaultKit().getIcon());
-        kitSlots.put(10, KitManager.getDefaultKit());
-
-        inventory.setItem(2, KitManager.getInfluencerKit().getIcon());
-        kitSlots.put(2, KitManager.getInfluencerKit());
-
-        inventory.setItem(6, KitManager.getPremiumKit().getIcon());
-        kitSlots.put(6, KitManager.getPremiumKit());
-
-        inventory.setItem(16, KitManager.getPremiumPlusKit().getIcon());
-        kitSlots.put(16, KitManager.getPremiumPlusKit());
-
-        inventory.setItem(12, KitManager.getSpeedKit().getIcon());
-        kitSlots.put(12, KitManager.getSpeedKit());
-
-        inventory.setItem(13, KitManager.getTankKit().getIcon());
-        kitSlots.put(13, KitManager.getTankKit());
-
-        inventory.setItem(14, KitManager.getStrengthKit().getIcon());
-        kitSlots.put(14, KitManager.getStrengthKit());
-
-        //inventory.setItem(12, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
-        //inventory.setItem(13, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
-        //inventory.setItem(14, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
-
-        setBoarders();
-    }
-
-    private static void setBoarders() {
-        ItemStack glass = new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).resetFlags().withName(colorize("&a")).build();
-
-        int[] kitPositions = {2, 6, 10, 12, 13, 14, 16};
-
-        for (int i = 0; i < 27; i++) {
-
-            if (ArrayUtils.contains(kitPositions, i))
-                continue;
-
-            inventory.setItem(i, glass);
-        }
     }
 }

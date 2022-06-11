@@ -7,13 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.HashSet;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir

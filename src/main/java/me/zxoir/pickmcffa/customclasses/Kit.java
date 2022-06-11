@@ -2,12 +2,9 @@ package me.zxoir.pickmcffa.customclasses;
 
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,7 +24,7 @@ public abstract class Kit {
     @NotNull
     private final String description;
     @Nullable
-    private final BigDecimal price;
+    private final Integer price;
     @Nullable
     private final Integer level;
     @NotNull
@@ -41,7 +38,7 @@ public abstract class Kit {
     @Nullable
     private final HashSet<Effect> permanentPotions;
 
-    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @Nullable String... permissions) {
+    public Kit(@NotNull String name, @NotNull String description, @Nullable Integer price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -53,7 +50,7 @@ public abstract class Kit {
         this.armour = new ItemStack[]{};
     }
 
-    public Kit(@NotNull String name, @NotNull String description, @Nullable BigDecimal price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @NotNull ItemStack[] items, @NotNull ItemStack[] armour, @Nullable String... permissions) {
+    public Kit(@NotNull String name, @NotNull String description, @Nullable Integer price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @NotNull ItemStack[] items, @NotNull ItemStack[] armour, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;

@@ -72,7 +72,8 @@ public class LaunchPad implements Listener {
     @EventHandler
     public void onPlayerDamage(@NotNull EntityDamageEvent event) {
         // If the entity is not a player, return
-        if (!(event.getEntity() instanceof Player) || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
+        if (!(event.getEntity() instanceof Player) || !event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK))
+            return;
         Player player = (Player) event.getEntity();
 
         // If the player is not in air after launch pad, return

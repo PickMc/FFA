@@ -3,7 +3,7 @@ version: '${project.version}'
 main: me.zxoir.pickmcffa.PickMcFFA
 api-version: 1.18
 author: Zxoir
-depend: [WorldGuard, WorldEdit]
+depend: [ WorldGuard, WorldEdit ]
 commands:
   kit:
     usage: "/kit"
@@ -27,3 +27,9 @@ permissions:
   perk.explosion:
     default: op
     description: "Explosion Perk"
+  perk.absorption:
+    default: op
+    description: "Absorption Perk"
+  perk.speed:
+    default: op
+    description: "Speed Perk"

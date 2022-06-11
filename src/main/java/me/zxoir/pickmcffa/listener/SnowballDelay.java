@@ -8,6 +8,8 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -21,6 +23,16 @@ import java.util.HashMap;
  */
 public class SnowballDelay implements Listener {
     private final HashMap<Player, Instant> snowBallCooldowns = new HashMap<>();
+
+    @EventHandler
+    public void onQuit(@NotNull PlayerQuitEvent event) {
+        snowBallCooldowns.remove(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onKick(@NotNull PlayerKickEvent event) {
+        snowBallCooldowns.remove(event.getPlayer());
+    }
 
     @EventHandler
     public void onSnowball(@NotNull ProjectileLaunchEvent event) {
@@ -37,8 +49,10 @@ public class SnowballDelay implements Listener {
         Player shooter = (Player) entity.getShooter();
 
         // If the player is not in the hashmap, add him
-        if (!snowBallCooldowns.containsKey(shooter))
+        if (!snowBallCooldowns.containsKey(shooter)) {
             snowBallCooldowns.put(shooter, Instant.now().plusMillis(100));
+            return;
+        }
 
         // If the cool down is over, add it back
         Instant instant = snowBallCooldowns.get(shooter);

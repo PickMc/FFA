@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -22,7 +21,7 @@ import java.util.HashSet;
  * @since 6/9/2022
  */
 public class TankKit extends Kit {
-    private static final ItemStack helmet =  new ItemStackBuilder(Material.DIAMOND_HELMET).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
+    private static final ItemStack helmet = new ItemStackBuilder(Material.DIAMOND_HELMET).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     private static final ItemStack chestplate = new ItemStackBuilder(Material.IRON_CHESTPLATE).withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     private static final ItemStack leggings = new ItemStackBuilder(Material.DIAMOND_LEGGINGS).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     private static final ItemStack boots = new ItemStackBuilder(Material.IRON_BOOTS).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
@@ -38,7 +37,7 @@ public class TankKit extends Kit {
         super(
                 "Tank",
                 "Tank Kit",
-                new BigDecimal(100),
+                100,
                 5,
                 new ItemStackBuilder(new ItemStack(Material.DIAMOND_CHESTPLATE)).withName("&6&o&lTank Kit").resetFlags().build(),
                 new HashSet<>(Collections.singletonList(new Effect(PotionEffectType.SLOW, 0))),

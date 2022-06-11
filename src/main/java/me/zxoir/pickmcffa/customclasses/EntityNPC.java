@@ -3,7 +3,6 @@ package me.zxoir.pickmcffa.customclasses;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.util.UnsafeList;
 import org.bukkit.entity.Villager;
@@ -45,6 +44,24 @@ public class EntityNPC extends EntityVillager {
         this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 0, 0));
     }
 
+    public static Villager spawn(@NotNull Location loc, String customName) {
+        World mcWorld = ((CraftWorld) loc.getWorld()).getHandle();
+        final EntityNPC customEnt = new EntityNPC(mcWorld);
+        customEnt.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        customEnt.setInvisible(true);
+        customEnt.setCustomName(customName);
+        customEnt.setCustomNameVisible(true);
+        customEnt.getBukkitEntity().getHandle().b(true);
+        Vector dirBetweenLocations = loc.toVector().subtract(loc.toVector());
+        Location locs = customEnt.bukkitEntity.getLocation();
+        loc.setDirection(dirBetweenLocations);
+        customEnt.teleportTo(locs, false);
+
+        ((CraftLivingEntity) customEnt.getBukkitEntity()).setRemoveWhenFarAway(false);
+        mcWorld.addEntity(customEnt, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        return (Villager) customEnt.getBukkitEntity();
+    }
+
     @Override
     public void move(double d0, double d1, double d2) {
 
@@ -63,36 +80,18 @@ public class EntityNPC extends EntityVillager {
     public void g(double d0, double d1, double d2) {
     }
 
-    public static Villager spawn(@NotNull Location loc, String customName){
-        World mcWorld = ((CraftWorld) loc.getWorld()).getHandle();
-        final EntityNPC customEnt = new EntityNPC(mcWorld);
-        customEnt.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-        customEnt.setInvisible(true);
-        customEnt.setCustomName(customName);
-        customEnt.setCustomNameVisible(true);
-        customEnt.getBukkitEntity().getHandle().b(true);
-        Vector dirBetweenLocations = loc.toVector().subtract(loc.toVector());
-        Location locs = customEnt.bukkitEntity.getLocation();
-        loc.setDirection(dirBetweenLocations);
-        customEnt.teleportTo(locs, false);
-
-        ((CraftLivingEntity) customEnt.getBukkitEntity()).setRemoveWhenFarAway(false);
-        mcWorld.addEntity(customEnt, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        return (Villager) customEnt.getBukkitEntity();
-    }
-
-    public void registerEntity(String name, int id, Class<? extends EntityInsentient> nmsClass, Class<? extends EntityInsentient> customClass){
+    public void registerEntity(String name, int id, Class<? extends EntityInsentient> nmsClass, Class<? extends EntityInsentient> customClass) {
         try {
 
             List<Map<?, ?>> dataMap = new ArrayList<>();
-            for (Field f : EntityTypes.class.getDeclaredFields()){
-                if (f.getType().getSimpleName().equals(Map.class.getSimpleName())){
+            for (Field f : EntityTypes.class.getDeclaredFields()) {
+                if (f.getType().getSimpleName().equals(Map.class.getSimpleName())) {
                     f.setAccessible(true);
                     dataMap.add((Map<?, ?>) f.get(null));
                 }
             }
 
-            if (dataMap.get(2).containsKey(id)){
+            if (dataMap.get(2).containsKey(id)) {
                 dataMap.get(0).remove(name);
                 dataMap.get(2).remove(id);
             }

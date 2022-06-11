@@ -38,6 +38,26 @@ public class MainCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("absorption") && sender instanceof Player) {
+            User playerUser = PickMcFFA.getCachedUsers().getIfPresent(((Player) sender).getUniqueId());
+
+            if (playerUser != null)
+                playerUser.setSelectedPerk(PerkManager.getAbsorptionPerk());
+
+            sender.sendMessage("Activated");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("speed") && sender instanceof Player) {
+            User playerUser = PickMcFFA.getCachedUsers().getIfPresent(((Player) sender).getUniqueId());
+
+            if (playerUser != null)
+                playerUser.setSelectedPerk(PerkManager.getSpeedPerk());
+
+            sender.sendMessage("Activated");
+            return true;
+        }
+
         return true;
     }
 }

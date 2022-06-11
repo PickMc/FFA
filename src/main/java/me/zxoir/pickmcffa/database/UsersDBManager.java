@@ -217,7 +217,8 @@ public class UsersDBManager {
     @NotNull
     private static User dbToUser(@NotNull ResultSet resultSet) throws SQLException {
         String uuid = resultSet.getString("uuid");
-        Stats stats = adapter.fromJson(resultSet.getString("stats"), new TypeToken<Stats>(){}.getType());
+        Stats stats = adapter.fromJson(resultSet.getString("stats"), new TypeToken<Stats>() {
+        }.getType());
 
         return new User(uuid, stats);
     }
