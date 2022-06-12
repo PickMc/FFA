@@ -7,9 +7,9 @@ import me.zxoir.pickmcffa.kits.DefaultKit;
 import me.zxoir.pickmcffa.kits.InfluencerKit;
 import me.zxoir.pickmcffa.kits.PremiumKit;
 import me.zxoir.pickmcffa.kits.PremiumPlusKit;
-import me.zxoir.pickmcffa.limitedkits.SpeedKit;
-import me.zxoir.pickmcffa.limitedkits.StrengthKit;
-import me.zxoir.pickmcffa.limitedkits.TankKit;
+import me.zxoir.pickmcffa.tempkits.SpeedKit;
+import me.zxoir.pickmcffa.tempkits.StrengthKit;
+import me.zxoir.pickmcffa.tempkits.TankKit;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
@@ -22,26 +22,42 @@ import java.util.HashMap;
  */
 public class KitManager {
     @Getter
-    private static final Kit defaultKit = new DefaultKit();
+    private static Kit defaultKit = new DefaultKit();
 
     @Getter
-    private static final Kit influencerKit = new InfluencerKit();
+    private static Kit influencerKit = new InfluencerKit();
 
     @Getter
-    private static final Kit premiumKit = new PremiumKit();
+    private static Kit premiumKit = new PremiumKit();
 
     @Getter
-    private static final Kit premiumPlusKit = new PremiumPlusKit();
+    private static Kit premiumPlusKit = new PremiumPlusKit();
 
     @Getter
-    private static final Kit speedKit = new SpeedKit();
+    private static Kit speedKit = new SpeedKit();
 
     @Getter
-    private static final Kit strengthKit = new StrengthKit();
+    private static Kit strengthKit = new StrengthKit();
 
     @Getter
-    private static final Kit tankKit = new TankKit();
+    private static Kit tankKit = new TankKit();
 
     @Getter
     private static final HashMap<User, BukkitTask> tempPotionTasks = new HashMap<>();
+
+    public static void reloadKits() {
+        defaultKit = new DefaultKit();
+
+        influencerKit = new InfluencerKit();
+
+        premiumKit = new PremiumKit();
+
+        premiumPlusKit = new PremiumPlusKit();
+
+        speedKit = new SpeedKit();
+
+        strengthKit = new StrengthKit();
+
+        tankKit = new TankKit();
+    }
 }

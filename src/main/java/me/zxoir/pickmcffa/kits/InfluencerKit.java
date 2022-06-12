@@ -30,7 +30,7 @@ public class InfluencerKit extends Kit {
     private static final ItemStack[] items = {axe, bow, snowballs, arrows};
 
     public InfluencerKit() {
-        super("Influencer", "Influencer Kit", null, null, new ItemStackBuilder(Material.STONE_AXE).withName("&5&lInfluencer Kit").resetFlags().build(), null, items, armour, "group.influencer");
+        super("Influencer", "Influencer Kit", null, null, null, new ItemStackBuilder(Material.STONE_AXE).withName("&5&lInfluencer Kit").resetFlags().build(), null, items, armour, "group.influencer");
     }
 
     public void killAction(@Nullable User killed, @NotNull User killer) {

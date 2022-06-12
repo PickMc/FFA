@@ -1,8 +1,9 @@
-package me.zxoir.pickmcffa.limitedkits;
+package me.zxoir.pickmcffa.tempkits;
 
 import me.zxoir.pickmcffa.customclasses.Effect;
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -37,8 +38,9 @@ public class TankKit extends Kit {
         super(
                 "Tank",
                 "Tank Kit",
-                100,
-                5,
+                ConfigManager.getTankKitPrice(),
+                ConfigManager.getTankKitLevel(),
+                ConfigManager.getTankKitExpire(),
                 new ItemStackBuilder(new ItemStack(Material.DIAMOND_CHESTPLATE)).withName("&6&o&lTank Kit").resetFlags().build(),
                 new HashSet<>(Collections.singletonList(new Effect(PotionEffectType.SLOW, 0))),
                 items,

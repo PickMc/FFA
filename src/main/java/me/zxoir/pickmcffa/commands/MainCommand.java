@@ -23,6 +23,9 @@ public class MainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
+        if (args.length < 1)
+            return true;
+
         if (args[0].equalsIgnoreCase("reload")) {
             ConfigManager.reloadConfig();
             sender.sendMessage(colorize("&a&lConfig's reloaded successfully"));

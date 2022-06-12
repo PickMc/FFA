@@ -27,6 +27,8 @@ public abstract class Kit {
     private final Integer price;
     @Nullable
     private final Integer level;
+    @Nullable
+    private final Long expire;
     @NotNull
     private final ItemStack[] items;
     @NotNull
@@ -38,11 +40,12 @@ public abstract class Kit {
     @Nullable
     private final HashSet<Effect> permanentPotions;
 
-    public Kit(@NotNull String name, @NotNull String description, @Nullable Integer price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @Nullable String... permissions) {
+    public Kit(@NotNull String name, @NotNull String description, @Nullable Integer price, @Nullable Integer level, @Nullable Long expire, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.level = level;
+        this.expire = expire == null || expire <= 0 ? null : expire;
         this.icon = icon;
         this.permissions = permissions == null ? new ArrayList<>() : Arrays.asList(permissions);
         this.permanentPotions = permanentPotions == null ? new HashSet<>() : permanentPotions;
@@ -50,11 +53,12 @@ public abstract class Kit {
         this.armour = new ItemStack[]{};
     }
 
-    public Kit(@NotNull String name, @NotNull String description, @Nullable Integer price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @NotNull ItemStack[] items, @NotNull ItemStack[] armour, @Nullable String... permissions) {
+    public Kit(@NotNull String name, @NotNull String description, @Nullable Integer price, @Nullable Integer level, @Nullable Long expire, @NotNull ItemStack icon, @Nullable HashSet<Effect> permanentPotions, @NotNull ItemStack[] items, @NotNull ItemStack[] armour, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.level = level;
+        this.expire = expire == null || expire <= 0 ? null : expire;
         this.icon = icon;
         this.permissions = permissions == null ? new ArrayList<>() : Arrays.asList(permissions);
         this.permanentPotions = permanentPotions == null ? new HashSet<>() : permanentPotions;

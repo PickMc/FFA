@@ -33,6 +33,7 @@ public class PremiumPlusKit extends Kit {
                 "Premium+ Kit",
                 null,
                 null,
+                null,
                 new ItemStackBuilder(Material.DIAMOND_AXE).withName("&2&lPremium+ Kit").resetFlags().build(),
                 null,
                 items,

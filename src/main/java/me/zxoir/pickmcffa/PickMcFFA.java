@@ -6,6 +6,7 @@ import lombok.Getter;
 import me.zxoir.pickmcffa.commands.KitCommand;
 import me.zxoir.pickmcffa.commands.MainCommand;
 import me.zxoir.pickmcffa.commands.SpawnShopCommand;
+import me.zxoir.pickmcffa.commands.StatsCommand;
 import me.zxoir.pickmcffa.customclasses.EntityNPC;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.database.DataFile;
@@ -13,8 +14,7 @@ import me.zxoir.pickmcffa.database.FFADatabase;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.listener.*;
 import me.zxoir.pickmcffa.managers.ConfigManager;
-import me.zxoir.pickmcffa.menus.KitMenu;
-import me.zxoir.pickmcffa.menus.ShopMenu;
+import me.zxoir.pickmcffa.menus.*;
 import net.minecraft.server.v1_8_R3.EntityVillager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -94,6 +94,10 @@ public final class PickMcFFA extends JavaPlugin {
         ffaLogger.info("Loading menus...");
         KitMenu.loadMenu();
         ShopMenu.loadMenu();
+        TempKitShopMenu.loadMenu();
+        KitPurchaseConfirmationMenu.loadMenu();
+        PerkShopMenu.loadMenu();
+        PerkPurchaseConfirmationMenu.loadMenu();
         ffaLogger.info("Menus loaded. Took " + (System.currentTimeMillis() - start) + "ms");
 
         ffaLogger.info("Plugin loaded and initialized successfully. Took " + (System.currentTimeMillis() - startTime) + "ms");
@@ -128,12 +132,18 @@ public final class PickMcFFA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CombatLogListener(), this);
         getServer().getPluginManager().registerEvents(new ShopVillager(), this);
         getServer().getPluginManager().registerEvents(new PerkListener(), this);
+        getServer().getPluginManager().registerEvents(new ShopMenu(), this);
+        getServer().getPluginManager().registerEvents(new TempKitShopMenu(), this);
+        getServer().getPluginManager().registerEvents(new KitPurchaseConfirmationMenu(), this);
+        getServer().getPluginManager().registerEvents(new PerkShopMenu(), this);
+        getServer().getPluginManager().registerEvents(new PerkPurchaseConfirmationMenu(), this);
     }
 
     private void registerCommands() {
         getCommand("kit").setExecutor(new KitCommand());
         getCommand("spawnshop").setExecutor(new SpawnShopCommand());
         getCommand("pickmc").setExecutor(new MainCommand());
+        getCommand("stats").setExecutor(new StatsCommand());
     }
 
     private void loadCachedUsers() {

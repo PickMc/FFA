@@ -13,7 +13,31 @@ ShopVillagerName: "&a&lSHOP"
 # No Permission Message
 InvalidPermission: "&c&lERROR > &8You don't have permission to use this command."
 
-# Explosion Perk (placeholder: %player%)
+# Purchase Messages (Placeholders: %kit_name% %kit_price% %perk_name% %perk_price%)
+KitPurchaseMessage: "&aYou have purchased &e&l%kit_name% &afor &e&l%perk_price%¢"
+PerkPurchaseMessage: "&aYou have purchased &e&l%perk_name% &afor &e&l%perk_price%¢"
+
+# Speed Kit
+SpeedKitPrice: 2000
+SpeedKitExpire: 86400
+SpeedKitLevel: 5
+SpeedKitEffectDuration: 6
+
+# Strength Kit
+StrengthKitPrice: 2500
+StrengthKitExpire: 86400
+StrengthKitLevel: 8
+
+# Tank Kit
+TankKitPrice: 1000
+TankKitExpire: 86400
+TankKitLevel: 3
+
+# Explosion Perk (Placeholder: %player%)
+ExplosionRadius: 5
+ExplosionPrice: 100
+ExplosionExpire: 86400
+ExplosionLevel: 0
 ExplosionChance: 30
 ExplosionActivated: "&6&lPERK > &2Explosion Perk activated!"
 ExplosionActivatedActionbar: ""
@@ -21,12 +45,18 @@ ExplosionDamage: "&6&lPERK > &cYou have been damaged by &4&l%player%&c's Explosi
 ExplosionDamageActionbar: ""
 
 # Absorption Perk
+AbsorptionPrice: 100
+AbsorptionExpire: 86400
+AbsorptionLevel: 0
 AbsorptionChance: 35
 AbsorptionDuration: 11
 AbsorptionActivated: "&6&lPERK > &2Absorption Perk activated!"
 AbsorptionActivatedActionbar: ""
 
 # Speed Perk
+SpeedPrice: 100
+SpeedExpire: 86400
+SpeedLevel: 0
 SpeedChance: 100
 SpeedDuration: 5
 SpeedActivated: "&6&lPERK > &2Speed Perk activated!"

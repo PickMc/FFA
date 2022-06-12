@@ -1,7 +1,8 @@
-package me.zxoir.pickmcffa.limitedkits;
+package me.zxoir.pickmcffa.tempkits;
 
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -32,8 +33,9 @@ public class StrengthKit extends Kit {
         super(
                 "Strength",
                 "Strength Kit",
-                100,
-                5,
+                ConfigManager.getStrengthKitPrice(),
+                ConfigManager.getStrengthKitLevel(),
+                ConfigManager.getStrengthKitExpire(),
                 new ItemStackBuilder(new ItemStack(Material.POTION, 1, (short) 8201)).withName("&6&o&lStrength Kit").resetFlags().build(),
                 null,
                 items,

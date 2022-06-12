@@ -2,6 +2,7 @@ package me.zxoir.pickmcffa.listener;
 
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.menus.ShopMenu;
+import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +28,7 @@ public class ShopVillager implements Listener {
             return;
 
         event.setCancelled(true);
-        event.getPlayer().openInventory(ShopMenu.getInventory());
+        event.getPlayer().openInventory(Utils.duplicateInventory(ShopMenu.getInventory()));
     }
 
     @EventHandler

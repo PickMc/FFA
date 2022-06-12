@@ -13,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
 public class ExplosionPerk extends Perk {
 
     public ExplosionPerk() {
-        super("Explosion", "Explosion Perk", 100, 5, new ItemStackBuilder(Material.TNT).withName("&c&lExplosion Perk").resetFlags().build(), "perk.explosion");
+        super("Explosion", "Explosion Perk", ConfigManager.getExplosionPrice(), ConfigManager.getExplosionLevel(), ConfigManager.getExplosionExpire(), new ItemStackBuilder(Material.TNT).withName("&c&lExplosion Perk").resetFlags().build(), "perk.explosion");
     }
 
     @Override
@@ -37,8 +38,8 @@ public class ExplosionPerk extends Perk {
         if (chance >= explosionChance)
             return;
 
-        player.getWorld().playEffect(player.getLocation(), Effect.EXPLOSION_HUGE, 10);
-        player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 1, 1);
+        player.getWorld().playEffect(killer.getPlayer().getLocation(), Effect.EXPLOSION_HUGE, 10);
+        player.getWorld().playSound(killer.getPlayer().getLocation(), Sound.EXPLODE, 1, 1);
 
         if (!ConfigManager.getExplosionActivated().isEmpty())
             player.sendMessage(ConfigManager.getExplosionActivated());
@@ -46,20 +47,21 @@ public class ExplosionPerk extends Perk {
         if (!ConfigManager.getExplosionActivatedActionbar().isEmpty())
             Utils.sendActionText(player, ConfigManager.getExplosionActivatedActionbar());
 
-        List<Entity> entities = player.getNearbyEntities(4, 4, 4);
+        List<Entity> entities = killer.getPlayer().getNearbyEntities(ConfigManager.getExplosionRadius(), ConfigManager.getExplosionRadius(), ConfigManager.getExplosionRadius());
         if (entities == null || entities.isEmpty())
             return;
 
-        for (Entity entity : player.getNearbyEntities(4, 4, 4)) {
+        for (Entity entity : entities) {
 
             if (entity == null || !entity.getType().equals(EntityType.PLAYER))
                 continue;
 
             Player nearbyPlayer = (Player) entity;
 
-            if (nearbyPlayer.equals(player) || (killed != null && nearbyPlayer.getUniqueId().equals(killed.getUuid())))
+            if (nearbyPlayer.equals(player) || nearbyPlayer.getHealth() <= 0 || (killed != null && nearbyPlayer.getUniqueId().equals(killed.getUuid())))
                 continue;
 
+            nearbyPlayer.damage(0, player);
             nearbyPlayer.setHealth(Math.max(0, nearbyPlayer.getHealth() - 5));
 
             if (!ConfigManager.getExplosionDamage(player.getName()).isEmpty())

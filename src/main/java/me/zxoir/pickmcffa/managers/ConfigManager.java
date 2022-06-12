@@ -2,6 +2,7 @@ package me.zxoir.pickmcffa.managers;
 
 import lombok.Getter;
 import me.zxoir.pickmcffa.PickMcFFA;
+import me.zxoir.pickmcffa.menus.*;
 import org.jetbrains.annotations.NotNull;
 
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
@@ -39,6 +40,52 @@ public class ConfigManager {
     @Getter
     private static String InvalidPermission;
 
+    private static String KitPurchaseMessage;
+
+    private static String PerkPurchaseMessage;
+
+    @Getter
+    private static int SpeedKitPrice;
+
+    @Getter
+    private static long SpeedKitExpire;
+
+    @Getter
+    private static int SpeedKitLevel;
+
+    @Getter
+    private static int SpeedKitEffectDuration;
+
+    @Getter
+    private static int StrengthKitPrice;
+
+    @Getter
+    private static long StrengthKitExpire;
+
+    @Getter
+    private static int StrengthKitLevel;
+
+    @Getter
+    private static int TankKitPrice;
+
+    @Getter
+    private static long TankKitExpire;
+
+    @Getter
+    private static int TankKitLevel;
+
+    @Getter
+    private static int ExplosionRadius;
+
+    @Getter
+    private static int ExplosionPrice;
+
+    @Getter
+    private static long ExplosionExpire;
+
+    @Getter
+    private static int ExplosionLevel;
+
     @Getter
     private static int ExplosionChance;
 
@@ -53,6 +100,15 @@ public class ConfigManager {
     private static String ExplosionDamageActionbar;
 
     @Getter
+    private static int AbsorptionPrice;
+
+    @Getter
+    private static long AbsorptionExpire;
+
+    @Getter
+    private static int AbsorptionLevel;
+
+    @Getter
     private static int AbsorptionChance;
 
     @Getter
@@ -63,6 +119,15 @@ public class ConfigManager {
 
     @Getter
     private static String AbsorptionActivatedActionbar;
+
+    @Getter
+    private static int SpeedPrice;
+
+    @Getter
+    private static long SpeedExpire;
+
+    @Getter
+    private static int SpeedLevel;
 
     @Getter
     private static int SpeedChance;
@@ -128,15 +193,37 @@ public class ConfigManager {
         port = main.getConfig().getString("port");
         ShopVillagerName = colorize(main.getConfig().getString("ShopVillagerName"));
         InvalidPermission = colorize(main.getConfig().getString("InvalidPermission"));
+        KitPurchaseMessage = colorize(main.getConfig().getString("KitPurchaseMessage"));
+        PerkPurchaseMessage = colorize(main.getConfig().getString("PerkPurchaseMessage"));
+        SpeedKitPrice = main.getConfig().getInt("SpeedKitPrice");
+        SpeedKitExpire = main.getConfig().getLong("SpeedKitExpire");
+        SpeedKitLevel = main.getConfig().getInt("SpeedKitLevel");
+        SpeedKitEffectDuration = main.getConfig().getInt("SpeedKitEffectDuration");
+        StrengthKitPrice = main.getConfig().getInt("StrengthKitPrice");
+        StrengthKitExpire = main.getConfig().getLong("StrengthKitExpire");
+        StrengthKitLevel = main.getConfig().getInt("StrengthKitLevel");
+        TankKitPrice = main.getConfig().getInt("TankKitPrice");
+        TankKitExpire = main.getConfig().getLong("TankKitExpire");
+        TankKitLevel = main.getConfig().getInt("TankKitLevel");
+        ExplosionRadius = main.getConfig().getInt("ExplosionRadius");
+        ExplosionPrice = main.getConfig().getInt("ExplosionPrice");
+        ExplosionExpire = main.getConfig().getLong("ExplosionExpire");
+        ExplosionLevel = main.getConfig().getInt("ExplosionLevel");
         ExplosionChance = main.getConfig().getInt("ExplosionChance");
         ExplosionActivated = colorize(main.getConfig().getString("ExplosionActivated"));
         ExplosionActivatedActionbar = colorize(main.getConfig().getString("ExplosionActivatedActionbar"));
         ExplosionDamage = colorize(main.getConfig().getString("ExplosionDamage"));
         ExplosionDamageActionbar = colorize(main.getConfig().getString("ExplosionDamageActionbar"));
+        AbsorptionPrice = main.getConfig().getInt("AbsorptionPrice");
+        AbsorptionExpire = main.getConfig().getLong("AbsorptionExpire");
+        AbsorptionLevel = main.getConfig().getInt("AbsorptionLevel");
         AbsorptionChance = main.getConfig().getInt("AbsorptionChance");
         AbsorptionDuration = main.getConfig().getInt("AbsorptionDuration");
         AbsorptionActivated = colorize(main.getConfig().getString("AbsorptionActivated"));
         AbsorptionActivatedActionbar = colorize(main.getConfig().getString("AbsorptionActivatedActionbar"));
+        SpeedPrice = main.getConfig().getInt("SpeedPrice");
+        SpeedExpire = main.getConfig().getLong("SpeedExpire");
+        SpeedLevel = main.getConfig().getInt("SpeedLevel");
         SpeedChance = main.getConfig().getInt("SpeedChance");
         SpeedDuration = main.getConfig().getInt("SpeedDuration");
         SpeedActivated = colorize(main.getConfig().getString("SpeedActivated"));
@@ -170,6 +257,24 @@ public class ConfigManager {
         main.reloadConfig();
         PickMcFFA.getDataFile().reloadConfig();
         getConfigData();
+        KitManager.reloadKits();
+        PerkManager.reloadPerks();
+        KitMenu.loadMenu();
+        ShopMenu.loadMenu();
+        TempKitShopMenu.loadMenu();
+        KitPurchaseConfirmationMenu.loadMenu();
+        PerkShopMenu.loadMenu();
+        PerkPurchaseConfirmationMenu.loadMenu();
+    }
+
+    @NotNull
+    public static String getKitPurchaseMessage(String kitName, int kitPrice) {
+        return KitPurchaseMessage.replace("%kit_name%", kitName).replace("%kit_price%", String.valueOf(kitPrice));
+    }
+
+    @NotNull
+    public static String getPerkPurchaseMessage(String perkName, int perkPrice) {
+        return PerkPurchaseMessage.replace("%perk_name%", perkName).replace("%perk_price%", String.valueOf(perkPrice));
     }
 
     @NotNull

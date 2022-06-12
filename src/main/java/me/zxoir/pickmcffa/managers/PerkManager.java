@@ -13,11 +13,17 @@ import me.zxoir.pickmcffa.perks.SpeedPerk;
  */
 public class PerkManager {
     @Getter
-    private static final ExplosionPerk explosionPerk = new ExplosionPerk();
+    private static ExplosionPerk explosionPerk = new ExplosionPerk();
 
     @Getter
-    private static final AbsorptionPerk absorptionPerk = new AbsorptionPerk();
+    private static AbsorptionPerk absorptionPerk = new AbsorptionPerk();
 
     @Getter
-    private static final SpeedPerk speedPerk = new SpeedPerk();
+    private static SpeedPerk speedPerk = new SpeedPerk();
+
+    public static void reloadPerks() {
+        explosionPerk = new ExplosionPerk();
+        absorptionPerk = new AbsorptionPerk();
+        speedPerk = new SpeedPerk();
+    }
 }

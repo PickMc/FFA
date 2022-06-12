@@ -33,6 +33,7 @@ public class DefaultKit extends Kit {
                 "Default Kit",
                 null,
                 null,
+                null,
                 new ItemStackBuilder(Material.WOOD_AXE).withName("&8&lDefault Kit").resetFlags().build(),
                 null,
                 items,

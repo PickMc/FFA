@@ -27,17 +27,20 @@ public abstract class Perk {
     private final Integer price;
     @Nullable
     private final Integer level;
+    @Nullable
+    private final Long expire;
     @NotNull
     private final ItemStack icon;
     @Nullable
     private final List<String> permissions;
     private final Random random = new Random();
 
-    protected Perk(@NotNull String name, @NotNull String description, @Nullable Integer price, @Nullable Integer level, @NotNull ItemStack icon, @Nullable String... permissions) {
+    protected Perk(@NotNull String name, @NotNull String description, @Nullable Integer price, @Nullable Integer level, @Nullable Long expire, @NotNull ItemStack icon, @Nullable String... permissions) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.level = level;
+        this.expire = expire;
         this.icon = icon;
         this.permissions = permissions == null ? new ArrayList<>() : Arrays.asList(permissions);
     }

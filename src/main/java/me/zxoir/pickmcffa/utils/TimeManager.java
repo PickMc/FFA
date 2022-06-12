@@ -72,6 +72,51 @@ public class TimeManager {
     }
 
     @NotNull
+    public static String formatTimeWithoutSpace(long time) {
+        long days = TimeUnit.SECONDS.toDays(time);
+        long hours = TimeUnit.SECONDS.toHours(time % 86400);
+        long minutes = TimeUnit.SECONDS.toMinutes((time % 3600));
+        long seconds = TimeUnit.SECONDS.toSeconds(time % 60);
+
+        String timeString;
+        if (time >= 86400) { // days
+            String day = (days != 1) ? "days" : "day";
+            String hour = (hours != 1) ? "hours" : "hour";
+            String minute = (minutes != 1) ? "minutes" : "minute";
+
+            if (hours > 0)
+                timeString = days + day + hours + hour;
+            else if (minutes == 0)
+                timeString = days + day;
+            else
+                timeString = days + day + minutes + minute;
+
+        } else if (time >= 3600) { // hours
+            String hour = (hours != 1) ? "hours" : "hour";
+            String minute = (minutes != 1) ? "minutes" : "minute";
+            String second = (seconds != 1) ? "seconds" : "second";
+            if (minutes > 0)
+                timeString = hours + hour + minutes + minute;
+            else if (seconds == 0)
+                timeString = hours + hour;
+            else
+                timeString = hours + hour + seconds + second;
+        } else if (time >= 60) { // minutes
+            String minute = (minutes != 1) ? "minutes" : "minute";
+            String second = (seconds != 1) ? "seconds" : "second";
+            if (seconds > 0)
+                timeString = minutes + minute + seconds + second;
+            else
+                timeString = minutes + minute;
+        } else { // seconds
+            String second = (seconds != 1) ? "seconds" : "second";
+            timeString = seconds + second;
+        }
+
+        return timeString;
+    }
+
+    @NotNull
     public static String formatTime(long time) {
         long days = TimeUnit.SECONDS.toDays(time);
         long hours = TimeUnit.SECONDS.toHours(time % 86400);

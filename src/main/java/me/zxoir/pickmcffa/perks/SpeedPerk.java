@@ -28,7 +28,7 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 public class SpeedPerk extends Perk {
 
     public SpeedPerk() {
-        super("Speed", "Speed Perk", 100, 5, new ItemStackBuilder(new ItemStack(Material.POTION, 1, (short) 8194)).withName("&C&lSpeed Perk").resetFlags().build(), "perk.speed");
+        super("Speed", "Speed Perk", ConfigManager.getSpeedPrice(), ConfigManager.getSpeedLevel(), ConfigManager.getSpeedExpire(), new ItemStackBuilder(new ItemStack(Material.POTION, 1, (short) 8194)).withName("&C&lSpeed Perk").resetFlags().build(), "perk.speed");
     }
 
     @Override

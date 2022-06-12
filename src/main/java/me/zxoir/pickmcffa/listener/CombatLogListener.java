@@ -52,7 +52,11 @@ public class CombatLogListener implements Listener {
             combatLog.getBukkitTask().cancel();
 
         player.setHealth(0);
-        User killerUser = combatLogs.get(user).getLastHit();
+
+        if (combatLog.getLastHit() == null)
+            return;
+
+        User killerUser = combatLog.getLastHit();
 
         if (killerUser != null) {
             combatLogs.remove(user);

@@ -1,9 +1,10 @@
-package me.zxoir.pickmcffa.limitedkits;
+package me.zxoir.pickmcffa.tempkits;
 
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.Effect;
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
 import org.bukkit.Material;
@@ -40,8 +41,9 @@ public class SpeedKit extends Kit {
         super(
                 "Speed",
                 "Speed Kit",
-                100,
-                5,
+                ConfigManager.getSpeedKitPrice(),
+                ConfigManager.getSpeedKitLevel(),
+                ConfigManager.getSpeedKitExpire(),
                 new ItemStackBuilder(new ItemStack(Material.POTION, 1, (short) 8194)).withName("&6&o&lSpeed Kit").resetFlags().build(),
                 new HashSet<>(Collections.singletonList(new Effect(PotionEffectType.SPEED, 0))),
                 items,
@@ -52,7 +54,7 @@ public class SpeedKit extends Kit {
 
     @Override
     public void killAction(@NotNull User killed, @NotNull User killer) {
-        PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 120, 1);
+        PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, ConfigManager.getSpeedKitEffectDuration()*20, 1);
         killer.getPlayer().addPotionEffect(potionEffect, true);
 
         if (KitManager.getTempPotionTasks().containsKey(killer)) {

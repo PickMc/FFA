@@ -20,7 +20,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
 
@@ -32,7 +32,7 @@ import static me.zxoir.pickmcffa.utils.Utils.colorize;
  */
 public class KitMenu implements Listener {
     @Getter
-    private static final HashMap<Integer, Kit> kitSlots = new HashMap<>();
+    private static final ConcurrentHashMap<Integer, Kit> kitSlots = new ConcurrentHashMap<>();
     @Getter
     private static final String inventoryName = colorize("&7Select a Kit");
     @Getter
@@ -41,30 +41,21 @@ public class KitMenu implements Listener {
     public static void loadMenu() {
         inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);
 
-        inventory.setItem(10, KitManager.getDefaultKit().getIcon());
+        inventory.setItem(10, KitManager.getDefaultKit().getIcon().clone());
         kitSlots.put(10, KitManager.getDefaultKit());
 
-        inventory.setItem(2, KitManager.getInfluencerKit().getIcon());
+        inventory.setItem(2, KitManager.getInfluencerKit().getIcon().clone());
         kitSlots.put(2, KitManager.getInfluencerKit());
 
-        inventory.setItem(6, KitManager.getPremiumKit().getIcon());
+        inventory.setItem(6, KitManager.getPremiumKit().getIcon().clone());
         kitSlots.put(6, KitManager.getPremiumKit());
 
-        inventory.setItem(16, KitManager.getPremiumPlusKit().getIcon());
+        inventory.setItem(16, KitManager.getPremiumPlusKit().getIcon().clone());
         kitSlots.put(16, KitManager.getPremiumPlusKit());
 
-        inventory.setItem(12, KitManager.getSpeedKit().getIcon());
-        kitSlots.put(12, KitManager.getSpeedKit());
-
-        inventory.setItem(13, KitManager.getTankKit().getIcon());
-        kitSlots.put(13, KitManager.getTankKit());
-
-        inventory.setItem(14, KitManager.getStrengthKit().getIcon());
-        kitSlots.put(14, KitManager.getStrengthKit());
-
-        //inventory.setItem(12, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
-        //inventory.setItem(13, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
-        //inventory.setItem(14, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lSOON").build());
+        inventory.setItem(12, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lYou don't have access to this Kit").build());
+        inventory.setItem(13, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lYou don't have access to this Kit").build());
+        inventory.setItem(14, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lYou don't have access to this Kit").build());
 
         setBoarders();
     }
@@ -99,10 +90,26 @@ public class KitMenu implements Listener {
         if (user == null)
             return;
 
+        if (hasKit(user, KitManager.getSpeedKit())) {
+            inventory.setItem(12, KitManager.getSpeedKit().getIcon().clone());
+            kitSlots.put(12, KitManager.getSpeedKit());
+        }
+
+        if (player.hasPermission("kit.tank")) {
+            inventory.setItem(13, KitManager.getTankKit().getIcon().clone());
+            kitSlots.put(13, KitManager.getTankKit());
+        }
+
+
+        if (player.hasPermission("kit.strength")) {
+            inventory.setItem(14, KitManager.getStrengthKit().getIcon().clone());
+            kitSlots.put(14, KitManager.getStrengthKit());
+        }
+
         for (Integer i : kitSlots.keySet()) {
             Kit kit = kitSlots.get(i);
             ItemStack kitItem = inventory.getItem(i);
-            if (kitItem == null)
+            if (kitItem == null || kitItem.getType().equals(Material.STAINED_GLASS_PANE))
                 continue;
 
             boolean hasPermission = true;
@@ -127,8 +134,24 @@ public class KitMenu implements Listener {
                     .withLore("&8Right click to edit layout (SOON)")
                     .withLore("")
                     .build();
+
             inventory.setItem(i, kitItem);
         }
+    }
+
+    private boolean hasKit(User user, @NotNull Kit kit) {
+        if (kit.getPermissions() == null || kit.getPermissions().isEmpty())
+            return true;
+
+        if (user.getPlayer() == null)
+            return false;
+
+        for (String permission : kit.getPermissions()) {
+            if (!user.getPlayer().hasPermission(permission))
+                return false;
+        }
+
+        return true;
     }
 
     @EventHandler

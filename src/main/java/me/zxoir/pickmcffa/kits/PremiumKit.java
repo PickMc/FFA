@@ -33,6 +33,7 @@ public class PremiumKit extends Kit {
                 "Premium Kit",
                 null,
                 null,
+                null,
                 new ItemStackBuilder(Material.IRON_AXE).withName("&a&lPremium Kit").resetFlags().build(),
                 null,
                 items,

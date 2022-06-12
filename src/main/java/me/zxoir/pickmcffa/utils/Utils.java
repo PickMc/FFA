@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,12 @@ public class Utils {
             PacketPlayOutChat packet = new PacketPlayOutChat(new ChatComponentText(colorize(message)), (byte) 2);
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
         });
+    }
+
+    public static Inventory duplicateInventory(@NotNull Inventory inventory) {
+        Inventory duplicate = Bukkit.createInventory(inventory.getHolder(), inventory.getSize(), inventory.getName());
+        duplicate.setContents(inventory.getContents());
+        return duplicate;
     }
 
     public static void sendActionText(Player player, String message) {

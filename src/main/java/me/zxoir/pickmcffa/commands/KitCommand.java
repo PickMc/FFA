@@ -8,6 +8,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.menus.KitMenu;
+import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -43,7 +44,7 @@ public class KitCommand implements CommandExecutor {
             return true;
         }
 
-        player.openInventory(KitMenu.getInventory());
+        player.openInventory(Utils.duplicateInventory(KitMenu.getInventory()));
 
         return true;
     }
