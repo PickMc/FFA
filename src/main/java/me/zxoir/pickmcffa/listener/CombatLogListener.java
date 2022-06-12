@@ -275,7 +275,8 @@ public class CombatLogListener implements Listener {
                     return;
                 }
 
-                Utils.runTaskSync(() -> Utils.sendActionText(player, ConfigManager.getCombatActionbar(damagerName, time + 1)));
+                if (!user.isActionbar())
+                    Utils.runTaskSync(() -> Utils.sendCombatActionText(player, ConfigManager.getCombatActionbar(damagerName, time + 1)));
                 time--;
             }
 

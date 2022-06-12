@@ -105,6 +105,9 @@ public final class PickMcFFA extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
+        FFADatabase.getDataSource().close();
+
         if (SpawnShopCommand.getShopNPC() != null)
             SpawnShopCommand.getShopNPC().remove();
 

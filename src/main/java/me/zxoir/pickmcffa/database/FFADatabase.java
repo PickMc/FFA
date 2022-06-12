@@ -2,6 +2,7 @@ package me.zxoir.pickmcffa.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.Getter;
 import me.zxoir.pickmcffa.PickMcFFA;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class FFADatabase {
     private static final HikariConfig config = new HikariConfig();
+    @Getter
     private static HikariDataSource dataSource;
 
     public static void createTable(String sqlCreateStatement) {

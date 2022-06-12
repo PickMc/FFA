@@ -27,6 +27,7 @@ public class User {
     Kit selectedKit;
     @Nullable
     Perk selectedPerk;
+    boolean actionbar = false;
 
     public User(@NotNull String uuid) {
         this.uuid = UUID.fromString(uuid);
@@ -108,6 +109,10 @@ public class User {
 
     public void setSelectedPerk(@Nullable Perk selectedPerk) {
         this.selectedPerk = selectedPerk;
+    }
+
+    public void setActionbar(boolean actionbar) {
+        this.actionbar = actionbar;
     }
 
     public void save() {

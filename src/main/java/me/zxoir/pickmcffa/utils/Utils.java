@@ -2,8 +2,10 @@ package me.zxoir.pickmcffa.utils;
 
 import lombok.Getter;
 import me.zxoir.pickmcffa.PickMcFFA;
+import me.zxoir.pickmcffa.customclasses.User;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -31,8 +33,23 @@ public class Utils {
         return ChatColor.translateAlternateColorCodes('&', arg);
     }
 
+    public static void sendCombatActionText(Player player, String message) {
+        runAsync(() -> {
+            PacketPlayOutChat packet = new PacketPlayOutChat(new ChatComponentText(colorize(message)), (byte) 2);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        });
+    }
+
     public static void sendActionText(Player player, String message) {
         runAsync(() -> {
+            User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
+
+            if (user == null)
+                return;
+
+            user.setActionbar(true);
+            Bukkit.getScheduler().runTaskLaterAsynchronously(PickMcFFA.getInstance(), () -> user.setActionbar(false), 60);
+
             PacketPlayOutChat packet = new PacketPlayOutChat(new ChatComponentText(colorize(message)), (byte) 2);
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
         });
