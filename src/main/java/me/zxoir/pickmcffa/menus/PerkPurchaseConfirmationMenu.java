@@ -2,7 +2,6 @@ package me.zxoir.pickmcffa.menus;
 
 import lombok.Getter;
 import me.zxoir.pickmcffa.PickMcFFA;
-import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.Perk;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
@@ -34,8 +33,8 @@ import static me.zxoir.pickmcffa.utils.Utils.duplicateInventory;
 public class PerkPurchaseConfirmationMenu implements Listener {
     @Getter
     private static final String inventoryName = colorize("&7Confirm Perk");
-    private static Inventory inventory;
     private static final HashMap<User, Perk> userPerkHashMap = new HashMap<>();
+    private static Inventory inventory;
 
     public static void loadMenu() {
         inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);
@@ -82,6 +81,32 @@ public class PerkPurchaseConfirmationMenu implements Listener {
 
         inv.setItem(13, perkIcon);
         return inv;
+    }
+
+    private static boolean hasPerk(User user, @NotNull Perk perk) {
+        if (perk.getPermissions() == null || perk.getPermissions().isEmpty())
+            return true;
+
+        if (user.getPlayer() == null)
+            return false;
+
+        for (String permission : perk.getPermissions()) {
+            if (!user.getPlayer().hasPermission(permission))
+                return false;
+        }
+
+        return true;
+    }
+
+    private static boolean canPurchasePerk(@NotNull User user, Perk perk) {
+        Player player = user.getPlayer();
+        if (player == null)
+            return false;
+
+        if (perk.getLevel() != null && perk.getLevel() > user.getStats().getLevel())
+            return false;
+
+        return perk.getPrice() == null || user.getStats().getCoins() >= perk.getPrice();
     }
 
     @EventHandler
@@ -148,31 +173,5 @@ public class PerkPurchaseConfirmationMenu implements Listener {
 
         }
 
-    }
-
-    private static boolean hasPerk(User user, @NotNull Perk perk) {
-        if (perk.getPermissions() == null || perk.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : perk.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
-    }
-
-    private static boolean canPurchasePerk(@NotNull User user, Perk perk) {
-        Player player = user.getPlayer();
-        if (player == null)
-            return false;
-
-        if (perk.getLevel() != null && perk.getLevel() > user.getStats().getLevel())
-            return false;
-
-        return perk.getPrice() == null || user.getStats().getCoins() >= perk.getPrice();
     }
 }

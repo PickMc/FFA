@@ -33,8 +33,8 @@ import static me.zxoir.pickmcffa.utils.Utils.duplicateInventory;
 public class KitPurchaseConfirmationMenu implements Listener {
     @Getter
     private static final String inventoryName = colorize("&7Confirm Kit");
-    private static Inventory inventory;
     private static final HashMap<User, Kit> userKitHashMap = new HashMap<>();
+    private static Inventory inventory;
 
     public static void loadMenu() {
         inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);
@@ -81,6 +81,32 @@ public class KitPurchaseConfirmationMenu implements Listener {
 
         inv.setItem(13, kitIcon);
         return inv;
+    }
+
+    private static boolean hasKit(User user, @NotNull Kit kit) {
+        if (kit.getPermissions() == null || kit.getPermissions().isEmpty())
+            return true;
+
+        if (user.getPlayer() == null)
+            return false;
+
+        for (String permission : kit.getPermissions()) {
+            if (!user.getPlayer().hasPermission(permission))
+                return false;
+        }
+
+        return true;
+    }
+
+    private static boolean canPurchaseKit(@NotNull User user, Kit kit) {
+        Player player = user.getPlayer();
+        if (player == null)
+            return false;
+
+        if (kit.getLevel() != null && kit.getLevel() > user.getStats().getLevel())
+            return false;
+
+        return kit.getPrice() == null || user.getStats().getCoins() >= kit.getPrice();
     }
 
     @EventHandler
@@ -148,31 +174,5 @@ public class KitPurchaseConfirmationMenu implements Listener {
 
         }
 
-    }
-
-    private static boolean hasKit(User user, @NotNull Kit kit) {
-        if (kit.getPermissions() == null || kit.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : kit.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
-    }
-
-    private static boolean canPurchaseKit(@NotNull User user, Kit kit) {
-        Player player = user.getPlayer();
-        if (player == null)
-            return false;
-
-        if (kit.getLevel() != null && kit.getLevel() > user.getStats().getLevel())
-            return false;
-
-        return kit.getPrice() == null || user.getStats().getCoins() >= kit.getPrice();
     }
 }

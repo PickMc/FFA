@@ -3,10 +3,7 @@ package me.zxoir.pickmcffa;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
-import me.zxoir.pickmcffa.commands.KitCommand;
-import me.zxoir.pickmcffa.commands.MainCommand;
-import me.zxoir.pickmcffa.commands.SpawnShopCommand;
-import me.zxoir.pickmcffa.commands.StatsCommand;
+import me.zxoir.pickmcffa.commands.*;
 import me.zxoir.pickmcffa.customclasses.EntityNPC;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.database.DataFile;
@@ -50,7 +47,8 @@ public final class PickMcFFA extends JavaPlugin {
         ffaLogger.info("Initializing database setup...");
         FFADatabase.createTable("CREATE TABLE IF NOT EXISTS users(" +
                 "uuid VARCHAR(36) PRIMARY KEY NOT NULL," +
-                "stats TEXT" +
+                "stats TEXT," +
+                "selectedPerk VARCHAR(36)" +
                 ");");
 
         /* FFADatabase.createTable("CREATE TABLE IF NOT EXISTS kits(" +
@@ -98,6 +96,7 @@ public final class PickMcFFA extends JavaPlugin {
         KitPurchaseConfirmationMenu.loadMenu();
         PerkShopMenu.loadMenu();
         PerkPurchaseConfirmationMenu.loadMenu();
+        PerkMenu.loadMenu();
         ffaLogger.info("Menus loaded. Took " + (System.currentTimeMillis() - start) + "ms");
 
         ffaLogger.info("Plugin loaded and initialized successfully. Took " + (System.currentTimeMillis() - startTime) + "ms");
@@ -137,6 +136,7 @@ public final class PickMcFFA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new KitPurchaseConfirmationMenu(), this);
         getServer().getPluginManager().registerEvents(new PerkShopMenu(), this);
         getServer().getPluginManager().registerEvents(new PerkPurchaseConfirmationMenu(), this);
+        getServer().getPluginManager().registerEvents(new PerkMenu(), this);
     }
 
     private void registerCommands() {
@@ -144,6 +144,7 @@ public final class PickMcFFA extends JavaPlugin {
         getCommand("spawnshop").setExecutor(new SpawnShopCommand());
         getCommand("pickmc").setExecutor(new MainCommand());
         getCommand("stats").setExecutor(new StatsCommand());
+        getCommand("perk").setExecutor(new PerkCommand());
     }
 
     private void loadCachedUsers() {

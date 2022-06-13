@@ -77,6 +77,18 @@ NoKitAccessError: "&c&lERROR > &8You don't have access to that Kit!"
 # Error when a player attempts to use the Kit command outside Spawn
 KitOutsideSpawnError: "&c&lERROR > &8You can't use that here!"
 
+# Error message when selecting same kit
+SamePerkError: "&c&lERROR > &8You already have that Perk selected!"
+
+# Error when a player leaves spawn without selecting a Kit
+NoPerkError: "&c&lERROR > &8You must select a Perk!"
+
+# Error when a player tries to access a kit he doesn't have access to
+NoPerkAccessError: "&c&lERROR > &8You don't have access to that Perk!"
+
+# Error when a player attempts to use the Kit command outside Spawn
+PerkOutsideSpawnError: "&c&lERROR > &8You can't use that here!"
+
 # Message when you are killed (Placeholders: %killer% %killed% %points_removed%)
 killed_message: "&cYou have been killed by %killer%"
 killed_actionbar: "&c-%points_removed%"

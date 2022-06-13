@@ -2,10 +2,8 @@ package me.zxoir.pickmcffa.menus;
 
 import lombok.Getter;
 import me.zxoir.pickmcffa.PickMcFFA;
-import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.Perk;
 import me.zxoir.pickmcffa.customclasses.User;
-import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.managers.PerkManager;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
 import me.zxoir.pickmcffa.utils.TimeManager;
@@ -34,9 +32,9 @@ public class PerkShopMenu implements Listener {
     @Getter
     private static final String inventoryName = colorize("&7Perk Shop");
     @Getter
-    private static Inventory inventory;
-    @Getter
     private static final ConcurrentHashMap<Integer, Perk> perkSlots = new ConcurrentHashMap<>();
+    @Getter
+    private static Inventory inventory;
 
     public static void loadMenu() {
         inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);

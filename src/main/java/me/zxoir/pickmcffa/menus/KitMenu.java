@@ -112,27 +112,13 @@ public class KitMenu implements Listener {
             if (kitItem == null || kitItem.getType().equals(Material.STAINED_GLASS_PANE))
                 continue;
 
-            boolean hasPermission = true;
-
-            if (kit.getPermissions() != null && !kit.getPermissions().isEmpty()) {
-
-                for (String permission : kit.getPermissions()) {
-
-                    if (!player.hasPermission(permission)) {
-                        hasPermission = false;
-                        break;
-                    }
-
-                }
-
-            }
+            boolean hasPermission = hasKit(user, kit);
+            boolean equippedKit = user.getSelectedKit() != null && user.getSelectedKit().equals(kit);
 
             kitItem = new ItemStackBuilder(kitItem.clone())
                     .clearLore()
-                    .withLore("")
-                    .withLore(hasPermission ? "&7⩥ &eClick to equip!" : "&7⩥ &cYou don't have access to this Kit")
+                    .withLore(equippedKit ? "&7⩥ &cThis Kit is already selected" : (hasPermission ? "&7⩥ &eClick to equip!" : "&7⩥ &cYou don't have access to this Kit"))
                     .withLore("&8Right click to edit layout (SOON)")
-                    .withLore("")
                     .build();
 
             inventory.setItem(i, kitItem);

@@ -54,7 +54,7 @@ public class SpeedKit extends Kit {
 
     @Override
     public void killAction(@NotNull User killed, @NotNull User killer) {
-        PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, ConfigManager.getSpeedKitEffectDuration()*20, 1);
+        PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, ConfigManager.getSpeedKitEffectDuration() * 20, 1);
         killer.getPlayer().addPotionEffect(potionEffect, true);
 
         if (KitManager.getTempPotionTasks().containsKey(killer)) {

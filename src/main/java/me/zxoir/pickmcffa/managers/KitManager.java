@@ -22,28 +22,21 @@ import java.util.HashMap;
  */
 public class KitManager {
     @Getter
+    private static final HashMap<User, BukkitTask> tempPotionTasks = new HashMap<>();
+    @Getter
     private static Kit defaultKit = new DefaultKit();
-
     @Getter
     private static Kit influencerKit = new InfluencerKit();
-
     @Getter
     private static Kit premiumKit = new PremiumKit();
-
     @Getter
     private static Kit premiumPlusKit = new PremiumPlusKit();
-
     @Getter
     private static Kit speedKit = new SpeedKit();
-
     @Getter
     private static Kit strengthKit = new StrengthKit();
-
     @Getter
     private static Kit tankKit = new TankKit();
-
-    @Getter
-    private static final HashMap<User, BukkitTask> tempPotionTasks = new HashMap<>();
 
     public static void reloadKits() {
         defaultKit = new DefaultKit();

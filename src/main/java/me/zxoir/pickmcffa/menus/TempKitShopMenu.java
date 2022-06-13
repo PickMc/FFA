@@ -1,6 +1,5 @@
 package me.zxoir.pickmcffa.menus;
 
-import javafx.print.PageLayout;
 import lombok.Getter;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.Kit;
@@ -33,9 +32,9 @@ public class TempKitShopMenu implements Listener {
     @Getter
     private static final String inventoryName = colorize("&7Kit Shop");
     @Getter
-    private static Inventory inventory;
-    @Getter
     private static final ConcurrentHashMap<Integer, Kit> kitSlots = new ConcurrentHashMap<>();
+    @Getter
+    private static Inventory inventory;
 
     public static void loadMenu() {
         inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);

@@ -156,6 +156,18 @@ public class ConfigManager {
     @Getter
     private static String KitOutsideSpawnError;
 
+    @Getter
+    private static String SamePerkError;
+
+    @Getter
+    private static String NoPerkError;
+
+    @Getter
+    private static String NoPerkAccessError;
+
+    @Getter
+    private static String PerkOutsideSpawnError;
+
     private static String killedMessage;
 
     private static String killMessage;
@@ -233,6 +245,10 @@ public class ConfigManager {
         NoKitError = colorize(main.getConfig().getString("NoKitError"));
         NoKitAccessError = colorize(main.getConfig().getString("NoKitAccessError"));
         KitOutsideSpawnError = colorize(main.getConfig().getString("KitOutsideSpawnError"));
+        SamePerkError = colorize(main.getConfig().getString("SamePerkError"));
+        NoPerkError = colorize(main.getConfig().getString("NoPerkError"));
+        NoPerkAccessError = colorize(main.getConfig().getString("NoPerkAccessError"));
+        PerkOutsideSpawnError = colorize(main.getConfig().getString("PerkOutsideSpawnError"));
         killedMessage = colorize(main.getConfig().getString("killed_message"));
         killMessage = colorize(main.getConfig().getString("kill_message"));
         killedActionbar = colorize(main.getConfig().getString("killed_actionbar"));
@@ -265,6 +281,7 @@ public class ConfigManager {
         KitPurchaseConfirmationMenu.loadMenu();
         PerkShopMenu.loadMenu();
         PerkPurchaseConfirmationMenu.loadMenu();
+        PerkMenu.loadMenu();
     }
 
     @NotNull

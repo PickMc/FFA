@@ -17,6 +17,10 @@ commands:
   stats:
     usage: "/stats"
     description: Stats command
+  perk:
+    usage: "/perk"
+    description: Perk command
+    aliases: [perks]
 permissions:
   kit.speed:
     default: op

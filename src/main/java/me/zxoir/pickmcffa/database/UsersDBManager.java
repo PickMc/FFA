@@ -4,8 +4,11 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.zxoir.pickmcffa.PickMcFFA;
+import me.zxoir.pickmcffa.customclasses.Perk;
 import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.managers.PerkManager;
+import me.zxoir.pickmcffa.utils.Utils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,14 +136,13 @@ public class UsersDBManager {
     public static CompletableFuture<Void> saveToDB(User user) {
         return FFADatabase.execute(conn -> {
             long start = System.currentTimeMillis();
-            System.out.println(1);
 
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO users VALUES(?, ?)");
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
             statement.setString(1, user.getUuid().toString());
-            System.out.println(2);
 
             statement.setString(2, adapter.toJson(user.getStats()));
-            System.out.println(3);
+
+            statement.setString(3, user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName());
 
             statement.execute();
 
@@ -201,11 +203,14 @@ public class UsersDBManager {
             long start = System.currentTimeMillis();
 
             PreparedStatement statement = conn.prepareStatement(
-                    "UPDATE users SET stats = ? WHERE uuid = ?");
+                    "UPDATE users SET stats = ?, selectedPerk = ? WHERE uuid = ?");
 
             statement.setString(1, adapter.toJson(user.getStats()));
 
-            statement.setString(2, user.getUuid().toString());
+            statement.setString(2, user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName());
+            Utils.runTaskSync(() -> System.out.println(user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName()));
+
+            statement.setString(3, user.getUuid().toString());
 
             statement.execute();
 
@@ -219,7 +224,31 @@ public class UsersDBManager {
         String uuid = resultSet.getString("uuid");
         Stats stats = adapter.fromJson(resultSet.getString("stats"), new TypeToken<Stats>() {
         }.getType());
+        String selectedPerk = resultSet.getString("selectedPerk");
+        Perk perk = PerkManager.valueOf(selectedPerk);
 
-        return new User(uuid, stats);
+        User user = new User(uuid, stats);
+        if (perk != null && !hasPerk(user, perk))
+            perk = null;
+
+        user.setSelectedPerk(perk);
+
+        return user;
+    }
+
+    private static boolean hasPerk(User user, @NotNull Perk perk) {
+
+        if (perk.getPermissions() == null || perk.getPermissions().isEmpty())
+            return true;
+
+        if (user.getPlayer() == null)
+            return false;
+
+        for (String permission : perk.getPermissions()) {
+            if (!user.getPlayer().hasPermission(permission))
+                return false;
+        }
+
+        return true;
     }
 }
