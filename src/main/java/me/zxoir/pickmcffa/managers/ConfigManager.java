@@ -141,6 +141,10 @@ public class ConfigManager {
     @Getter
     private static String SpeedActivatedActionbar;
 
+    private static String KitExpireMessage;
+
+    private static String PerkExpireMessage;
+
     @Getter
     private static String FailedProfileSave;
 
@@ -240,6 +244,8 @@ public class ConfigManager {
         SpeedDuration = main.getConfig().getInt("SpeedDuration");
         SpeedActivated = colorize(main.getConfig().getString("SpeedActivated"));
         SpeedActivatedActionbar = colorize(main.getConfig().getString("SpeedActivatedActionbar"));
+        KitExpireMessage = colorize(main.getConfig().getString("KitExpireMessage"));
+        PerkExpireMessage = colorize(main.getConfig().getString("PerkExpireMessage"));
         FailedProfileSave = colorize(main.getConfig().getString("FailedProfileSave"));
         SameKitError = colorize(main.getConfig().getString("SameKitError"));
         NoKitError = colorize(main.getConfig().getString("NoKitError"));
@@ -302,6 +308,16 @@ public class ConfigManager {
     @NotNull
     public static String getExplosionDamageActionbar(String player) {
         return ExplosionDamageActionbar.replace("%player%", player);
+    }
+
+    @NotNull
+    public static String getKitExpireMessage(String kitName) {
+        return KitExpireMessage.replace("%kit_name%", kitName);
+    }
+
+    @NotNull
+    public static String getPerkExpireMessage(String perkName) {
+        return PerkExpireMessage.replace("%perk_name%", perkName);
     }
 
     @NotNull

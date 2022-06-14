@@ -2,15 +2,11 @@ package me.zxoir.pickmcffa.menus;
 
 import lombok.Getter;
 import me.zxoir.pickmcffa.PickMcFFA;
-import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.Perk;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
-import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.managers.PerkManager;
-import me.zxoir.pickmcffa.perks.SpeedPerk;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import static me.zxoir.pickmcffa.managers.PerkManager.hasPerk;
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
 
 /**
@@ -74,6 +71,13 @@ public class PerkMenu implements Listener {
         if (user == null)
             return;
 
+        Perk selectedPerk = user.getSelectedPerk();
+
+        if (selectedPerk != null && !hasPerk(user, selectedPerk)) {
+            user.setSelectedPerk(null);
+            player.sendMessage(ConfigManager.getPerkExpireMessage(selectedPerk.getName()));
+        }
+
         if (hasPerk(user, PerkManager.getExplosionPerk())) {
             inventory.setItem(11, PerkManager.getExplosionPerk().getIcon().clone());
             perkSlots.put(11, PerkManager.getExplosionPerk());
@@ -83,7 +87,6 @@ public class PerkMenu implements Listener {
             inventory.setItem(13, PerkManager.getAbsorptionPerk().getIcon().clone());
             perkSlots.put(13, PerkManager.getAbsorptionPerk());
         }
-
 
         if (hasPerk(user, PerkManager.getSpeedPerk())) {
             inventory.setItem(15, PerkManager.getSpeedPerk().getIcon().clone());
@@ -146,20 +149,5 @@ public class PerkMenu implements Listener {
         player.closeInventory();
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 2);
         user.save();
-    }
-
-    private boolean hasPerk(User user, @NotNull Perk perk) {
-        if (perk.getPermissions() == null || perk.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : perk.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
     }
 }

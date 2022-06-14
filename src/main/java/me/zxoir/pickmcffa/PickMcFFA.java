@@ -137,6 +137,8 @@ public final class PickMcFFA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PerkShopMenu(), this);
         getServer().getPluginManager().registerEvents(new PerkPurchaseConfirmationMenu(), this);
         getServer().getPluginManager().registerEvents(new PerkMenu(), this);
+        getServer().getPluginManager().registerEvents(new KitCheckerListener(), this);
+        getServer().getPluginManager().registerEvents(new PerkCheckerListener(), this);
     }
 
     private void registerCommands() {

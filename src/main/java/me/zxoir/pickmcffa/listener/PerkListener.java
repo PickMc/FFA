@@ -33,6 +33,7 @@ public class PerkListener implements Listener {
 
         if (playerUser == null) {
             player.kickPlayer(ConfigManager.getFailedProfileSave());
+            return;
         }
 
         if (killerUser == null) {

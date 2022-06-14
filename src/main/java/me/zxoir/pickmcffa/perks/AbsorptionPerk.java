@@ -31,7 +31,7 @@ public class AbsorptionPerk extends Perk {
     }
 
     @Override
-    public void killAction(User killed, @NotNull User killer) {
+    public void killAction(@NotNull User killed, @NotNull User killer) {
         float chance = getRandom().nextFloat();
         float absorptionChance = (float) ConfigManager.getAbsorptionChance() / 100;
 

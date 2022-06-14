@@ -208,7 +208,6 @@ public class UsersDBManager {
             statement.setString(1, adapter.toJson(user.getStats()));
 
             statement.setString(2, user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName());
-            Utils.runTaskSync(() -> System.out.println(user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName()));
 
             statement.setString(3, user.getUuid().toString());
 
@@ -228,27 +227,8 @@ public class UsersDBManager {
         Perk perk = PerkManager.valueOf(selectedPerk);
 
         User user = new User(uuid, stats);
-        if (perk != null && !hasPerk(user, perk))
-            perk = null;
-
         user.setSelectedPerk(perk);
 
         return user;
-    }
-
-    private static boolean hasPerk(User user, @NotNull Perk perk) {
-
-        if (perk.getPermissions() == null || perk.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : perk.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
     }
 }

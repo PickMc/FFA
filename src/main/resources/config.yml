@@ -14,7 +14,7 @@ ShopVillagerName: "&a&lSHOP"
 InvalidPermission: "&c&lERROR > &8You don't have permission to use this command."
 
 # Purchase Messages (Placeholders: %kit_name% %kit_price% %perk_name% %perk_price%)
-KitPurchaseMessage: "&aYou have purchased &e&l%kit_name% &afor &e&l%perk_price%¢"
+KitPurchaseMessage: "&aYou have purchased &e&l%kit_name% &afor &e&l%kit_price%¢"
 PerkPurchaseMessage: "&aYou have purchased &e&l%perk_name% &afor &e&l%perk_price%¢"
 
 # Speed Kit
@@ -61,6 +61,12 @@ SpeedChance: 100
 SpeedDuration: 5
 SpeedActivated: "&6&lPERK > &2Speed Perk activated!"
 SpeedActivatedActionbar: ""
+
+# Kit Expire Message (Placeholder: %kit_name%)
+KitExpireMessage: "&c&lKIT > &7&l%kit_name% Kit &8has expired!"
+
+# Perk Expire Message (Placeholder: %perk_name%)
+PerkExpireMessage: "&c&lPERK > &7&l%perk_name% Perk &8has expired!"
 
 # Kick message when a players profile has failed to save
 FailedProfileSave: "&cError saving your profile. If this consists please contact &c&lZxoir"

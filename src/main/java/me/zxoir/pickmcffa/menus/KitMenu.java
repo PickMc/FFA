@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import static me.zxoir.pickmcffa.managers.KitManager.hasKit;
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
 
 /**
@@ -123,21 +124,6 @@ public class KitMenu implements Listener {
 
             inventory.setItem(i, kitItem);
         }
-    }
-
-    private boolean hasKit(User user, @NotNull Kit kit) {
-        if (kit.getPermissions() == null || kit.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : kit.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
     }
 
     @EventHandler

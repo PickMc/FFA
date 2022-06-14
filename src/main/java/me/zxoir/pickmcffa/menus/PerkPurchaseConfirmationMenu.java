@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+import static me.zxoir.pickmcffa.managers.PerkManager.canPurchasePerk;
+import static me.zxoir.pickmcffa.managers.PerkManager.hasPerk;
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
 import static me.zxoir.pickmcffa.utils.Utils.duplicateInventory;
 
@@ -81,32 +83,6 @@ public class PerkPurchaseConfirmationMenu implements Listener {
 
         inv.setItem(13, perkIcon);
         return inv;
-    }
-
-    private static boolean hasPerk(User user, @NotNull Perk perk) {
-        if (perk.getPermissions() == null || perk.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : perk.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
-    }
-
-    private static boolean canPurchasePerk(@NotNull User user, Perk perk) {
-        Player player = user.getPlayer();
-        if (player == null)
-            return false;
-
-        if (perk.getLevel() != null && perk.getLevel() > user.getStats().getLevel())
-            return false;
-
-        return perk.getPrice() == null || user.getStats().getCoins() >= perk.getPrice();
     }
 
     @EventHandler

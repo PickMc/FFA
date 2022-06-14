@@ -10,7 +10,9 @@ import me.zxoir.pickmcffa.kits.PremiumPlusKit;
 import me.zxoir.pickmcffa.tempkits.SpeedKit;
 import me.zxoir.pickmcffa.tempkits.StrengthKit;
 import me.zxoir.pickmcffa.tempkits.TankKit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -37,6 +39,32 @@ public class KitManager {
     private static Kit strengthKit = new StrengthKit();
     @Getter
     private static Kit tankKit = new TankKit();
+
+    public static boolean hasKit(User user, @NotNull Kit kit) {
+        if (kit.getPermissions() == null || kit.getPermissions().isEmpty())
+            return true;
+
+        if (user == null || user.getPlayer() == null)
+            return false;
+
+        for (String permission : kit.getPermissions()) {
+            if (!user.getPlayer().hasPermission(permission))
+                return false;
+        }
+
+        return true;
+    }
+
+    public static boolean canPurchaseKit(@NotNull User user, Kit kit) {
+        Player player = user.getPlayer();
+        if (player == null)
+            return false;
+
+        if (kit.getLevel() != null && kit.getLevel() > user.getStats().getLevel())
+            return false;
+
+        return kit.getPrice() == null || user.getStats().getCoins() >= kit.getPrice();
+    }
 
     public static void reloadKits() {
         defaultKit = new DefaultKit();

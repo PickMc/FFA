@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import static me.zxoir.pickmcffa.managers.KitManager.canPurchaseKit;
+import static me.zxoir.pickmcffa.managers.KitManager.hasKit;
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
 
 /**
@@ -140,31 +142,5 @@ public class TempKitShopMenu implements Listener {
             return;
 
         player.openInventory(KitPurchaseConfirmationMenu.getInventory(user, kit));
-    }
-
-    private boolean hasKit(User user, @NotNull Kit kit) {
-        if (kit.getPermissions() == null || kit.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : kit.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
-    }
-
-    private boolean canPurchaseKit(@NotNull User user, Kit kit) {
-        Player player = user.getPlayer();
-        if (player == null)
-            return false;
-
-        if (kit.getLevel() != null && kit.getLevel() > user.getStats().getLevel())
-            return false;
-
-        return kit.getPrice() == null || user.getStats().getCoins() >= kit.getPrice();
     }
 }

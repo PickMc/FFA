@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+import static me.zxoir.pickmcffa.managers.KitManager.canPurchaseKit;
+import static me.zxoir.pickmcffa.managers.KitManager.hasKit;
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
 import static me.zxoir.pickmcffa.utils.Utils.duplicateInventory;
 
@@ -83,32 +85,6 @@ public class KitPurchaseConfirmationMenu implements Listener {
         return inv;
     }
 
-    private static boolean hasKit(User user, @NotNull Kit kit) {
-        if (kit.getPermissions() == null || kit.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : kit.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
-    }
-
-    private static boolean canPurchaseKit(@NotNull User user, Kit kit) {
-        Player player = user.getPlayer();
-        if (player == null)
-            return false;
-
-        if (kit.getLevel() != null && kit.getLevel() > user.getStats().getLevel())
-            return false;
-
-        return kit.getPrice() == null || user.getStats().getCoins() >= kit.getPrice();
-    }
-
     @EventHandler
     public void onInventoryClose(@NotNull InventoryCloseEvent event) {
         User user = PickMcFFA.getCachedUsers().getIfPresent(event.getPlayer().getUniqueId());
@@ -117,7 +93,6 @@ public class KitPurchaseConfirmationMenu implements Listener {
             return;
 
         userKitHashMap.remove(user);
-        Bukkit.broadcastMessage("ran");
     }
 
     @EventHandler

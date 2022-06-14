@@ -28,11 +28,14 @@ public class ExplosionPerk extends Perk {
     }
 
     @Override
-    public void killAction(User killed, @NotNull User killer) {
+    public void killAction(@NotNull User killed, @NotNull User killer) {
         float chance = getRandom().nextFloat();
         float explosionChance = (float) ConfigManager.getExplosionChance() / 100;
 
         Player player = killer.getPlayer();
+
+        if (killed.getPlayer().getLastDamage() <= 0)
+            return;
 
         if (chance >= explosionChance)
             return;
@@ -57,7 +60,7 @@ public class ExplosionPerk extends Perk {
 
             Player nearbyPlayer = (Player) entity;
 
-            if (nearbyPlayer.equals(player) || nearbyPlayer.getHealth() <= 0 || (killed != null && nearbyPlayer.getUniqueId().equals(killed.getUuid())))
+            if (nearbyPlayer.equals(player) || nearbyPlayer.getHealth() <= 0 || nearbyPlayer.getUniqueId().equals(killed.getUuid()))
                 continue;
 
             nearbyPlayer.damage(0, player);

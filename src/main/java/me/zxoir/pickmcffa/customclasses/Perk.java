@@ -45,7 +45,7 @@ public abstract class Perk {
         this.permissions = permissions == null ? new ArrayList<>() : Arrays.asList(permissions);
     }
 
-    public abstract void killAction(User killed, @NotNull User killer);
+    public abstract void killAction(@NotNull User killed, @NotNull User killer);
 
     public abstract void hitAction(@NotNull User killed, @NotNull User killer);
 }

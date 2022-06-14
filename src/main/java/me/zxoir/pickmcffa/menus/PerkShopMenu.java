@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import static me.zxoir.pickmcffa.managers.PerkManager.canPurchasePerk;
+import static me.zxoir.pickmcffa.managers.PerkManager.hasPerk;
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
 
 /**
@@ -141,31 +143,5 @@ public class PerkShopMenu implements Listener {
             return;
 
         player.openInventory(PerkPurchaseConfirmationMenu.getInventory(user, perk));
-    }
-
-    private boolean hasPerk(User user, @NotNull Perk perk) {
-        if (perk.getPermissions() == null || perk.getPermissions().isEmpty())
-            return true;
-
-        if (user.getPlayer() == null)
-            return false;
-
-        for (String permission : perk.getPermissions()) {
-            if (!user.getPlayer().hasPermission(permission))
-                return false;
-        }
-
-        return true;
-    }
-
-    private boolean canPurchasePerk(@NotNull User user, Perk perk) {
-        Player player = user.getPlayer();
-        if (player == null)
-            return false;
-
-        if (perk.getLevel() != null && perk.getLevel() > user.getStats().getLevel())
-            return false;
-
-        return perk.getPrice() == null || user.getStats().getCoins() >= perk.getPrice();
     }
 }
