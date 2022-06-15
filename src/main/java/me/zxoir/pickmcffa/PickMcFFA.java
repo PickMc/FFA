@@ -48,7 +48,8 @@ public final class PickMcFFA extends JavaPlugin {
         FFADatabase.createTable("CREATE TABLE IF NOT EXISTS users(" +
                 "uuid VARCHAR(36) PRIMARY KEY NOT NULL," +
                 "stats TEXT," +
-                "selectedPerk VARCHAR(36)" +
+                "selectedPerk VARCHAR(36)," +
+                "savedInventories TEXT" +
                 ");");
 
         /* FFADatabase.createTable("CREATE TABLE IF NOT EXISTS kits(" +
@@ -139,6 +140,8 @@ public final class PickMcFFA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PerkMenu(), this);
         getServer().getPluginManager().registerEvents(new KitCheckerListener(), this);
         getServer().getPluginManager().registerEvents(new PerkCheckerListener(), this);
+        getServer().getPluginManager().registerEvents(new KillStreakListener(), this);
+        getServer().getPluginManager().registerEvents(new KitInventoryListener(), this);
     }
 
     private void registerCommands() {

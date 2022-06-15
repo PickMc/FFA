@@ -7,14 +7,19 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.zxoir.pickmcffa.PickMcFFA;
+import me.zxoir.pickmcffa.customclasses.KillStreak;
 import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import me.zxoir.pickmcffa.utils.Utils;
+import net.minecraft.server.v1_8_R3.EnumParticle;
+import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,11 +27,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -79,6 +86,52 @@ public class GeneralListener implements Listener {
         user.save();
     }
 
+    @EventHandler
+    public void onThrow(@NotNull PlayerDropItemEvent event) {
+        //Player player = event.getPlayer();
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onChat(@NotNull AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        if (event.getMessage().equalsIgnoreCase("testi")) {
+            BukkitTask task = new BukkitRunnable() {
+
+                public void run() {
+                    PacketPlayOutWorldParticles packet =
+                            new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, true, (float) player.getLocation().getX(), (float) player.getLocation().getY(), (float) player.getLocation().getZ(),
+                                    0.5f, 0.5f, 0.5f, 5, 60);
+
+                    for (Player online : Bukkit.getOnlinePlayers()) {
+                        ((CraftPlayer) online).getHandle().playerConnection.sendPacket(packet);
+                    }
+                }
+            }.runTaskTimer(PickMcFFA.getInstance(), 0, 5);
+
+            Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), task::cancel, 20 * 10);
+        }
+
+        if (event.getMessage().equalsIgnoreCase("serialize")) {
+            try {
+                ItemStack itemStack = ItemDeserializer.itemStackFromBase64("rO0ABXNyABpvcmcuYnVra2l0LnV0aWwuaW8uV3JhcHBlcvJQR+zxEm8FAgABTAADbWFwdAAPTGphdmEvdXRpbC9NYXA7eHBzcgA1Y29tLmdvb2dsZS5jb21tb24uY29sbGVjdC5JbW11dGFibGVNYXAkU2VyaWFsaXplZEZvcm0AAAAAAAAAAAIAAlsABGtleXN0ABNbTGphdmEvbGFuZy9PYmplY3Q7WwAGdmFsdWVzcQB+AAR4cHVyABNbTGphdmEubGFuZy5PYmplY3Q7kM5YnxBzKWwCAAB4cAAAAAR0AAI9PXQABHR5cGV0AAZkYW1hZ2V0AARtZXRhdXEAfgAGAAAABHQAHm9yZy5idWtraXQuaW52ZW50b3J5Lkl0ZW1TdGFja3QAClNLVUxMX0lURU1zcgAPamF2YS5sYW5nLlNob3J0aE03EzRg2lICAAFTAAV2YWx1ZXhyABBqYXZhLmxhbmcuTnVtYmVyhqyVHQuU4IsCAAB4cAADc3EAfgAAc3EAfgADdXEAfgAGAAAABHEAfgAIdAAJbWV0YS10eXBldAAMZGlzcGxheS1uYW1ldAAIaW50ZXJuYWx1cQB+AAYAAAAEdAAISXRlbU1ldGF0AAVTS1VMTHQADVF1ZXN0aW9uIE1hcmt0AWRINHNJQUFBQUFBQUFBRTJPeTJxRFFCaEcveFlLVnZvWTNRcGVvdFpscWNhTVpMUXhSaDEzWHNib09LYkJhSWcrVlIreExydjhPT2ZBSndLSThIYnNKczYvaDUrNjVWU0FaMVRCdTI2YXF2SlI2cEpxV3JtMEtkVkNzdkthU21wVlZCdkZvcWFsbVNLSWEzU2x3OWpTMnlzSUkzMk0wMEJ2SWdBOENmQVM1M3lpOEV0blQ4N1NScTVTajVjek10WWRIV1VlSUhZMTBTV2VpeTlrb0g3bHUwOWpQMXYvWEgzTUU1MFR6V3V5eTJFcStsamVheUdudTFBcCs5TTlTM3ptUncwajdLUVF0bTF3dE9WK2Y5Z0VMcDR6Tyt4dzRxaDRJU3BaMEJMWVp5MXpZNDRaV2JBZHRwbnJ5RGp5bU84NkNvN09zNStRUnhCMWJaMHExdm9lL2dDRXo0aVlHQUVBQUE9PQ==");
+                player.getInventory().addItem(itemStack);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        if (event.getMessage().equalsIgnoreCase("deserialize")) {
+            if (player.getItemInHand() != null) {
+                ItemStack itemStack = player.getItemInHand();
+                String deserializedItem = ItemDeserializer.itemStackToBase64(itemStack);
+                PickMcFFA.getDataFile().getConfig().set("Text", deserializedItem.replaceAll("\\s+", ""));
+                PickMcFFA.getDataFile().saveConfig();
+            }
+        }
+    }
+
     /* Registering stats */
     @EventHandler
     public void onDeath(@NotNull PlayerDeathEvent event) {
@@ -107,6 +160,12 @@ public class GeneralListener implements Listener {
         if (killerUser == null)
             killer.kickPlayer(ConfigManager.getFailedProfileSave());
         else {
+            if (KillStreakListener.getKillStreak().containsKey(killerUser)) {
+                KillStreak killStreak = KillStreakListener.getKillStreak().get(killerUser);
+                if (killStreak.getSameUserCount() == 4 || killStreak.getSameUserCount2() == 4)
+                    return;
+            }
+
             Stats stats = killerUser.getStats();
             stats.setKills(stats.getKills() + 1);
             int gainedCoins = stats.addCoins(15, 20);

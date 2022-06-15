@@ -13,6 +13,7 @@ import me.zxoir.pickmcffa.tempkits.TankKit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -39,6 +40,28 @@ public class KitManager {
     private static Kit strengthKit = new StrengthKit();
     @Getter
     private static Kit tankKit = new TankKit();
+
+    @Nullable
+    public static Kit valueOf(@Nullable String value) {
+        if (value == null)
+            return null;
+        else if (value.equalsIgnoreCase("default"))
+            return defaultKit;
+        else if (value.equalsIgnoreCase("influencer"))
+            return influencerKit;
+        else if (value.equalsIgnoreCase("premium"))
+            return premiumKit;
+        else if (value.equalsIgnoreCase("premiumPlus"))
+            return premiumPlusKit;
+        else if (value.equalsIgnoreCase("speed"))
+            return speedKit;
+        else if (value.equalsIgnoreCase("strength"))
+            return strengthKit;
+        else if (value.equalsIgnoreCase("tank"))
+            return tankKit;
+
+        else return null;
+    }
 
     public static boolean hasKit(User user, @NotNull Kit kit) {
         if (kit.getPermissions() == null || kit.getPermissions().isEmpty())

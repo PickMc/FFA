@@ -2,14 +2,17 @@ package me.zxoir.pickmcffa.customclasses;
 
 import lombok.Getter;
 import me.zxoir.pickmcffa.database.UsersDBManager;
+import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -28,6 +31,8 @@ public class User {
     @Nullable
     Perk selectedPerk;
     boolean actionbar = false;
+    @NotNull
+    ConcurrentHashMap<Kit, ItemStack[]> savedInventories = new ConcurrentHashMap<>();
 
     public User(@NotNull String uuid) {
         this.uuid = UUID.fromString(uuid);
@@ -107,12 +112,46 @@ public class User {
         }
     }
 
+    public void setSelectedKit(@NotNull Kit selectedKit, @NotNull ItemStack[] itemStacks) {
+        this.selectedKit = selectedKit;
+        Player player = getPlayer();
+
+        if (player == null)
+            return;
+
+        player.getInventory().setContents(itemStacks);
+        player.getInventory().setArmorContents(selectedKit.getArmour());
+
+        if (selectedKit.getPermanentPotions() != null && !selectedKit.getPermanentPotions().isEmpty()) {
+
+            for (Effect effect : selectedKit.getPermanentPotions()) {
+                PotionEffect potionEffect = new PotionEffect(effect.getPotionEffectType(), 1000000000, effect.getAmplifier());
+                player.addPotionEffect(potionEffect, true);
+            }
+
+        }
+    }
+
     public void setSelectedPerk(@Nullable Perk selectedPerk) {
         this.selectedPerk = selectedPerk;
     }
 
     public void setActionbar(boolean actionbar) {
         this.actionbar = actionbar;
+    }
+
+    public void setSavedInventories(@NotNull ConcurrentHashMap<Kit, ItemStack[]> savedInventories) {
+        this.savedInventories = savedInventories;
+    }
+
+    public ConcurrentHashMap<String, String> getDeserializedSavedInventories() {
+        ConcurrentHashMap<String, String> deserializedSavedInventories = new ConcurrentHashMap<>();
+
+        for (Kit kit : savedInventories.keySet()) {
+            deserializedSavedInventories.put(kit.getName(), ItemDeserializer.itemStackArrayToBase64(savedInventories.get(kit)));
+        }
+
+        return deserializedSavedInventories;
     }
 
     public void save() {

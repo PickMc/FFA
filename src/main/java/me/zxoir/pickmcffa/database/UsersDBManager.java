@@ -3,21 +3,25 @@ package me.zxoir.pickmcffa.database;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.SneakyThrows;
 import me.zxoir.pickmcffa.PickMcFFA;
+import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.Perk;
 import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.managers.PerkManager;
-import me.zxoir.pickmcffa.utils.Utils;
+import me.zxoir.pickmcffa.utils.ItemDeserializer;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -137,12 +141,14 @@ public class UsersDBManager {
         return FFADatabase.execute(conn -> {
             long start = System.currentTimeMillis();
 
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO users VALUES(?, ?, ?)");
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?)");
             statement.setString(1, user.getUuid().toString());
 
             statement.setString(2, adapter.toJson(user.getStats()));
 
             statement.setString(3, user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName());
+
+            statement.setString(4, user.getSavedInventories().isEmpty() ? null : adapter.toJson(user.getDeserializedSavedInventories()));
 
             statement.execute();
 
@@ -203,13 +209,15 @@ public class UsersDBManager {
             long start = System.currentTimeMillis();
 
             PreparedStatement statement = conn.prepareStatement(
-                    "UPDATE users SET stats = ?, selectedPerk = ? WHERE uuid = ?");
+                    "UPDATE users SET stats = ?, selectedPerk = ?, savedInventories = ? WHERE uuid = ?");
 
             statement.setString(1, adapter.toJson(user.getStats()));
 
             statement.setString(2, user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName());
 
-            statement.setString(3, user.getUuid().toString());
+            statement.setString(3, user.getSavedInventories().isEmpty() ? null : adapter.toJson(user.getDeserializedSavedInventories()));
+
+            statement.setString(4, user.getUuid().toString());
 
             statement.execute();
 
@@ -218,16 +226,32 @@ public class UsersDBManager {
         });
     }
 
+    @SneakyThrows
     @NotNull
-    private static User dbToUser(@NotNull ResultSet resultSet) throws SQLException {
+    private static User dbToUser(@NotNull ResultSet resultSet) {
         String uuid = resultSet.getString("uuid");
         Stats stats = adapter.fromJson(resultSet.getString("stats"), new TypeToken<Stats>() {
         }.getType());
         String selectedPerk = resultSet.getString("selectedPerk");
         Perk perk = PerkManager.valueOf(selectedPerk);
+        ConcurrentHashMap<String, String> savedInventories = adapter.fromJson(resultSet.getString("savedInventories"), new TypeToken<ConcurrentHashMap<String, String>>() {
+
+        }.getType());
+
+        ConcurrentHashMap<Kit, ItemStack[]> savedInventoriesParsed = new ConcurrentHashMap<>();
+        if (savedInventories != null) {
+            for (String kitName : savedInventories.keySet()) {
+                Kit kit = KitManager.valueOf(kitName);
+                if (kit == null)
+                    continue;
+
+                savedInventoriesParsed.put(kit, ItemDeserializer.itemStackArrayFromBase64(savedInventories.get(kitName)));
+            }
+        }
 
         User user = new User(uuid, stats);
         user.setSelectedPerk(perk);
+        user.setSavedInventories(savedInventoriesParsed);
 
         return user;
     }

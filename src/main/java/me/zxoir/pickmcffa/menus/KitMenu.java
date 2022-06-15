@@ -1,12 +1,15 @@
 package me.zxoir.pickmcffa.menus;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.managers.KitManager;
+import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
+import me.zxoir.pickmcffa.utils.Utils;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,16 +17,19 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static me.zxoir.pickmcffa.managers.KitManager.hasKit;
-import static me.zxoir.pickmcffa.utils.Utils.colorize;
+import static me.zxoir.pickmcffa.managers.KitManager.*;
+import static me.zxoir.pickmcffa.utils.Utils.*;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -36,9 +42,11 @@ public class KitMenu implements Listener {
     private static final ConcurrentHashMap<Integer, Kit> kitSlots = new ConcurrentHashMap<>();
     @Getter
     private static final String inventoryName = colorize("&7Select a Kit");
+    private static final String serializedRandomHead = "rO0ABXNyABpvcmcuYnVra2l0LnV0aWwuaW8uV3JhcHBlcvJQR+zxEm8FAgABTAADbWFwdAAPTGphdmEvdXRpbC9NYXA7eHBzcgA1Y29tLmdvb2dsZS5jb21tb24uY29sbGVjdC5JbW11dGFibGVNYXAkU2VyaWFsaXplZEZvcm0AAAAAAAAAAAIAAlsABGtleXN0ABNbTGphdmEvbGFuZy9PYmplY3Q7WwAGdmFsdWVzcQB+AAR4cHVyABNbTGphdmEubGFuZy5PYmplY3Q7kM5YnxBzKWwCAAB4cAAAAAR0AAI9PXQABHR5cGV0AAZkYW1hZ2V0AARtZXRhdXEAfgAGAAAABHQAHm9yZy5idWtraXQuaW52ZW50b3J5Lkl0ZW1TdGFja3QAClNLVUxMX0lURU1zcgAPamF2YS5sYW5nLlNob3J0aE03EzRg2lICAAFTAAV2YWx1ZXhyABBqYXZhLmxhbmcuTnVtYmVyhqyVHQuU4IsCAAB4cAADc3EAfgAAc3EAfgADdXEAfgAGAAAABHEAfgAIdAAJbWV0YS10eXBldAAMZGlzcGxheS1uYW1ldAAIaW50ZXJuYWx1cQB+AAYAAAAEdAAISXRlbU1ldGF0AAVTS1VMTHQADVF1ZXN0aW9uIE1hcmt0AWRINHNJQUFBQUFBQUFBRTJPeTJxRFFCaEcveFlLVnZvWTNRcGVvdFpscWNhTVpMUXhSaDEzWHNib09LYkJhSWcrVlIreExydjhPT2ZBSndLSThIYnNKczYvaDUrNjVWU0FaMVRCdTI2YXF2SlI2cEpxV3JtMEtkVkNzdkthU21wVlZCdkZvcWFsbVNLSWEzU2x3OWpTMnlzSUkzMk0wMEJ2SWdBOENmQVM1M3lpOEV0blQ4N1NScTVTajVjek10WWRIV1VlSUhZMTBTV2VpeTlrb0g3bHUwOWpQMXYvWEgzTUU1MFR6V3V5eTJFcStsamVheUdudTFBcCs5TTlTM3ptUncwajdLUVF0bTF3dE9WK2Y5Z0VMcDR6Tyt4dzRxaDRJU3BaMEJMWVp5MXpZNDRaV2JBZHRwbnJ5RGp5bU84NkNvN09zNStRUnhCMWJaMHExdm9lL2dDRXo0aVlHQUVBQUE9PQ==";
     @Getter
     private static Inventory inventory;
 
+    @SneakyThrows
     public static void loadMenu() {
         inventory = Bukkit.createInventory(new MenuHolder(), 27, inventoryName);
 
@@ -54,6 +62,9 @@ public class KitMenu implements Listener {
         inventory.setItem(16, KitManager.getPremiumPlusKit().getIcon().clone());
         kitSlots.put(16, KitManager.getPremiumPlusKit());
 
+
+        ItemStack randomHead = ItemDeserializer.itemStackFromBase64(serializedRandomHead);
+        inventory.setItem(22, new ItemStackBuilder(randomHead).withName("&9&lRandom Kit").withLore("&7⩥ &eClick to equip!").build());
         inventory.setItem(12, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lYou don't have access to this Kit").build());
         inventory.setItem(13, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lYou don't have access to this Kit").build());
         inventory.setItem(14, new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).withName("&c&lYou don't have access to this Kit").build());
@@ -64,7 +75,7 @@ public class KitMenu implements Listener {
     private static void setBoarders() {
         ItemStack glass = new ItemStackBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).resetFlags().withName(colorize("&a")).build();
 
-        int[] kitPositions = {2, 6, 10, 12, 13, 14, 16};
+        int[] kitPositions = {2, 6, 10, 12, 13, 14, 16, 22};
 
         for (int i = 0; i < 27; i++) {
 
@@ -96,13 +107,13 @@ public class KitMenu implements Listener {
             kitSlots.put(12, KitManager.getSpeedKit());
         }
 
-        if (player.hasPermission("kit.tank")) {
+        if (hasKit(user, KitManager.getTankKit())) {
             inventory.setItem(13, KitManager.getTankKit().getIcon().clone());
             kitSlots.put(13, KitManager.getTankKit());
         }
 
 
-        if (player.hasPermission("kit.strength")) {
+        if (hasKit(user, KitManager.getStrengthKit())) {
             inventory.setItem(14, KitManager.getStrengthKit().getIcon().clone());
             kitSlots.put(14, KitManager.getStrengthKit());
         }
@@ -119,13 +130,14 @@ public class KitMenu implements Listener {
             kitItem = new ItemStackBuilder(kitItem.clone())
                     .clearLore()
                     .withLore(equippedKit ? "&7⩥ &cThis Kit is already selected" : (hasPermission ? "&7⩥ &eClick to equip!" : "&7⩥ &cYou don't have access to this Kit"))
-                    .withLore("&8Right click to edit layout (SOON)")
+                    .withLore("&8Right click to edit layout")
                     .build();
 
             inventory.setItem(i, kitItem);
         }
     }
 
+    @SneakyThrows
     @EventHandler
     public void onClick(@NotNull InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
@@ -144,10 +156,28 @@ public class KitMenu implements Listener {
 
         event.setCancelled(true);
 
+        if (event.getSlot() == 22) {
+            Kit randomKit = getRandomKit(user);
+
+            user.setSelectedKit(null);
+            user.setSelectedKit(randomKit);
+            player.closeInventory();
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 2);
+            Utils.sendActionText(player, colorize("&9Equipped &a&l" + randomKit.getIcon().getItemMeta().getDisplayName()));
+            return;
+        }
+
         if (!kitSlots.containsKey(event.getSlot()))
             return;
 
         Kit kit = kitSlots.get(event.getSlot());
+
+        if (event.getClick().equals(ClickType.RIGHT)) {
+            Inventory kitInventory = duplicateInventory(Bukkit.createInventory(new KitInventoryHolder(kit), 36, kit.getIcon().getItemMeta().getDisplayName()));
+            kitInventory.setContents(kit.getItems());
+            player.openInventory(kitInventory);
+            return;
+        }
 
         if (user.getSelectedKit() != null && user.getSelectedKit().equals(kit)) {
             player.sendMessage(ConfigManager.getSameKitError());
@@ -169,9 +199,9 @@ public class KitMenu implements Listener {
 
         }
 
-        boolean isPremiumPlus = player.hasPermission("group.premiumplus");
-        boolean isPremium = player.hasPermission("group.premium");
-        boolean isInfluencer = player.hasPermission("group.influencer");
+        boolean isPremiumPlus = KitManager.hasKit(user, getPremiumPlusKit());
+        boolean isPremium = KitManager.hasKit(user, getPremiumKit());
+        boolean isInfluencer = KitManager.hasKit(user, getInfluencerKit());
 
         if (isPremiumPlus || isPremium || isInfluencer) {
 
@@ -196,8 +226,39 @@ public class KitMenu implements Listener {
         }
 
         user.setSelectedKit(null);
-        user.setSelectedKit(kit);
+
+        if (user.getSavedInventories().containsKey(kit))
+            user.setSelectedKit(kit, user.getSavedInventories().get(kit));
+        else
+            user.setSelectedKit(kit);
+
         player.closeInventory();
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 2);
+    }
+
+    private Kit getRandomKit(User user) {
+        List<Kit> kits = new ArrayList<>();
+
+        kits.add(getDefaultKit());
+
+        if (KitManager.hasKit(user, getPremiumPlusKit()))
+            kits.add(getPremiumPlusKit());
+
+        if (KitManager.hasKit(user, getPremiumKit()))
+            kits.add(getPremiumKit());
+
+        if (KitManager.hasKit(user, getInfluencerKit()))
+            kits.add(getInfluencerKit());
+
+        if (KitManager.hasKit(user, getTankKit()))
+            kits.add(getTankKit());
+
+        if (KitManager.hasKit(user, getSpeedKit()))
+            kits.add(getSpeedKit());
+
+        if (KitManager.hasKit(user, getStrengthKit()))
+            kits.add(getStrengthKit());
+
+        return kits.get(getRANDOM().nextInt(kits.size()));
     }
 }
