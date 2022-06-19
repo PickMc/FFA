@@ -6,6 +6,8 @@ import me.zxoir.pickmcffa.managers.UserManager;
 import me.zxoir.pickmcffa.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -20,6 +22,7 @@ import java.util.UUID;
 public class Stats {
     @NotNull
     UUID uuid;
+    String firstJoinDate;
     int xp;
     int level;
     int coins;
@@ -30,6 +33,7 @@ public class Stats {
 
     public Stats(@NotNull UUID uuid) {
         this.uuid = uuid;
+        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
         xp = 0;
         level = 1;
         coins = 0;
@@ -73,6 +77,10 @@ public class Stats {
 
     public int addCoins(int minCoin, int maxCoin) {
         int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
+
+        if (Booster.getGlobalCoin() != null)
+            randomCoin = randomCoin*Booster.getGlobalCoin();
+
         this.coins = this.coins + randomCoin;
         return randomCoin;
     }
@@ -96,6 +104,10 @@ public class Stats {
 
     public int addXp(int minXp, int maxXp) {
         int randomXp = Utils.getRANDOM().nextInt(maxXp - minXp) + minXp;
+
+        if (Booster.getGlobalXP() != null)
+            randomXp = randomXp*Booster.getGlobalXP();
+
         this.xp += randomXp;
 
         if (this.xp >= getLevelUpXp())

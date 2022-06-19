@@ -1,6 +1,7 @@
 package me.zxoir.pickmcffa.utils;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimeManager {
 
-    //@Nullable
+    @Nullable
     public static Long toMilliSecond(String input) {
         input = input.replaceAll("\\s", ""); // Remove white space
         String[] sl = input.toLowerCase().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");

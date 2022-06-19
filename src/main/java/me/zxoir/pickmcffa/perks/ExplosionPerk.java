@@ -75,7 +75,6 @@ public class ExplosionPerk extends Perk {
     }
 
     @Override
-    public void hitAction(@NotNull User killed, @NotNull User killer) {
-
+    public void hitAction(@NotNull User hit, @NotNull User hitter) {
     }
 }

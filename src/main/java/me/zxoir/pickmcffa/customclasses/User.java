@@ -33,6 +33,8 @@ public class User {
     boolean actionbar = false;
     @NotNull
     ConcurrentHashMap<Kit, ItemStack[]> savedInventories = new ConcurrentHashMap<>();
+    int personalXpBooster = 1;
+    int personalCoinBooster = 1;
 
     public User(@NotNull String uuid) {
         this.uuid = UUID.fromString(uuid);

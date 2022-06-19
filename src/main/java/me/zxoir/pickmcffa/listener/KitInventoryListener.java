@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +29,7 @@ public class KitInventoryListener implements Listener {
         User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
         Inventory inventory = event.getInventory();
 
-        if (user == null)
+        if (user == null || inventory.getHolder() == null)
             return;
 
         if (!inventory.getHolder().getClass().equals(KitInventoryHolder.class))
@@ -42,11 +43,29 @@ public class KitInventoryListener implements Listener {
     }
 
     @EventHandler
+    public void onThrow(@NotNull PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+
+        if (player.getOpenInventory() == null)
+            return;
+
+        Inventory inventory = player.getOpenInventory().getTopInventory();
+        if (inventory == null || inventory.getHolder() == null)
+            return;
+
+        if (!inventory.getHolder().getClass().equals(KitInventoryHolder.class))
+            return;
+
+        inventory.addItem(event.getItemDrop().getItemStack());
+        event.getItemDrop().remove();
+    }
+
+    @EventHandler
     public void onInventoryChange(@NotNull InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
         Inventory clickedInventory = event.getClickedInventory();
 
-        if (inventory == null || clickedInventory == null)
+        if (inventory == null || clickedInventory == null || inventory.getHolder() == null)
             return;
 
         if (!inventory.getHolder().getClass().equals(KitInventoryHolder.class))
@@ -54,8 +73,13 @@ public class KitInventoryListener implements Listener {
 
         KitInventoryHolder holder = (KitInventoryHolder) inventory.getHolder();
 
-        if (clickedInventory.getHolder().equals(holder))
+        if (clickedInventory.getHolder().equals(holder)) {
+
+            if (event.getClick().isShiftClick())
+                event.setCancelled(true);
+
             return;
+        }
 
         event.setCancelled(true);
     }

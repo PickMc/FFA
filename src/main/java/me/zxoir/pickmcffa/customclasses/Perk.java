@@ -47,5 +47,5 @@ public abstract class Perk {
 
     public abstract void killAction(@NotNull User killed, @NotNull User killer);
 
-    public abstract void hitAction(@NotNull User killed, @NotNull User killer);
+    public abstract void hitAction(@NotNull User hit, @NotNull User hitter);
 }

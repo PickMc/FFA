@@ -12,6 +12,7 @@ import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import me.zxoir.pickmcffa.menus.KitInventoryHolder;
 import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import me.zxoir.pickmcffa.utils.Utils;
 import net.minecraft.server.v1_8_R3.EnumParticle;
@@ -28,6 +29,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -88,13 +90,19 @@ public class GeneralListener implements Listener {
 
     @EventHandler
     public void onThrow(@NotNull PlayerDropItemEvent event) {
-        //Player player = event.getPlayer();
+        Player player = event.getPlayer();
+        InventoryView openInventory = player.getOpenInventory();
+
+        if (openInventory != null && openInventory.getTopInventory() != null && openInventory.getTopInventory().getHolder() != null && openInventory.getTopInventory().getHolder().getClass().equals(KitInventoryHolder.class))
+            return;
+
         event.setCancelled(true);
     }
 
     @EventHandler
     public void onChat(@NotNull AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+
         if (event.getMessage().equalsIgnoreCase("testi")) {
             BukkitTask task = new BukkitRunnable() {
 
@@ -185,7 +193,15 @@ public class GeneralListener implements Listener {
         if (user == null)
             return;
 
-        Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), () -> user.setSelectedKit(user.getSelectedKit()), 1);
+        Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), () -> {
+            user.setSelectedKit(user.getSelectedKit());
+
+            if (user.getSelectedKit() != null && user.getSavedInventories().containsKey(user.getSelectedKit()))
+                user.setSelectedKit(user.getSelectedKit(), user.getSavedInventories().get(user.getSelectedKit()));
+            else
+                user.setSelectedKit(user.getSelectedKit());
+
+        }, 1);
     }
 
     /* Remove Hunger */

@@ -159,8 +159,15 @@ public class KitMenu implements Listener {
         if (event.getSlot() == 22) {
             Kit randomKit = getRandomKit(user);
 
+            setSnowballAmount(user, randomKit);
+
             user.setSelectedKit(null);
-            user.setSelectedKit(randomKit);
+
+            if (user.getSavedInventories().containsKey(randomKit))
+                user.setSelectedKit(randomKit, user.getSavedInventories().get(randomKit));
+            else
+                user.setSelectedKit(randomKit);
+
             player.closeInventory();
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 2);
             Utils.sendActionText(player, colorize("&9Equipped &a&l" + randomKit.getIcon().getItemMeta().getDisplayName()));
@@ -199,31 +206,7 @@ public class KitMenu implements Listener {
 
         }
 
-        boolean isPremiumPlus = KitManager.hasKit(user, getPremiumPlusKit());
-        boolean isPremium = KitManager.hasKit(user, getPremiumKit());
-        boolean isInfluencer = KitManager.hasKit(user, getInfluencerKit());
-
-        if (isPremiumPlus || isPremium || isInfluencer) {
-
-            if (kit.getItems().length > 0) {
-
-                for (ItemStack itemStack : kit.getItems()) {
-
-                    if (itemStack == null || !itemStack.getType().equals(Material.SNOW_BALL))
-                        continue;
-
-                    if (isPremiumPlus)
-                        itemStack.setAmount(25);
-                    else if (isPremium)
-                        itemStack.setAmount(20);
-                    else
-                        itemStack.setAmount(18);
-
-                }
-
-            }
-
-        }
+        setSnowballAmount(user, kit);
 
         user.setSelectedKit(null);
 
@@ -260,5 +243,33 @@ public class KitMenu implements Listener {
             kits.add(getStrengthKit());
 
         return kits.get(getRANDOM().nextInt(kits.size()));
+    }
+
+    private void setSnowballAmount(User user, Kit kit) {
+        boolean isPremiumPlus = KitManager.hasKit(user, getPremiumPlusKit());
+        boolean isPremium = KitManager.hasKit(user, getPremiumKit());
+        boolean isInfluencer = KitManager.hasKit(user, getInfluencerKit());
+
+        if (isPremiumPlus || isPremium || isInfluencer) {
+
+            if (kit.getItems().length > 0) {
+
+                for (ItemStack itemStack : kit.getItems()) {
+
+                    if (itemStack == null || !itemStack.getType().equals(Material.SNOW_BALL))
+                        continue;
+
+                    if (isPremiumPlus)
+                        itemStack.setAmount(25);
+                    else if (isPremium)
+                        itemStack.setAmount(20);
+                    else
+                        itemStack.setAmount(18);
+
+                }
+
+            }
+
+        }
     }
 }
