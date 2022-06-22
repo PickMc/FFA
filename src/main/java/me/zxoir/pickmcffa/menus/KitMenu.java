@@ -3,8 +3,10 @@ package me.zxoir.pickmcffa.menus;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.zxoir.pickmcffa.PickMcFFA;
+import me.zxoir.pickmcffa.customclasses.KillStreak;
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.listener.KillStreakListener;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.utils.ItemDeserializer;
@@ -171,6 +173,8 @@ public class KitMenu implements Listener {
             player.closeInventory();
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 2);
             Utils.sendActionText(player, colorize("&9Equipped &a&l" + randomKit.getIcon().getItemMeta().getDisplayName()));
+
+            KillStreakListener.KillStreakDebuff(user);
             return;
         }
 
@@ -217,6 +221,8 @@ public class KitMenu implements Listener {
 
         player.closeInventory();
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 2);
+
+        KillStreakListener.KillStreakDebuff(user);
     }
 
     private Kit getRandomKit(User user) {

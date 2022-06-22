@@ -32,10 +32,10 @@ public class MainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if (!sender.isOp()) {
+        /*if (!sender.isOp()) {
             sender.sendMessage(ConfigManager.getInvalidPermission());
             return true;
-        }
+        }*/
 
         if (args.length < 1)
             return true;
@@ -125,7 +125,9 @@ public class MainCommand implements CommandExecutor {
                     duration = duration / 1000;
 
                     Booster.setGlobalXP(value, duration * 20);
+                    sender.sendMessage("Globalboost activated");
 
+                    return true;
                 }
 
                 if (args[1].equalsIgnoreCase("coin")) {
@@ -149,7 +151,9 @@ public class MainCommand implements CommandExecutor {
                     duration = duration / 1000;
 
                     Booster.setGlobalCoin(value, duration * 20);
+                    sender.sendMessage("Globalboost activated");
 
+                    return true;
                 }
 
             }
@@ -159,6 +163,19 @@ public class MainCommand implements CommandExecutor {
         if (args[0].equalsIgnoreCase("reload")) {
             ConfigManager.reloadConfig();
             sender.sendMessage(colorize("&a&lConfig's reloaded successfully"));
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("globalboost")) {
+            if (Booster.getGlobalXP() != null && Booster.getGlobalCoin() != null)
+                sender.sendMessage("XP: " + Booster.getGlobalXP() + " Coin: " + Booster.getGlobalCoin());
+            else if (Booster.getGlobalXP() != null)
+                sender.sendMessage("XP: " + Booster.getGlobalXP());
+            else if (Booster.getGlobalCoin() != null)
+                sender.sendMessage("Coin: " + Booster.getGlobalCoin());
+            else
+                sender.sendMessage("No global boost.");
+
             return true;
         }
 

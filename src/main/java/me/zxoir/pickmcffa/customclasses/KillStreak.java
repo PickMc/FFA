@@ -19,9 +19,9 @@ public class KillStreak {
     User user2;
     int sameUserCount2;
 
-    public KillStreak(@NotNull User user) {
+    public KillStreak(@NotNull User user, int count) {
         this.user = user;
-        this.count = 0;
+        this.count = count;
         this.sameUserCount = 0;
         this.sameUserCount2 = 0;
     }

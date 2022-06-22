@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.zxoir.pickmcffa.managers.UserManager;
 import me.zxoir.pickmcffa.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
@@ -78,7 +80,12 @@ public class Stats {
     public int addCoins(int minCoin, int maxCoin) {
         int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
 
-        if (Booster.getGlobalCoin() != null)
+        Player player = Bukkit.getPlayer(uuid);
+        Integer coinBoost = UserManager.getCoinBoost(Bukkit.getPlayer(uuid));
+        if (player != null && coinBoost != null)
+            randomCoin = randomCoin*coinBoost;
+
+        if (Booster.getGlobalCoin() != null && coinBoost == null)
             randomCoin = randomCoin*Booster.getGlobalCoin();
 
         this.coins = this.coins + randomCoin;
@@ -105,7 +112,12 @@ public class Stats {
     public int addXp(int minXp, int maxXp) {
         int randomXp = Utils.getRANDOM().nextInt(maxXp - minXp) + minXp;
 
-        if (Booster.getGlobalXP() != null)
+        Player player = Bukkit.getPlayer(uuid);
+        Integer xpBoost = UserManager.getXpBoost(Bukkit.getPlayer(uuid));
+        if (player != null && xpBoost != null)
+            randomXp = randomXp*xpBoost;
+
+        if (Booster.getGlobalXP() != null && xpBoost == null)
             randomXp = randomXp*Booster.getGlobalXP();
 
         this.xp += randomXp;

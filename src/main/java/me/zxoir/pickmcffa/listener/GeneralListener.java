@@ -6,6 +6,7 @@ import com.sk89q.worldguard.bukkit.RegionQuery;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import me.neznamy.tab.shared.TAB;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.KillStreak;
 import me.zxoir.pickmcffa.customclasses.Stats;
@@ -19,6 +20,7 @@ import net.minecraft.server.v1_8_R3.EnumParticle;
 import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
@@ -31,11 +33,16 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+
+import static me.zxoir.pickmcffa.utils.Utils.colorize;
+import static me.zxoir.pickmcffa.utils.Utils.isInteger;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -103,6 +110,14 @@ public class GeneralListener implements Listener {
     public void onChat(@NotNull AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
+        if (event.getMessage().equalsIgnoreCase("arrows")) {
+            player.sendMessage(player.getInventory().contains(Material.ARROW, 32) + "");
+        }
+
+        if (event.getMessage().equalsIgnoreCase("tnt")) {
+            player.getInventory().addItem(KillStreakListener.getTntItem());
+        }
+
         if (event.getMessage().equalsIgnoreCase("testi")) {
             BukkitTask task = new BukkitRunnable() {
 
@@ -115,7 +130,7 @@ public class GeneralListener implements Listener {
                         ((CraftPlayer) online).getHandle().playerConnection.sendPacket(packet);
                     }
                 }
-            }.runTaskTimer(PickMcFFA.getInstance(), 0, 5);
+            }.runTaskTimerAsynchronously(PickMcFFA.getInstance(), 0, 5);
 
             Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), task::cancel, 20 * 10);
         }
@@ -178,6 +193,13 @@ public class GeneralListener implements Listener {
             stats.setKills(stats.getKills() + 1);
             int gainedCoins = stats.addCoins(15, 20);
             int xpGained = stats.addXp(50, 150);
+            if (KillStreakListener.getBountyList().containsKey(player.getUniqueId())) {
+                gainedCoins = stats.addCoins(45, 60);
+                xpGained = stats.addXp(150, 450);
+                KillStreakListener.getBountyList().get(player.getUniqueId()).cancel();
+                KillStreakListener.getBountyList().remove(player.getUniqueId());
+                TAB.getInstance().getTeamManager().resetPrefix(TAB.getInstance().getPlayer(player.getUniqueId()));
+            }
             killerUser.save();
             killer.sendMessage(ConfigManager.getKillMessage(killer.getName(), player.getName(), gainedCoins, xpGained));
             Utils.sendActionText(killer, ConfigManager.getKillActionbar(killer.getName(), player.getName(), gainedCoins, xpGained));

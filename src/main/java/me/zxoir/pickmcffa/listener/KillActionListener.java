@@ -59,7 +59,7 @@ public class KillActionListener implements Listener {
             else
                 snowballs.setAmount(24);
 
-            if (killer.getInventory().contains(Material.BOW))
+            if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
                 killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
 
         } else if (isPremium) {
@@ -69,7 +69,7 @@ public class KillActionListener implements Listener {
             else
                 snowballs.setAmount(20);
 
-            if (killer.getInventory().contains(Material.BOW))
+            if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
                 killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
         } else if (isInfluencer) {
             killer.setHealth(Math.min(20, killer.getHealth() + 10));
@@ -78,7 +78,7 @@ public class KillActionListener implements Listener {
             else
                 snowballs.setAmount(20);
 
-            if (killer.getInventory().contains(Material.BOW))
+            if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
                 killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
         } else {
             killer.setHealth(Math.min(20, killer.getHealth() + 8));
@@ -87,7 +87,7 @@ public class KillActionListener implements Listener {
             else
                 snowballs.setAmount(16);
 
-            if (killer.getInventory().contains(Material.BOW))
+            if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
                 killer.getInventory().addItem(new ItemStack(Material.ARROW, 1));
         }
     }
