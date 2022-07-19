@@ -24,7 +24,7 @@ import java.util.List;
 public class ExplosionPerk extends Perk {
 
     public ExplosionPerk() {
-        super("Explosion", "Explosion Perk", ConfigManager.getExplosionPrice(), ConfigManager.getExplosionLevel(), ConfigManager.getExplosionExpire(), new ItemStackBuilder(Material.TNT).withName("&c&lExplosion Perk").resetFlags().build(), "perk.explosion");
+        super("Explosion", ConfigManager.getExplosionChance() + "% chance for an explosion to spawn after a kill", ConfigManager.getExplosionPrice(), ConfigManager.getExplosionLevel(), ConfigManager.getExplosionExpire(), new ItemStackBuilder(Material.TNT).withName("&c&lExplosion Perk").resetFlags().build(), "perk.explosion");
     }
 
     @Override

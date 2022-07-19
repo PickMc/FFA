@@ -38,6 +38,18 @@ public class ConfigManager {
     private static String ShopVillagerName;
 
     @Getter
+    private static int FireTickSpeed;
+
+    @Getter
+    private static String VotePendingMessage;
+
+    @Getter
+    private static String VoteReceivedMessage;
+
+    @Getter
+    private static String VoteReceivedOfflineMessage;
+
+    @Getter
     private static String InvalidPermission;
 
     private static String KitPurchaseMessage;
@@ -208,6 +220,10 @@ public class ConfigManager {
         ip = main.getConfig().getString("ip");
         port = main.getConfig().getString("port");
         ShopVillagerName = colorize(main.getConfig().getString("ShopVillagerName"));
+        FireTickSpeed = main.getConfig().getInt("FireTickSpeed");
+        VotePendingMessage = colorize(main.getConfig().getString("VotePendingMessage"));
+        VoteReceivedMessage = colorize(main.getConfig().getString("VoteReceivedMessage"));
+        VoteReceivedOfflineMessage = colorize(main.getConfig().getString("VoteReceivedOfflineMessage"));
         InvalidPermission = colorize(main.getConfig().getString("InvalidPermission"));
         KitPurchaseMessage = colorize(main.getConfig().getString("KitPurchaseMessage"));
         PerkPurchaseMessage = colorize(main.getConfig().getString("PerkPurchaseMessage"));
@@ -321,8 +337,8 @@ public class ConfigManager {
     }
 
     @NotNull
-    public static String getKilledMessage(String killer, String killed, int pointsRemoved) {
-        return killedMessage.replace("%killer%", killer).replace("%killed%", killed).replace("%points_removed%", String.valueOf(pointsRemoved));
+    public static String getKilledMessage(String killer, String killed, int pointsRemoved, double killerHearts) {
+        return killedMessage.replace("%killer%", killer).replace("%killed%", killed).replace("%points_removed%", String.valueOf(pointsRemoved)).replace("%killer_hearts%", String.format("%.2f", killerHearts));
     }
 
     @NotNull

@@ -4,13 +4,17 @@ import lombok.Getter;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,30 +37,33 @@ public class User {
     boolean actionbar = false;
     @NotNull
     ConcurrentHashMap<Kit, ItemStack[]> savedInventories = new ConcurrentHashMap<>();
-    int personalXpBooster = 1;
-    int personalCoinBooster = 1;
+    String firstJoinDate;
 
     public User(@NotNull String uuid) {
         this.uuid = UUID.fromString(uuid);
         this.stats = new Stats(this.uuid);
+        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
     }
 
     public User(@NotNull UUID uuid) {
         this.uuid = uuid;
         this.stats = new Stats(uuid);
+        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
     }
 
     public User(@NotNull Player player) {
         this.uuid = player.getUniqueId();
         this.stats = new Stats(uuid);
+        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
     }
 
     public User(@NotNull OfflinePlayer player) {
         this.uuid = player.getUniqueId();
         this.stats = new Stats(uuid);
+        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
     }
 
-    public User(@NotNull String uuid, @NotNull Stats stats) {
+    public User(@NotNull String uuid, @NotNull Stats stats, String firstJoinDate) {
         this.uuid = UUID.fromString(uuid);
         this.stats = stats;
     }
@@ -101,8 +108,13 @@ public class User {
             return;
         }
 
+        ItemStack itemStack = getFlintAndSteel(player.getInventory());
+
         player.getInventory().setContents(selectedKit.getItems());
         player.getInventory().setArmorContents(selectedKit.getArmour());
+
+        if (itemStack != null)
+            player.getInventory().addItem(itemStack);
 
         if (selectedKit.getPermanentPotions() != null && !selectedKit.getPermanentPotions().isEmpty()) {
 
@@ -120,6 +132,8 @@ public class User {
 
         if (player == null)
             return;
+
+
 
         player.getInventory().setContents(itemStacks);
         player.getInventory().setArmorContents(selectedKit.getArmour());
@@ -154,6 +168,30 @@ public class User {
         }
 
         return deserializedSavedInventories;
+    }
+
+    @Nullable
+    private ItemStack getFlintAndSteel(@NotNull PlayerInventory inventory) {
+        boolean flintAndSteelFound = false;
+        ItemStack flintAndSteel = null;
+
+        for (ItemStack itemStack : inventory.getContents()) {
+
+            if (itemStack != null && itemStack.getType().equals(Material.FLINT_AND_STEEL)) {
+
+                if (!flintAndSteelFound) {
+                    flintAndSteelFound = true;
+                    flintAndSteel = itemStack;
+                } else {
+                    inventory.remove(itemStack);
+                    flintAndSteel.setDurability((short) (flintAndSteel.getDurability() - 1));
+                }
+
+            }
+
+        }
+
+        return flintAndSteel;
     }
 
     public void save() {

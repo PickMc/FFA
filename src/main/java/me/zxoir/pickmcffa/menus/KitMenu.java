@@ -3,7 +3,6 @@ package me.zxoir.pickmcffa.menus;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.zxoir.pickmcffa.PickMcFFA;
-import me.zxoir.pickmcffa.customclasses.KillStreak;
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.listener.KillStreakListener;

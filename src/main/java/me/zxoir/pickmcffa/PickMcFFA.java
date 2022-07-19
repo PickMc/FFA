@@ -1,10 +1,15 @@
 package me.zxoir.pickmcffa;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
-import lombok.Setter;
 import me.zxoir.pickmcffa.commands.*;
+import me.zxoir.pickmcffa.commands.topstats.TopDeathsCommand;
+import me.zxoir.pickmcffa.commands.topstats.TopKillsCommand;
+import me.zxoir.pickmcffa.commands.topstats.TopKillstreak;
+import me.zxoir.pickmcffa.commands.topstats.TopLevelCommand;
 import me.zxoir.pickmcffa.customclasses.EntityNPC;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.database.DataFile;
@@ -12,15 +17,17 @@ import me.zxoir.pickmcffa.database.FFADatabase;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.listener.*;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import me.zxoir.pickmcffa.managers.StatsManager;
 import me.zxoir.pickmcffa.menus.*;
+import net.luckperms.api.LuckPerms;
 import net.minecraft.server.v1_8_R3.EntityVillager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -33,6 +40,8 @@ public final class PickMcFFA extends JavaPlugin {
     private static DataFile dataFile;
     @Getter
     private static Cache<UUID, User> cachedUsers;
+    @Getter
+    private static LuckPerms luckPerms;
 
     @Override
     public void onEnable() {
@@ -45,26 +54,16 @@ public final class PickMcFFA extends JavaPlugin {
         dataFile = new DataFile();
         dataFile.setup();
         cachedUsers = CacheBuilder.newBuilder().build();
+        luckPerms = getServer().getServicesManager().load(LuckPerms.class);
 
         ffaLogger.info("Initializing database setup...");
         FFADatabase.createTable("CREATE TABLE IF NOT EXISTS users(" +
                 "uuid VARCHAR(36) PRIMARY KEY NOT NULL," +
                 "stats TEXT," +
                 "selectedPerk VARCHAR(36)," +
-                "savedInventories TEXT" +
+                "savedInventories TEXT," +
+                "firstJoinDate TEXT" +
                 ");");
-
-        /* FFADatabase.createTable("CREATE TABLE IF NOT EXISTS kits(" +
-                "name VARCHAR(36) PRIMARY KEY NOT NULL," +
-                "description VARCHAR(36) NOT NULL," +
-                "price DECIMAL," +
-                "expireTime VARCHAR(36)," +
-                "items TEXT NOT NULL," +
-                "armour TEXT NOT NULL," +
-                "icon TEXT NOT NULL," +
-                "permissions TEXT," +
-                "permanentPotions TEXT" +
-                ");");*/
 
         ffaLogger.info("Database loaded successfully. Took " + (System.currentTimeMillis() - startTime) + "ms");
         long start = System.currentTimeMillis();
@@ -72,6 +71,16 @@ public final class PickMcFFA extends JavaPlugin {
         ffaLogger.info("Caching users...");
         loadCachedUsers();
         ffaLogger.info("Cached users successfully. Took " + (System.currentTimeMillis() - start) + "ms");
+
+        start = System.currentTimeMillis();
+        ffaLogger.info("Loading saved pending vote rewards...");
+        loadSavedPendingVoteRewards();
+        ffaLogger.info("Loaded saved pending vote rewards successfully. Took " + (System.currentTimeMillis() - start) + "ms");
+
+        start = System.currentTimeMillis();
+        ffaLogger.info("Caching stats...");
+        StatsManager.cacheStats();
+        ffaLogger.info("Cached stats successfully. Took " + (System.currentTimeMillis() - start) + "ms");
 
         if (SpawnShopCommand.getShopNPC() == null) {
             start = System.currentTimeMillis();
@@ -111,7 +120,7 @@ public final class PickMcFFA extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        savePendingVoteRewards();
         FFADatabase.getDataSource().close();
 
         if (SpawnShopCommand.getShopNPC() != null)
@@ -122,6 +131,32 @@ public final class PickMcFFA extends JavaPlugin {
                 user.setSelectedKit(null);
                 user.save();
             });
+
+        Collection<Hologram> holograms = HologramsAPI.getHolograms(this);
+        if (holograms.isEmpty()) return;
+        holograms.forEach(Hologram::delete);
+    }
+
+    private void savePendingVoteRewards() {
+        if (VoteListener.getPendingVoteReward().isEmpty())
+            return;
+
+        for (UUID uuid : VoteListener.getPendingVoteReward().keySet()) {
+            dataFile.getConfig().set("voteReward." + uuid.toString(), VoteListener.getPendingVoteReward().get(uuid));
+        }
+        dataFile.saveConfig();
+    }
+
+    private void loadSavedPendingVoteRewards() {
+        if (dataFile.getConfig().getString("voteReward") == null)
+            return;
+
+        for (String uuid : dataFile.getConfig().getConfigurationSection("voteReward").getKeys(true)) {
+            VoteListener.getPendingVoteReward().put(UUID.fromString(uuid), dataFile.getConfig().getInt("voteReward." + uuid));
+        }
+
+        dataFile.getConfig().set("voteReward", null);
+        dataFile.saveConfig();
     }
 
     private void registerEvents() {
@@ -144,6 +179,11 @@ public final class PickMcFFA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PerkCheckerListener(), this);
         getServer().getPluginManager().registerEvents(new KillStreakListener(), this);
         getServer().getPluginManager().registerEvents(new KitInventoryListener(), this);
+        getServer().getPluginManager().registerEvents(new LeaderboardHeads(), this);
+        getServer().getPluginManager().registerEvents(new StatsHologram(), this);
+        getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
+        getServer().getPluginManager().registerEvents(new TempFireListener(), this);
+        getServer().getPluginManager().registerEvents(new VoteListener(), this);
     }
 
     private void registerCommands() {
@@ -152,6 +192,10 @@ public final class PickMcFFA extends JavaPlugin {
         getCommand("pickmc").setExecutor(new MainCommand());
         getCommand("stats").setExecutor(new StatsCommand());
         getCommand("perk").setExecutor(new PerkCommand());
+        getCommand("topkills").setExecutor(new TopKillsCommand());
+        getCommand("topdeaths").setExecutor(new TopDeathsCommand());
+        getCommand("topkillstreak").setExecutor(new TopKillstreak());
+        getCommand("toplevel").setExecutor(new TopLevelCommand());
     }
 
     private void loadCachedUsers() {

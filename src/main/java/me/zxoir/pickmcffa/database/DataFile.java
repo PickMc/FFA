@@ -4,11 +4,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.commands.SpawnShopCommand;
+import me.zxoir.pickmcffa.commands.StatsCommand;
 import me.zxoir.pickmcffa.customclasses.EntityNPC;
+import me.zxoir.pickmcffa.listener.LeaderboardHeads;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.utils.LocationAdapter;
 import net.minecraft.server.v1_8_R3.EntityVillager;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -50,29 +55,57 @@ public class DataFile {
 
         this.playerscfg = YamlConfiguration.loadConfiguration(this.playersfile);
         Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationAdapter()).serializeNulls().create();
-        /*if (getConfig().getString("holo") != null)
+
+        if (getConfig().getString("holo") != null)
             StatsCommand.setStatsLocation(gson.fromJson(getConfig().getString("holo"), Location.class));
-        if (getConfig().getString("ldh.one") != null) {
-            Location loc = gson.fromJson(getConfig().getString("ldh.one"), Location.class);
+
+        if (getConfig().getString("ldh.kills.one") != null) {
+            Location loc = gson.fromJson(getConfig().getString("ldh.kills.one"), Location.class);
             Block block = loc.getWorld().getBlockAt(loc);
             if (block != null && block.getType().equals(Material.WALL_SIGN)) {
                 LeaderboardHeads.setTopOneKiller((Sign) block.getState());
             }
         }
-        if (getConfig().getString("ldh.two") != null) {
-            Location loc = gson.fromJson(getConfig().getString("ldh.two"), Location.class);
+
+        if (getConfig().getString("ldh.kills.two") != null) {
+            Location loc = gson.fromJson(getConfig().getString("ldh.kills.two"), Location.class);
             Block block = loc.getWorld().getBlockAt(loc);
             if (block != null && block.getType().equals(Material.WALL_SIGN)) {
                 LeaderboardHeads.setTopTwoKiller((Sign) block.getState());
             }
         }
-        if (getConfig().getString("ldh.three") != null) {
-            Location loc = gson.fromJson(getConfig().getString("ldh.three"), Location.class);
+
+        if (getConfig().getString("ldh.kills.three") != null) {
+            Location loc = gson.fromJson(getConfig().getString("ldh.kills.three"), Location.class);
             Block block = loc.getWorld().getBlockAt(loc);
             if (block != null && block.getType().equals(Material.WALL_SIGN)) {
                 LeaderboardHeads.setTopThreeKiller((Sign) block.getState());
             }
-        }*/
+        }
+
+        if (getConfig().getString("ldh.levels.one") != null) {
+            Location loc = gson.fromJson(getConfig().getString("ldh.levels.one"), Location.class);
+            Block block = loc.getWorld().getBlockAt(loc);
+            if (block != null && block.getType().equals(Material.WALL_SIGN)) {
+                LeaderboardHeads.setTopOneLevel((Sign) block.getState());
+            }
+        }
+
+        if (getConfig().getString("ldh.levels.two") != null) {
+            Location loc = gson.fromJson(getConfig().getString("ldh.levels.two"), Location.class);
+            Block block = loc.getWorld().getBlockAt(loc);
+            if (block != null && block.getType().equals(Material.WALL_SIGN)) {
+                LeaderboardHeads.setTopTwoLevel((Sign) block.getState());
+            }
+        }
+
+        if (getConfig().getString("ldh.levels.three") != null) {
+            Location loc = gson.fromJson(getConfig().getString("ldh.levels.three"), Location.class);
+            Block block = loc.getWorld().getBlockAt(loc);
+            if (block != null && block.getType().equals(Material.WALL_SIGN)) {
+                LeaderboardHeads.setTopThreeLevel((Sign) block.getState());
+            }
+        }
 
         if (getConfig().getString("shop") != null) {
             Location loc = gson.fromJson(getConfig().getString("shop"), Location.class);

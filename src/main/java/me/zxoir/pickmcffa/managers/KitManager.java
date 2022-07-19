@@ -5,8 +5,8 @@ import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.kits.DefaultKit;
 import me.zxoir.pickmcffa.kits.InfluencerKit;
-import me.zxoir.pickmcffa.kits.PremiumKit;
-import me.zxoir.pickmcffa.kits.PremiumPlusKit;
+import me.zxoir.pickmcffa.kits.PickKit;
+import me.zxoir.pickmcffa.kits.PickPlusKit;
 import me.zxoir.pickmcffa.tempkits.SpeedKit;
 import me.zxoir.pickmcffa.tempkits.StrengthKit;
 import me.zxoir.pickmcffa.tempkits.TankKit;
@@ -31,9 +31,9 @@ public class KitManager {
     @Getter
     private static Kit influencerKit = new InfluencerKit();
     @Getter
-    private static Kit premiumKit = new PremiumKit();
+    private static Kit premiumKit = new PickKit();
     @Getter
-    private static Kit premiumPlusKit = new PremiumPlusKit();
+    private static Kit premiumPlusKit = new PickPlusKit();
     @Getter
     private static Kit speedKit = new SpeedKit();
     @Getter
@@ -49,9 +49,9 @@ public class KitManager {
             return defaultKit;
         else if (value.equalsIgnoreCase("influencer"))
             return influencerKit;
-        else if (value.equalsIgnoreCase("premium"))
+        else if (value.equalsIgnoreCase("pick"))
             return premiumKit;
-        else if (value.equalsIgnoreCase("premiumPlus"))
+        else if (value.equalsIgnoreCase("pickPlus"))
             return premiumPlusKit;
         else if (value.equalsIgnoreCase("speed"))
             return speedKit;
@@ -94,9 +94,9 @@ public class KitManager {
 
         influencerKit = new InfluencerKit();
 
-        premiumKit = new PremiumKit();
+        premiumKit = new PickKit();
 
-        premiumPlusKit = new PremiumPlusKit();
+        premiumPlusKit = new PickPlusKit();
 
         speedKit = new SpeedKit();
 

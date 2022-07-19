@@ -55,73 +55,36 @@ public class UserManager {
     }
 
     @Nullable
-    public static Integer getXpBoost(@NotNull Player player) {
-
-        for (int i = 10; i > 1; i--) {
-
-            if (player.hasPermission("boost.xp." + i))
-                return i;
-
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public static Integer getXpBoost(@NotNull OfflinePlayer player) {
-
-        net.luckperms.api.model.user.UserManager userManager = LuckPermsProvider.get().getUserManager();
-        CompletableFuture<net.luckperms.api.model.user.User> userFuture = userManager.loadUser(player.getUniqueId());
-
-        net.luckperms.api.model.user.User luckUser;
-        try {
-            luckUser = userFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
+    public static Double getXpBoost(@NotNull Player player) {
+        if (player.isOp())
             return null;
+
+        if (player.hasPermission("boost.xp"))
+            return PickMcFFA.getInstance().getConfig().getDouble("XpBoosts.permission");
+
+        for (String group : PickMcFFA.getInstance().getConfig().getConfigurationSection("XpBoosts").getKeys(true)) {
+            if (player.hasPermission("group." + group))
+                return PickMcFFA.getInstance().getConfig().getDouble("XpBoosts." + group);
         }
 
-        for (int i = 10; i > 1; i--) {
-
-            if (luckUser.getCachedData().getPermissionData().checkPermission("boost.xp." + i).asBoolean())
-                return i;
-
-        }
 
         return null;
     }
 
     @Nullable
-    public static Integer getCoinBoost(@NotNull Player player) {
+    public static Double getCoinBoost(@NotNull Player player) {
 
-        for (int i = 10; i > 1; i--) {
-
-            if (player.hasPermission("boost.coin." + i))
-                return i;
-
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public static Integer getCoinBoost(@NotNull OfflinePlayer player) {
-
-        net.luckperms.api.model.user.UserManager userManager = LuckPermsProvider.get().getUserManager();
-        CompletableFuture<net.luckperms.api.model.user.User> userFuture = userManager.loadUser(player.getUniqueId());
-
-        net.luckperms.api.model.user.User luckUser;
-        try {
-            luckUser = userFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
+        if (player.isOp())
             return null;
+
+        if (player.hasPermission("boost.coin"))
+            return PickMcFFA.getInstance().getConfig().getDouble("CoinBoosts.permission");
+
+        for (String group : PickMcFFA.getInstance().getConfig().getConfigurationSection("CoinBoosts").getKeys(true)) {
+            if (player.hasPermission("group." + group))
+                return PickMcFFA.getInstance().getConfig().getDouble("CoinBoosts." + group);
         }
 
-        for (int i = 10; i > 1; i--) {
-
-            if (luckUser.getCachedData().getPermissionData().checkPermission("boost.coin." + i).asBoolean())
-                return i;
-
-        }
 
         return null;
     }

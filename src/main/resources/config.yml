@@ -7,8 +7,30 @@ password: password
 ip: localhost
 port: 3306
 
+XpBoosts:
+  permission: 1.7
+  pick: 1.5
+  pickplus+: 1.7
+
+CoinBoosts:
+  permission: 1.7
+  pick: 1.5
+  pick+: 1.7
+
 # Shop Villager name
 ShopVillagerName: "&a&lSHOP"
+
+# Fire Tick Speed (19 Seconds MAX)
+FireTickSpeed: 2
+
+# Vote Pending Message
+VotePendingMessage: "&e&lThank you for voting! &eYou will receive your Reward once you're in &e&lSpawn&e!"
+
+# Vote Received Message
+VoteReceivedMessage: "&e&lThank you for voting! &eYour reward is in your inventory!"
+
+# Vote Received Message While Offline
+VoteReceivedOfflineMessage: "&eYou have received your voting rewards!"
 
 # No Permission Message
 InvalidPermission: "&c&lERROR > &8You don't have permission to use this command."
@@ -95,7 +117,7 @@ NoPerkAccessError: "&c&lERROR > &8You don't have access to that Perk!"
 # Error when a player attempts to use the Kit command outside Spawn
 PerkOutsideSpawnError: "&c&lERROR > &8You can't use that here!"
 
-# Message when you are killed (Placeholders: %killer% %killed% %points_removed%)
+# Message when you are killed (Placeholders: %killer% %killed% %points_removed% %killer_hearts%)
 killed_message: "&cYou have been killed by %killer%"
 killed_actionbar: "&c-%points_removed%"
 

@@ -104,6 +104,8 @@ public class PerkMenu implements Listener {
 
             perkItem = new ItemStackBuilder(perkItem.clone())
                     .clearLore()
+                    .withLore("&8" +perk.getDescription())
+                    .withLore(" ")
                     .withLore(equippedPerk ? "&7⩥ &cThis Perk is already selected" : (hasPermission ? "&7⩥ &eClick to equip!" : "&7⩥ &cYou don't have access to this Perk"))
                     .build();
 

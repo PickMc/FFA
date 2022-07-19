@@ -12,6 +12,7 @@ import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.managers.PerkManager;
 import me.zxoir.pickmcffa.utils.ItemDeserializer;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -141,7 +146,7 @@ public class UsersDBManager {
         return FFADatabase.execute(conn -> {
             long start = System.currentTimeMillis();
 
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?)");
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?, ?)");
             statement.setString(1, user.getUuid().toString());
 
             statement.setString(2, adapter.toJson(user.getStats()));
@@ -149,6 +154,8 @@ public class UsersDBManager {
             statement.setString(3, user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName());
 
             statement.setString(4, user.getSavedInventories().isEmpty() ? null : adapter.toJson(user.getDeserializedSavedInventories()));
+
+            statement.setString(5, user.getFirstJoinDate());
 
             statement.execute();
 
@@ -209,7 +216,7 @@ public class UsersDBManager {
             long start = System.currentTimeMillis();
 
             PreparedStatement statement = conn.prepareStatement(
-                    "UPDATE users SET stats = ?, selectedPerk = ?, savedInventories = ? WHERE uuid = ?");
+                    "UPDATE users SET stats = ?, selectedPerk = ?, savedInventories = ?, firstJoinDate = ? WHERE uuid = ?");
 
             statement.setString(1, adapter.toJson(user.getStats()));
 
@@ -217,7 +224,9 @@ public class UsersDBManager {
 
             statement.setString(3, user.getSavedInventories().isEmpty() ? null : adapter.toJson(user.getDeserializedSavedInventories()));
 
-            statement.setString(4, user.getUuid().toString());
+            statement.setString(4, user.getFirstJoinDate());
+
+            statement.setString(5, user.getUuid().toString());
 
             statement.execute();
 
@@ -249,7 +258,9 @@ public class UsersDBManager {
             }
         }
 
-        User user = new User(uuid, stats);
+        String firstJoinDate = resultSet.getString("firstJoinDate");
+
+        User user = new User(uuid, stats, firstJoinDate);
         user.setSelectedPerk(perk);
         user.setSavedInventories(savedInventoriesParsed);
 

@@ -2,7 +2,9 @@ package me.zxoir.pickmcffa.listener;
 
 import lombok.Getter;
 import me.zxoir.pickmcffa.PickMcFFA;
+import me.zxoir.pickmcffa.commands.StatsCommand;
 import me.zxoir.pickmcffa.customclasses.CombatLog;
+import me.zxoir.pickmcffa.customclasses.Kill;
 import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
@@ -12,9 +14,11 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,6 +26,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.concurrent.CompletableFuture.runAsync;
@@ -74,12 +79,17 @@ public class CombatLogListener implements Listener {
                     stats.setDeaths(user.getStats().getDeaths() + 1);
                     stats.deductCoins(5, 10);
                     user.save();
+                    StatsCommand.refreshPlayerHologram(user.getPlayer());
+                    ScoreboardListener.updateScoreBoard(user.getPlayer());
 
+                    Kill kill = new Kill(stats.getUuid(), new Date());
                     stats = lastHit.getStats();
-                    stats.setKills(stats.getKills() + 1);
+                    stats.getKills().add(kill);
                     int gainedCoins = stats.addCoins(15, 20);
                     int xpGained = stats.addXp(50, 150);
                     lastHit.save();
+                    StatsCommand.refreshPlayerHologram(lastHit.getPlayer());
+                    ScoreboardListener.updateScoreBoard(lastHit.getPlayer());
 
                     if (lastHit.getPlayer() == null || !lastHit.getOfflinePlayer().isOnline()) {
                         combatLogs.remove(user);
@@ -131,12 +141,17 @@ public class CombatLogListener implements Listener {
                     stats.setDeaths(user.getStats().getDeaths() + 1);
                     stats.deductCoins(5, 10);
                     user.save();
+                    StatsCommand.refreshPlayerHologram(user.getPlayer());
+                    ScoreboardListener.updateScoreBoard(user.getPlayer());
 
+                    Kill kill = new Kill(stats.getUuid(), new Date());
                     stats = lastHit.getStats();
-                    stats.setKills(stats.getKills() + 1);
+                    stats.getKills().add(kill);
                     int gainedCoins = stats.addCoins(15, 20);
                     int xpGained = stats.addXp(50, 150);
                     lastHit.save();
+                    StatsCommand.refreshPlayerHologram(lastHit.getPlayer());
+                    ScoreboardListener.updateScoreBoard(lastHit.getPlayer());
 
                     if (lastHit.getPlayer() == null || !lastHit.getOfflinePlayer().isOnline()) {
                         combatLogs.remove(user);

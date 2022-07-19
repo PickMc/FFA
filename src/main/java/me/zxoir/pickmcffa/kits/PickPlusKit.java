@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Zxoir
  * @since 6/9/2022
  */
-public class PremiumPlusKit extends Kit {
+public class PickPlusKit extends Kit {
     private static final ItemStack helmet = new ItemStackBuilder(Material.IRON_HELMET).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
     private static final ItemStack chestplate = new ItemStackBuilder(Material.IRON_CHESTPLATE).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
     private static final ItemStack leggings = new ItemStackBuilder(Material.IRON_LEGGINGS).isUnbreakable(true).withFlag(ItemFlag.HIDE_UNBREAKABLE).build();
@@ -28,17 +28,17 @@ public class PremiumPlusKit extends Kit {
     private static final ItemStack[] armour = {boots, leggings, chestplate, helmet};
     private static final ItemStack[] items = {axe, bow, snowballs, arrows};
 
-    public PremiumPlusKit() {
-        super("Premium+",
-                "Premium+ Kit",
+    public PickPlusKit() {
+        super("Pick+",
+                "Pick+ Kit",
                 null,
                 null,
                 null,
-                new ItemStackBuilder(Material.DIAMOND_AXE).withName("&2&lPremium+ Kit").resetFlags().build(),
+                new ItemStackBuilder(Material.DIAMOND_AXE).withName("&2&lPick+ Kit").resetFlags().build(),
                 null,
                 items,
                 armour,
-                "group.premiumplus"
+                "group.pickplus"
         );
     }
 

@@ -2,6 +2,7 @@ package me.zxoir.pickmcffa.customclasses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.managers.UserManager;
 import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
@@ -9,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,24 +27,22 @@ import java.util.UUID;
 public class Stats {
     @NotNull
     UUID uuid;
-    String firstJoinDate;
     int xp;
     int level;
     int coins;
     int maxKillStreaks;
     int killsStreak;
-    int kills;
+    List<Kill> kills;
     int deaths;
 
     public Stats(@NotNull UUID uuid) {
         this.uuid = uuid;
-        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
         xp = 0;
         level = 1;
         coins = 0;
         maxKillStreaks = 0;
         killsStreak = 0;
-        kills = 0;
+        kills = new ArrayList<>();
         deaths = 0;
     }
 
@@ -53,7 +54,7 @@ public class Stats {
         this.deaths = deaths;
     }
 
-    public void setKills(int kills) {
+    public void setKills(List<Kill> kills) {
         this.kills = kills;
     }
 
@@ -81,12 +82,12 @@ public class Stats {
         int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
 
         Player player = Bukkit.getPlayer(uuid);
-        Integer coinBoost = UserManager.getCoinBoost(Bukkit.getPlayer(uuid));
+        Double coinBoost = UserManager.getCoinBoost(Bukkit.getPlayer(uuid));
         if (player != null && coinBoost != null)
-            randomCoin = randomCoin*coinBoost;
+            randomCoin = (int) (randomCoin * coinBoost);
 
         if (Booster.getGlobalCoin() != null && coinBoost == null)
-            randomCoin = randomCoin*Booster.getGlobalCoin();
+            randomCoin = (int) (randomCoin * Booster.getGlobalCoin());
 
         this.coins = this.coins + randomCoin;
         return randomCoin;
@@ -113,12 +114,12 @@ public class Stats {
         int randomXp = Utils.getRANDOM().nextInt(maxXp - minXp) + minXp;
 
         Player player = Bukkit.getPlayer(uuid);
-        Integer xpBoost = UserManager.getXpBoost(Bukkit.getPlayer(uuid));
+        Double xpBoost = UserManager.getXpBoost(Bukkit.getPlayer(uuid));
         if (player != null && xpBoost != null)
-            randomXp = randomXp*xpBoost;
+            randomXp = (int) (randomXp * xpBoost);
 
         if (Booster.getGlobalXP() != null && xpBoost == null)
-            randomXp = randomXp*Booster.getGlobalXP();
+            randomXp = (int) (randomXp * Booster.getGlobalXP());
 
         this.xp += randomXp;
 

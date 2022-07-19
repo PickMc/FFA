@@ -1,7 +1,6 @@
 package me.zxoir.pickmcffa.customclasses;
 
 import lombok.Getter;
-import lombok.Setter;
 import me.zxoir.pickmcffa.PickMcFFA;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,11 +15,11 @@ import static me.zxoir.pickmcffa.utils.Utils.colorize;
  */
 public class Booster {
     @Getter
-    private static Integer globalXP;
+    private static Double globalXP;
     @Getter
-    private static Integer globalCoin;
+    private static Double globalCoin;
 
-    public static void setGlobalCoin(int globalCoin2, long duration) {
+    public static void setGlobalCoin(double globalCoin2, long duration) {
         globalCoin = globalCoin2;
 
         Bukkit.broadcastMessage(colorize("&9&l" + globalCoin2 + "x COIN BOOSTER ACTIVATED!"));
@@ -37,7 +36,7 @@ public class Booster {
         }.runTaskLater(PickMcFFA.getInstance(), duration);
     }
 
-    public static void setGlobalXP(int globalXP2, long duration) {
+    public static void setGlobalXP(double globalXP2, long duration) {
         globalXP = globalXP2;
 
         Bukkit.broadcastMessage(colorize("&9&l" + globalXP + "x XP BOOSTER ACTIVATED!"));

@@ -33,13 +33,8 @@ public class PerkCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-        RegionContainer container = WorldGuardPlugin.inst().getRegionContainer();
-        RegionQuery query = container.createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(player.getLocation());
-
-        // If the player is in a non pvp area, return
-        if (set.testState(localPlayer, DefaultFlag.PVP)) {
+        // If the player is in a pvp area, return
+        if (Utils.isInPvpArea(player)) {
             player.sendMessage(ConfigManager.getPerkOutsideSpawnError());
             return true;
         }

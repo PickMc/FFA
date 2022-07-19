@@ -27,7 +27,7 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 public class AbsorptionPerk extends Perk {
 
     public AbsorptionPerk() {
-        super("Absorption", "Absorption Perk", ConfigManager.getAbsorptionPrice(), ConfigManager.getAbsorptionLevel(), ConfigManager.getAbsorptionExpire(), new ItemStackBuilder(Material.GOLDEN_APPLE).withName("&c&lAbsorption Perk").resetFlags().build(), "perk.absorption");
+        super("Absorption", ConfigManager.getAbsorptionChance() + "% chance to gain absorption after a kill", ConfigManager.getAbsorptionPrice(), ConfigManager.getAbsorptionLevel(), ConfigManager.getAbsorptionExpire(), new ItemStackBuilder(Material.GOLDEN_APPLE).withName("&c&lAbsorption Perk").resetFlags().build(), "perk.absorption");
     }
 
     @Override

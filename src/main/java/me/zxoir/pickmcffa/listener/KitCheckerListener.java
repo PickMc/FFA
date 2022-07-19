@@ -11,6 +11,7 @@ import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.managers.KitManager;
+import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -86,15 +87,10 @@ public class KitCheckerListener implements Listener {
 
         if (KitManager.hasKit(user, kit))
             return;
-
-        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-        RegionContainer container = WorldGuardPlugin.inst().getRegionContainer();
-        RegionQuery query = container.createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(player.getLocation());
         Location spawn = new Location(player.getWorld(), 1.5, 73, 75.5, -180, 0);
 
         // If the player is in a pvp area, teleport to Spawn
-        if (set.testState(localPlayer, DefaultFlag.PVP))
+        if (Utils.isInPvpArea(player))
             player.teleport(spawn);
 
         user.setSelectedKit(null);

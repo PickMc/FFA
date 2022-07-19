@@ -46,8 +46,8 @@ public class KillActionListener implements Listener {
         if (killerUser.getSelectedKit() != null)
             killerUser.getSelectedKit().killAction(playerUser, killerUser);
 
-        boolean isPremiumPlus = killer.hasPermission("group.premiumplus");
-        boolean isPremium = killer.hasPermission("group.premium");
+        boolean isPremiumPlus = killer.hasPermission("group.pickplus");
+        boolean isPremium = killer.hasPermission("group.pick");
         boolean isInfluencer = killer.hasPermission("group.influencer");
         ItemStack snowballs = getSnowballs(killer.getInventory());
 

@@ -180,6 +180,36 @@ public class KillStreakListener implements Listener {
         }
     }
 
+    public static void KillStreakDebuff(@NotNull User user) {
+        Player player = user.getPlayer();
+
+        if (player == null)
+            return;
+
+        if (user.getStats().getKillsStreak() >= 30)
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 1000000000, 0));
+
+        if (user.getStats().getKillsStreak() >= 35)
+            player.getInventory().setHelmet(null);
+
+        if (user.getStats().getKillsStreak() >= 40) {
+            ItemStack weapon = getWeapon(player.getInventory().getContents());
+
+            if (weapon != null) {
+                Material material = getLowerMaterial(weapon.getType());
+                if (weapon.getType().equals(Material.WOOD_SPADE))
+                    new ItemStackBuilder(weapon).clearEnchantments().withEnchantment(Enchantment.DAMAGE_ALL, 1).build();
+                else new ItemStackBuilder(weapon).setType(material).build();
+            }
+
+        }
+
+        if (user.getStats().getKillsStreak() >= 45) {
+            player.getInventory().setBoots(null);
+            player.removePotionEffect(PotionEffectType.WEAKNESS);
+        }
+    }
+
     @EventHandler
     public void onPlace(@NotNull PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -249,6 +279,7 @@ public class KillStreakListener implements Listener {
                     }
 
                 }
+
             }.runTaskTimerAsynchronously(PickMcFFA.getInstance(), 0, 5);
 
             bountyList.put(player.getUniqueId(), task);
@@ -268,36 +299,6 @@ public class KillStreakListener implements Listener {
         User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
 
         if (user == null)
-            return;
-
-        if (user.getStats().getKillsStreak() >= 30)
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 1000000000, 0));
-
-        if (user.getStats().getKillsStreak() >= 35)
-            player.getInventory().setHelmet(null);
-
-        if (user.getStats().getKillsStreak() >= 40) {
-            ItemStack weapon = getWeapon(player.getInventory().getContents());
-
-            if (weapon != null) {
-                Material material = getLowerMaterial(weapon.getType());
-                if (weapon.getType().equals(Material.WOOD_SPADE))
-                    new ItemStackBuilder(weapon).clearEnchantments().withEnchantment(Enchantment.DAMAGE_ALL, 1).build();
-                else new ItemStackBuilder(weapon).setType(material).build();
-            }
-
-        }
-
-        if (user.getStats().getKillsStreak() >= 45) {
-            player.getInventory().setBoots(null);
-            player.removePotionEffect(PotionEffectType.WEAKNESS);
-        }
-    }
-
-    public static void KillStreakDebuff(@NotNull User user) {
-        Player player = user.getPlayer();
-
-        if (player == null)
             return;
 
         if (user.getStats().getKillsStreak() >= 30)
@@ -347,6 +348,7 @@ public class KillStreakListener implements Listener {
             // New Max Kill Streak Reached
             if (playerKillStreak.getCount() > stats.getMaxKillStreaks()) {
                 stats.setMaxKillStreaks(playerKillStreak.getCount());
+                playerUser.save();
             }
 
             killStreak.remove(playerUser);
@@ -379,6 +381,7 @@ public class KillStreakListener implements Listener {
 
         killerStreak.setCount(killerStreak.getCount() + 1);
         killerUser.getStats().setKillsStreak(killerStreak.getCount());
+        killerUser.save();
         killStreakReward(killer, killerStreak.getCount());
     }
 

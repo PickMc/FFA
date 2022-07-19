@@ -7,18 +7,16 @@ import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.managers.UserManager;
 import me.zxoir.pickmcffa.utils.TimeManager;
-import net.luckperms.api.LuckPermsProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-
-import static me.zxoir.pickmcffa.utils.Utils.colorize;
-import static me.zxoir.pickmcffa.utils.Utils.isInteger;
+import static me.zxoir.pickmcffa.utils.Utils.*;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -32,10 +30,10 @@ public class MainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        /*if (!sender.isOp()) {
+        if (!sender.isOp()) {
             sender.sendMessage(ConfigManager.getInvalidPermission());
             return true;
-        }*/
+        }
 
         if (args.length < 1)
             return true;
@@ -44,12 +42,12 @@ public class MainCommand implements CommandExecutor {
             if (args[0].equalsIgnoreCase("personalboost")) {
 
                 if (args[1].equalsIgnoreCase("xp")) {
-                    if (!isInteger(args[2])) {
+                    if (!isDouble(args[2])) {
                         sender.sendMessage("You must enter a numerical value!");
                         return true;
                     }
 
-                    int value = Integer.parseInt(args[2]);
+                    double value = Double.parseDouble(args[2]);
                     if (value <= 1 || value > 10) {
                         sender.sendMessage("Value must be more than 1!");
                         return true;
@@ -71,12 +69,12 @@ public class MainCommand implements CommandExecutor {
                 }
 
                 if (args[1].equalsIgnoreCase("coin")) {
-                    if (!isInteger(args[2])) {
+                    if (!isDouble(args[2])) {
                         sender.sendMessage("You must enter a numerical value!");
                         return true;
                     }
 
-                    int value = Integer.parseInt(args[2]);
+                    double value = Double.parseDouble(args[2]);
                     if (value <= 1 || value > 10) {
                         sender.sendMessage("Value must be more than 1!");
                         return true;
@@ -105,12 +103,12 @@ public class MainCommand implements CommandExecutor {
             if (args[0].equalsIgnoreCase("globalboost")) {
 
                 if (args[1].equalsIgnoreCase("xp")) {
-                    if (!isInteger(args[2])) {
+                    if (!isDouble(args[2])) {
                         sender.sendMessage("You must enter a numerical value!");
                         return true;
                     }
 
-                    int value = Integer.parseInt(args[2]);
+                    double value = Double.parseDouble(args[2]);
                     if (value <= 1 || value > 10) {
                         sender.sendMessage("Value must be more than 1!");
                         return true;
@@ -131,12 +129,12 @@ public class MainCommand implements CommandExecutor {
                 }
 
                 if (args[1].equalsIgnoreCase("coin")) {
-                    if (!isInteger(args[2])) {
+                    if (!isDouble(args[2])) {
                         sender.sendMessage("You must enter a numerical value!");
                         return true;
                     }
 
-                    int value = Integer.parseInt(args[2]);
+                    double value = Double.parseDouble(args[2]);
                     if (value <= 1 || value > 10) {
                         sender.sendMessage("Value must be more than 1!");
                         return true;
@@ -187,24 +185,22 @@ public class MainCommand implements CommandExecutor {
             }
 
             StringBuilder builder = new StringBuilder();
-            builder.append("List of boosters:");
-            for (User user : PickMcFFA.getCachedUsers().asMap().values()) {
-                if (user == null)
-                    continue;
+            builder.append("List of online boosters:");
+            for (Player player : Bukkit.getOnlinePlayers()) {
 
-                Integer xpBoost = UserManager.getXpBoost(user.getOfflinePlayer());
-                Integer coinBoost = UserManager.getCoinBoost(user.getOfflinePlayer());
+                Double xpBoost = UserManager.getXpBoost(player);
+                Double coinBoost = UserManager.getCoinBoost(player);
 
                 if (xpBoost == null && coinBoost == null)
                     continue;
 
                 if (xpBoost != null)
-                    builder.append("\n").append(user.getOfflinePlayer().getName()).append(" - ").append("XP ").append(xpBoost).append("x");
+                    builder.append("\n").append(player.getName()).append(" - ").append("XP ").append(xpBoost).append("x");
                 if (coinBoost != null)
-                    builder.append("\n").append(user.getOfflinePlayer().getName()).append(" - ").append("Coin ").append(coinBoost).append("x");
+                    builder.append("\n").append(player.getName()).append(" - ").append("Coin ").append(coinBoost).append("x");
             }
 
-            if (builder.length() <= 17)
+            if (builder.length() <= 24)
                 sender.sendMessage("None.");
             else
                 sender.sendMessage(builder.toString());
