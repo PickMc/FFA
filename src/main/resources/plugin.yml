@@ -2,7 +2,7 @@ name: PickMcFFA
 version: '${project.version}'
 main: me.zxoir.pickmcffa.PickMcFFA
 author: Zxoir
-depend: [ WorldGuard, WorldEdit, LuckPerms, TAB, HolographicDisplays, PlaceholderAPI, LuckPerms, Votifier]
+depend: [ WorldGuard, WorldEdit, LuckPerms, TAB, HolographicDisplays, PlaceholderAPI, LuckPerms, Votifier, CMI]
 commands:
   kit:
     usage: "/kit"
@@ -36,6 +36,9 @@ commands:
     usage: "/toplevel"
     description: Shows 10 players with the most level.
     aliases: [ toplevels ]
+  events:
+    usage: "/events"
+    description: "Events command"
 permissions:
   kit.speed:
     default: op

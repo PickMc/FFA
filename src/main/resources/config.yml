@@ -23,6 +23,9 @@ ShopVillagerName: "&a&lSHOP"
 # Fire Tick Speed (19 Seconds MAX)
 FireTickSpeed: 2
 
+# Arrow Hit Message (Placeholders: %player_name% %player_hearts%)
+ArrowHitMessage: "&a%player_name% has &4&l%player_hearts%❤"
+
 # Vote Pending Message
 VotePendingMessage: "&e&lThank you for voting! &eYou will receive your Reward once you're in &e&lSpawn&e!"
 

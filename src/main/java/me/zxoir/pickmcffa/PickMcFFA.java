@@ -4,6 +4,8 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import lombok.Getter;
 import me.zxoir.pickmcffa.commands.*;
 import me.zxoir.pickmcffa.commands.topstats.TopDeathsCommand;
@@ -16,6 +18,8 @@ import me.zxoir.pickmcffa.database.DataFile;
 import me.zxoir.pickmcffa.database.FFADatabase;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.listener.*;
+import me.zxoir.pickmcffa.listener.eventsListeners.LastManStandingEventListener;
+import me.zxoir.pickmcffa.listener.eventsListeners.SnowBallEventListener;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.managers.StatsManager;
 import me.zxoir.pickmcffa.menus.*;
@@ -24,7 +28,10 @@ import net.minecraft.server.v1_8_R3.EntityVillager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
@@ -42,6 +49,8 @@ public final class PickMcFFA extends JavaPlugin {
     private static Cache<UUID, User> cachedUsers;
     @Getter
     private static LuckPerms luckPerms;
+    @Getter
+    private static WorldEditPlugin worldEditPlugin;
 
     @Override
     public void onEnable() {
@@ -68,6 +77,10 @@ public final class PickMcFFA extends JavaPlugin {
         ffaLogger.info("Database loaded successfully. Took " + (System.currentTimeMillis() - startTime) + "ms");
         long start = System.currentTimeMillis();
 
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldEdit");
+        if (plugin instanceof WorldEditPlugin)
+            worldEditPlugin = (WorldEditPlugin) plugin;
+
         ffaLogger.info("Caching users...");
         loadCachedUsers();
         ffaLogger.info("Cached users successfully. Took " + (System.currentTimeMillis() - start) + "ms");
@@ -76,6 +89,16 @@ public final class PickMcFFA extends JavaPlugin {
         ffaLogger.info("Loading saved pending vote rewards...");
         loadSavedPendingVoteRewards();
         ffaLogger.info("Loaded saved pending vote rewards successfully. Took " + (System.currentTimeMillis() - start) + "ms");
+
+        start = System.currentTimeMillis();
+        ffaLogger.info("Loading saved barrier wall selection...");
+        loadSavedBarrierWall();
+        ffaLogger.info("Loaded saved barrier wall selection successfully. Took " + (System.currentTimeMillis() - start) + "ms");
+
+        start = System.currentTimeMillis();
+        ffaLogger.info("Loading saved teleport point...");
+        loadTeleportPoint();
+        ffaLogger.info("Loaded saved teleport point successfully. Took " + (System.currentTimeMillis() - start) + "ms");
 
         start = System.currentTimeMillis();
         ffaLogger.info("Caching stats...");
@@ -118,6 +141,42 @@ public final class PickMcFFA extends JavaPlugin {
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> cachedUsers.asMap().forEach((uuid, user) -> user.save()), 0, 12000);
     }
 
+    private void loadSavedBarrierWall() {
+        if (getDataFile().getConfig().getString("BarrierWall.world") == null)
+            return;
+
+        World world = Bukkit.getWorld(getDataFile().getConfig().getString("BarrierWall.world"));
+        double minX = getDataFile().getConfig().getDouble("BarrierWall.minX");
+        double minY = getDataFile().getConfig().getDouble("BarrierWall.minY");
+        double minZ = getDataFile().getConfig().getDouble("BarrierWall.minZ");
+
+        double maxX = getDataFile().getConfig().getDouble("BarrierWall.maxX");
+        double maxY = getDataFile().getConfig().getDouble("BarrierWall.maxY");
+        double maxZ = getDataFile().getConfig().getDouble("BarrierWall.maxZ");
+
+
+        Location minimumPoint = new Location(world, minX, minY, minZ);
+        Location maximumPoint = new Location(world, maxX, maxY, maxZ);
+
+        EventsManager.setBarrierWall(new CuboidSelection(world, minimumPoint, maximumPoint));
+    }
+
+    private void loadTeleportPoint() {
+        if (getDataFile().getConfig().getString("Teleport.world") == null)
+            return;
+
+        World world = Bukkit.getWorld(getDataFile().getConfig().getString("Teleport.world"));
+        double x = getDataFile().getConfig().getDouble("Teleport.x");
+        double y = getDataFile().getConfig().getDouble("Teleport.y");
+        double z = getDataFile().getConfig().getDouble("Teleport.z");
+        float pitch = (float) getDataFile().getConfig().getDouble("Teleport.pitch");
+        float yaw = (float) getDataFile().getConfig().getDouble("Teleport.yaw");
+
+        Location teleportPoint = new Location(world, x, y, z, yaw, pitch);
+
+        EventsManager.setTeleportPoint(teleportPoint);
+    }
+
     @Override
     public void onDisable() {
         savePendingVoteRewards();
@@ -135,6 +194,8 @@ public final class PickMcFFA extends JavaPlugin {
         Collection<Hologram> holograms = HologramsAPI.getHolograms(this);
         if (holograms.isEmpty()) return;
         holograms.forEach(Hologram::delete);
+
+        instance = null;
     }
 
     private void savePendingVoteRewards() {
@@ -184,6 +245,9 @@ public final class PickMcFFA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
         getServer().getPluginManager().registerEvents(new TempFireListener(), this);
         getServer().getPluginManager().registerEvents(new VoteListener(), this);
+        getServer().getPluginManager().registerEvents(new SnowBallEventListener(), this);
+        getServer().getPluginManager().registerEvents(new EventsListener(), this);
+        getServer().getPluginManager().registerEvents(new LastManStandingEventListener(), this);
     }
 
     private void registerCommands() {
@@ -196,6 +260,7 @@ public final class PickMcFFA extends JavaPlugin {
         getCommand("topdeaths").setExecutor(new TopDeathsCommand());
         getCommand("topkillstreak").setExecutor(new TopKillstreak());
         getCommand("toplevel").setExecutor(new TopLevelCommand());
+        getCommand("events").setExecutor(new EventCommand());
     }
 
     private void loadCachedUsers() {

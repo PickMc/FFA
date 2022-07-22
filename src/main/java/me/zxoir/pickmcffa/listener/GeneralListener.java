@@ -1,13 +1,5 @@
 package me.zxoir.pickmcffa.listener;
 
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.bukkit.RegionContainer;
-import com.sk89q.worldguard.bukkit.RegionQuery;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.vexsoftware.votifier.model.Vote;
-import com.vexsoftware.votifier.model.VotifierEvent;
 import me.neznamy.tab.shared.TAB;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.commands.StatsCommand;
@@ -17,32 +9,23 @@ import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import me.zxoir.pickmcffa.menus.EventsManager;
 import me.zxoir.pickmcffa.menus.KitInventoryHolder;
-import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import me.zxoir.pickmcffa.utils.Utils;
-import net.minecraft.server.v1_8_R3.EnumParticle;
-import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.Date;
 
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
@@ -201,19 +184,58 @@ public class GeneralListener implements Listener {
         }
     }*/
 
+    /* Disable Snowball/Bow/FlintnSteel in Spawn */
+    @EventHandler
+    public void onSnowball(@NotNull PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack itemStack = player.getItemInHand();
+
+        if (Utils.isInPvpArea(player))
+            return;
+
+        if (!itemStack.getType().equals(Material.SNOW_BALL) && !itemStack.getType().equals(Material.BOW) && !itemStack.getType().equals(Material.FLINT_AND_STEEL))
+            return;
+
+        event.setCancelled(true);
+        Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), player::updateInventory, 1);
+    }
+
     /* Registering stats */
     @EventHandler
     public void onDeath(@NotNull PlayerDeathEvent event) {
         Player player = event.getEntity();
-        Player killer = player.getKiller();
+        Player killer;
+
+        if (player.getKiller() == null) {
+
+            Entity lastDamage = player.getLastDamageCause().getEntity();
+
+            if (lastDamage == null || !lastDamage.getType().equals(EntityType.PLAYER)) {
+
+                if (EventsManager.isEventActive())
+                    EventsManager.eliminate(player, null);
+
+                return;
+            }
+
+            killer = (Player) lastDamage;
+
+        } else
+            killer = player.getKiller();
 
         event.setDeathMessage(null);
 
-        if (killer == null)
+        if (player.equals(killer))
             return;
 
         User playerUser = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
         User killerUser = PickMcFFA.getCachedUsers().getIfPresent(killer.getUniqueId());
+
+        if (EventsManager.isEventActive() && EventsManager.getPlayersAlive().contains(player))
+            EventsManager.eliminate(player, killer);
+
+        if (EventsManager.isEventActive())
+            return;
 
         if (playerUser == null)
             player.kickPlayer(ConfigManager.getFailedProfileSave());
@@ -255,6 +277,27 @@ public class GeneralListener implements Listener {
             killer.sendMessage(ConfigManager.getKillMessage(killer.getName(), player.getName(), gainedCoins, xpGained));
             Utils.sendActionText(killer, ConfigManager.getKillActionbar(killer.getName(), player.getName(), gainedCoins, xpGained));
         }
+    }
+
+    /* Show player hearts on Arrow Hit */
+    @EventHandler
+    public void onArrowHit(@NotNull EntityDamageByEntityEvent event) {
+        if (event.getFinalDamage() <= 0 || event.isCancelled())
+            return;
+
+        if (event.getDamager() instanceof Arrow) {
+            Arrow sn = (Arrow) event.getDamager();
+            if (sn.getShooter() instanceof Player && event.getEntity() instanceof Player) {
+                Player shooter = (Player) sn.getShooter();
+                Player player = (Player) event.getEntity();
+
+                if (shooter.equals(player))
+                    return;
+
+                shooter.sendMessage(ConfigManager.getArrowHitMessage(player.getName(), player.getHealth()));
+            }
+        }
+
     }
 
     /* Regive Kit on respawn */
@@ -305,6 +348,9 @@ public class GeneralListener implements Listener {
 
         // If the player is in a non pvp area, return
         if (!Utils.isInPvpArea(player))
+            return;
+
+        if (EventsManager.isEventActive())
             return;
 
         Location location = new Location(player.getWorld(), 1.5, 73, 75.5, -180, 0);

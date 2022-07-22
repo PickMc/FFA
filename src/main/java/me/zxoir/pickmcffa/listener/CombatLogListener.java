@@ -108,7 +108,7 @@ public class CombatLogListener implements Listener {
     }
 
     @EventHandler
-    public void onQuit(@NotNull PlayerKickEvent event) {
+    public void onKick(@NotNull PlayerKickEvent event) {
         Player player = event.getPlayer();
         User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
 
@@ -123,7 +123,11 @@ public class CombatLogListener implements Listener {
             combatLog.getBukkitTask().cancel();
 
         player.setHealth(0);
-        User killerUser = combatLogs.get(user).getLastHit();
+
+        if (combatLog.getLastHit() == null)
+            return;
+
+        User killerUser = combatLog.getLastHit();
 
         if (killerUser != null) {
             combatLogs.remove(user);
@@ -160,7 +164,7 @@ public class CombatLogListener implements Listener {
 
                     Utils.runTaskSync(() -> lastHit.getPlayer().sendMessage(ConfigManager.getKillMessage(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
                     Utils.runTaskSync(() -> Utils.sendActionText(lastHit.getPlayer(), ConfigManager.getKillActionbar(lastHit.getPlayer().getName(), player.getName(), gainedCoins, xpGained)));
-                    break;
+                    return;
                 }
 
             }

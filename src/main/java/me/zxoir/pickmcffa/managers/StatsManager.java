@@ -40,7 +40,7 @@ public class StatsManager {
 
         cachedStats.forEach(stat -> topDeaths.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getDeaths()));
         cachedStats.forEach(stat -> topKills.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getKills().size()));
-        cachedStats.forEach(stat -> topKillStreak.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getKillsStreak()));
+        cachedStats.forEach(stat -> topKillStreak.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getMaxKillStreaks()));
         cachedStats.forEach(stat -> topLevel.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getLevel()));
         topDeaths = sortByValue(topDeaths);
         topKills = sortByValue(topKills);

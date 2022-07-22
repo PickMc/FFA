@@ -182,7 +182,7 @@ public class KitMenu implements Listener {
 
         Kit kit = kitSlots.get(event.getSlot());
 
-        if (event.getClick().equals(ClickType.RIGHT)) {
+        if (event.getClick().equals(ClickType.RIGHT) && !EventsManager.isEventActive()) {
             Inventory kitInventory = duplicateInventory(Bukkit.createInventory(new KitInventoryHolder(kit), 36, kit.getIcon().getItemMeta().getDisplayName()));
             kitInventory.setContents(kit.getItems());
             player.openInventory(kitInventory);

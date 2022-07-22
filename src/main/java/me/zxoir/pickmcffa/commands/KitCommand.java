@@ -7,6 +7,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import me.zxoir.pickmcffa.menus.EventsManager;
 import me.zxoir.pickmcffa.menus.KitMenu;
 import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.command.Command;
@@ -32,6 +33,9 @@ public class KitCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
+
+        if (EventsManager.isEventActive())
+            return true;
 
         // If the player is in a pvp area, return
         if (Utils.isInPvpArea(player)) {

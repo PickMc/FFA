@@ -3,6 +3,7 @@ package me.zxoir.pickmcffa.listener;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,9 +24,21 @@ public class PerkListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onDeath(@NotNull PlayerDeathEvent event) {
         Player player = event.getEntity();
-        Player killer = event.getEntity().getKiller();
+        Player killer;
 
-        if (killer == null)
+        if (player.getKiller() == null) {
+
+            Entity lastDamage = player.getLastDamageCause().getEntity();
+
+            if (lastDamage == null || !lastDamage.getType().equals(EntityType.PLAYER))
+                return;
+
+            killer = (Player) lastDamage;
+
+        } else
+            killer = player.getKiller();
+
+        if (player.equals(killer))
             return;
 
         User playerUser = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());

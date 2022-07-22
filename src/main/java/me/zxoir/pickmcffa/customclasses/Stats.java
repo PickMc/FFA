@@ -2,6 +2,7 @@ package me.zxoir.pickmcffa.customclasses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Synchronized;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.managers.UserManager;
 import me.zxoir.pickmcffa.utils.Utils;
@@ -9,11 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -23,7 +20,7 @@ import java.util.UUID;
  */
 
 @AllArgsConstructor
-@Getter
+@Getter(onMethod_={@Synchronized})
 public class Stats {
     @NotNull
     UUID uuid;
@@ -34,6 +31,7 @@ public class Stats {
     int killsStreak;
     List<Kill> kills;
     int deaths;
+    int eventsWon;
 
     public Stats(@NotNull UUID uuid) {
         this.uuid = uuid;
@@ -42,43 +40,40 @@ public class Stats {
         coins = 0;
         maxKillStreaks = 0;
         killsStreak = 0;
-        kills = new ArrayList<>();
+        kills = Collections.synchronizedList(new ArrayList<>());
         deaths = 0;
+        eventsWon = 0;
     }
 
-    public void setLevel(int level) {
+    public synchronized void setLevel(int level) {
         this.level = level;
     }
 
-    public void setDeaths(int deaths) {
+    public synchronized void setDeaths(int deaths) {
         this.deaths = deaths;
     }
 
-    public void setKills(List<Kill> kills) {
-        this.kills = kills;
-    }
-
-    public void setKillsStreak(int killsStreak) {
+    public synchronized void setKillsStreak(int killsStreak) {
         this.killsStreak = killsStreak;
     }
 
-    public void setMaxKillStreaks(int maxKillStreaks) {
+    public synchronized void setMaxKillStreaks(int maxKillStreaks) {
         this.maxKillStreaks = maxKillStreaks;
     }
 
-    public void setCoins(int coins) {
+    public synchronized void setCoins(int coins) {
         this.coins = coins;
     }
 
-    public void setXp(int xp) {
+    public synchronized void setXp(int xp) {
         this.xp = xp;
     }
 
-    public void addCoins(int coins) {
+    public synchronized void addCoins(int coins) {
         this.coins = this.coins + coins;
     }
 
-    public int addCoins(int minCoin, int maxCoin) {
+    public synchronized int addCoins(int minCoin, int maxCoin) {
         int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
 
         Player player = Bukkit.getPlayer(uuid);
@@ -93,24 +88,24 @@ public class Stats {
         return randomCoin;
     }
 
-    public void deductCoins(int coins) {
+    public synchronized void deductCoins(int coins) {
         this.coins = Math.max(0, this.coins - coins);
     }
 
-    public int deductCoins(int minCoin, int maxCoin) {
+    public synchronized int deductCoins(int minCoin, int maxCoin) {
         int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
         this.coins = Math.max(0, this.coins - randomCoin);
         return randomCoin;
     }
 
-    public void addXp(int xp) {
+    public synchronized void addXp(int xp) {
         this.xp += xp;
 
         if (this.xp >= getLevelUpXp())
             UserManager.levelUp(uuid);
     }
 
-    public int addXp(int minXp, int maxXp) {
+    public synchronized int addXp(int minXp, int maxXp) {
         int randomXp = Utils.getRANDOM().nextInt(maxXp - minXp) + minXp;
 
         Player player = Bukkit.getPlayer(uuid);
@@ -129,13 +124,17 @@ public class Stats {
         return randomXp;
     }
 
-    public int getLevelUpXp() {
+    public synchronized void setEventsWon(int eventsWon) {
+        this.eventsWon = eventsWon;
+    }
+
+    public synchronized int getLevelUpXp() {
         if (level >= 25)
             return 12500;
         return level * 500;
     }
 
-    public int getLevelUpXp(int level) {
+    public synchronized int getLevelUpXp(int level) {
         if (level >= 25)
             return 12500;
         return level * 500;

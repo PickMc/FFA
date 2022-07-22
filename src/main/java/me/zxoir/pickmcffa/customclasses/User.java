@@ -1,6 +1,7 @@
 package me.zxoir.pickmcffa.customclasses;
 
 import lombok.Getter;
+import lombok.Synchronized;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import org.bukkit.Bukkit;
@@ -18,13 +19,15 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static me.zxoir.pickmcffa.utils.Utils.runTaskSync;
+
 /**
  * MIT License Copyright (c) 2022 Zxoir
  *
  * @author Zxoir
  * @since 3/19/2022
  */
-@Getter
+@Getter(onMethod_ = {@Synchronized})
 public class User {
     @NotNull
     UUID uuid;
@@ -91,76 +94,87 @@ public class User {
         return Bukkit.getOfflinePlayer(uuid);
     }
 
-    public void setSelectedKit(@Nullable Kit selectedKit) {
+    public synchronized void setSelectedKit(@Nullable Kit selectedKit) {
         this.selectedKit = selectedKit;
         Player player = getPlayer();
 
         if (player == null)
             return;
-
-        if (selectedKit == null) {
-            player.getInventory().setHelmet(null);
-            player.getInventory().setChestplate(null);
-            player.getInventory().setLeggings(null);
-            player.getInventory().setBoots(null);
-            player.getInventory().clear();
-            player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
-            return;
-        }
 
         ItemStack itemStack = getFlintAndSteel(player.getInventory());
 
-        player.getInventory().setContents(selectedKit.getItems());
-        player.getInventory().setArmorContents(selectedKit.getArmour());
+        runTaskSync(() -> {
+            if (selectedKit == null) {
+                player.getInventory().setHelmet(null);
+                player.getInventory().setChestplate(null);
+                player.getInventory().setLeggings(null);
+                player.getInventory().setBoots(null);
+                player.getInventory().clear();
+                player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
 
-        if (itemStack != null)
-            player.getInventory().addItem(itemStack);
+                if (itemStack != null)
+                    player.getInventory().addItem(itemStack);
 
-        if (selectedKit.getPermanentPotions() != null && !selectedKit.getPermanentPotions().isEmpty()) {
-
-            for (Effect effect : selectedKit.getPermanentPotions()) {
-                PotionEffect potionEffect = new PotionEffect(effect.getPotionEffectType(), 1000000000, effect.getAmplifier());
-                player.addPotionEffect(potionEffect, true);
+                return;
             }
 
-        }
+            player.getInventory().setContents(selectedKit.getItems());
+            player.getInventory().setArmorContents(selectedKit.getArmour());
+
+            if (itemStack != null)
+                player.getInventory().addItem(itemStack);
+
+            if (selectedKit.getPermanentPotions() != null && !selectedKit.getPermanentPotions().isEmpty()) {
+
+                for (Effect effect : selectedKit.getPermanentPotions()) {
+                    PotionEffect potionEffect = new PotionEffect(effect.getPotionEffectType(), 1000000000, effect.getAmplifier());
+                    player.addPotionEffect(potionEffect, true);
+                }
+
+            }
+        });
     }
 
-    public void setSelectedKit(@NotNull Kit selectedKit, @NotNull ItemStack[] itemStacks) {
+    public synchronized void setSelectedKit(@NotNull Kit selectedKit, @NotNull ItemStack[] itemStacks) {
         this.selectedKit = selectedKit;
         Player player = getPlayer();
 
         if (player == null)
             return;
 
+        ItemStack itemStack = getFlintAndSteel(player.getInventory());
 
+        runTaskSync(() -> {
+            player.getInventory().setContents(itemStacks);
+            player.getInventory().setArmorContents(selectedKit.getArmour());
 
-        player.getInventory().setContents(itemStacks);
-        player.getInventory().setArmorContents(selectedKit.getArmour());
+            if (itemStack != null)
+                player.getInventory().addItem(itemStack);
 
-        if (selectedKit.getPermanentPotions() != null && !selectedKit.getPermanentPotions().isEmpty()) {
+            if (selectedKit.getPermanentPotions() != null && !selectedKit.getPermanentPotions().isEmpty()) {
 
-            for (Effect effect : selectedKit.getPermanentPotions()) {
-                PotionEffect potionEffect = new PotionEffect(effect.getPotionEffectType(), 1000000000, effect.getAmplifier());
-                player.addPotionEffect(potionEffect, true);
+                for (Effect effect : selectedKit.getPermanentPotions()) {
+                    PotionEffect potionEffect = new PotionEffect(effect.getPotionEffectType(), 1000000000, effect.getAmplifier());
+                    player.addPotionEffect(potionEffect, true);
+                }
+
             }
-
-        }
+        });
     }
 
-    public void setSelectedPerk(@Nullable Perk selectedPerk) {
+    public synchronized void setSelectedPerk(@Nullable Perk selectedPerk) {
         this.selectedPerk = selectedPerk;
     }
 
-    public void setActionbar(boolean actionbar) {
+    public synchronized void setActionbar(boolean actionbar) {
         this.actionbar = actionbar;
     }
 
-    public void setSavedInventories(@NotNull ConcurrentHashMap<Kit, ItemStack[]> savedInventories) {
+    public synchronized void setSavedInventories(@NotNull ConcurrentHashMap<Kit, ItemStack[]> savedInventories) {
         this.savedInventories = savedInventories;
     }
 
-    public ConcurrentHashMap<String, String> getDeserializedSavedInventories() {
+    public synchronized ConcurrentHashMap<String, String> getDeserializedSavedInventories() {
         ConcurrentHashMap<String, String> deserializedSavedInventories = new ConcurrentHashMap<>();
 
         for (Kit kit : savedInventories.keySet()) {
@@ -174,6 +188,7 @@ public class User {
     private ItemStack getFlintAndSteel(@NotNull PlayerInventory inventory) {
         boolean flintAndSteelFound = false;
         ItemStack flintAndSteel = null;
+        short durability = 0;
 
         for (ItemStack itemStack : inventory.getContents()) {
 
@@ -182,14 +197,18 @@ public class User {
                 if (!flintAndSteelFound) {
                     flintAndSteelFound = true;
                     flintAndSteel = itemStack;
+                    durability = itemStack.getDurability();
                 } else {
-                    inventory.remove(itemStack);
-                    flintAndSteel.setDurability((short) (flintAndSteel.getDurability() - 1));
+                    runTaskSync(() -> inventory.remove(itemStack));
+                    durability = (short) (durability - (itemStack.getDurability()));
                 }
 
             }
 
         }
+
+        if (flintAndSteelFound)
+            flintAndSteel.setDurability(durability);
 
         return flintAndSteel;
     }

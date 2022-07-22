@@ -128,6 +128,7 @@ public class StatsCommand implements CommandExecutor {
         return colorize("\n&7Name &8» &e" + Bukkit.getOfflinePlayer(stats.getUuid()).getName() + "\n" +
                 "&7Level: &8» &e" + stats.getLevel() + "\n" +
                 "&7Coins: &8» &e" + stats.getCoins() + "\n" +
+                "&7Events Won: &8» &e" + stats.getEventsWon() + "\n" +
                 "&7Kills: &8» &e" + stats.getKills().size() + "\n" +
                 "&7Deaths: &8» &e" + stats.getDeaths() + "\n" +
                 "&7KillStreak: &8» &e" + stats.getKillsStreak() + "\n" +

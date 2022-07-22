@@ -6,6 +6,7 @@ import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.KillStreak;
 import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.menus.EventsManager;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
 import me.zxoir.pickmcffa.utils.Utils;
 import net.minecraft.server.v1_8_R3.EnumParticle;
@@ -328,13 +329,28 @@ public class KillStreakListener implements Listener {
     @EventHandler
     public void onKill(@NotNull PlayerDeathEvent event) {
         Player player = event.getEntity();
-        Player killer = player.getKiller();
+        Player killer;
 
-        if (killer == null)
+        if (player.getKiller() == null) {
+
+            Entity lastDamage = player.getLastDamageCause().getEntity();
+
+            if (lastDamage == null || !lastDamage.getType().equals(EntityType.PLAYER))
+                return;
+
+            killer = (Player) lastDamage;
+
+        } else
+            killer = player.getKiller();
+
+        if (player.equals(killer))
             return;
 
         User playerUser = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
         User killerUser = PickMcFFA.getCachedUsers().getIfPresent(killer.getUniqueId());
+
+        if (EventsManager.isEventActive())
+            return;
 
         if (playerUser == null)
             return;

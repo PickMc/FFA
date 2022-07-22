@@ -40,6 +40,8 @@ public class ConfigManager {
     @Getter
     private static int FireTickSpeed;
 
+    private static String ArrowHitMessage;
+
     @Getter
     private static String VotePendingMessage;
 
@@ -221,6 +223,7 @@ public class ConfigManager {
         port = main.getConfig().getString("port");
         ShopVillagerName = colorize(main.getConfig().getString("ShopVillagerName"));
         FireTickSpeed = main.getConfig().getInt("FireTickSpeed");
+        ArrowHitMessage = colorize(main.getConfig().getString("ArrowHitMessage"));
         VotePendingMessage = colorize(main.getConfig().getString("VotePendingMessage"));
         VoteReceivedMessage = colorize(main.getConfig().getString("VoteReceivedMessage"));
         VoteReceivedOfflineMessage = colorize(main.getConfig().getString("VoteReceivedOfflineMessage"));
@@ -304,6 +307,11 @@ public class ConfigManager {
         PerkShopMenu.loadMenu();
         PerkPurchaseConfirmationMenu.loadMenu();
         PerkMenu.loadMenu();
+    }
+
+    @NotNull
+    public static String getArrowHitMessage(String playerName, double playerHearts) {
+        return ArrowHitMessage.replace("%player_name%", playerName).replace("%player_hearts%", String.format("%.2f", playerHearts));
     }
 
     @NotNull

@@ -4,6 +4,8 @@ import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,11 +26,23 @@ public class KillActionListener implements Listener {
     @EventHandler
     public void onDeath(@NotNull PlayerDeathEvent event) {
         Player player = event.getEntity();
-        Player killer = event.getEntity().getKiller();
+        Player killer;
+
+        if (player.getKiller() == null) {
+
+            Entity lastDamage = player.getLastDamageCause().getEntity();
+
+            if (lastDamage == null || !lastDamage.getType().equals(EntityType.PLAYER))
+                return;
+
+            killer = (Player) lastDamage;
+
+        } else
+            killer = player.getKiller();
 
         event.getDrops().clear();
 
-        if (killer == null)
+        if (player.equals(killer))
             return;
 
         User playerUser = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());

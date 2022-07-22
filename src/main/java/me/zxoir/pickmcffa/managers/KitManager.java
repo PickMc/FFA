@@ -3,6 +3,7 @@ package me.zxoir.pickmcffa.managers;
 import lombok.Getter;
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.eventkits.SnowBallEventKit;
 import me.zxoir.pickmcffa.kits.DefaultKit;
 import me.zxoir.pickmcffa.kits.InfluencerKit;
 import me.zxoir.pickmcffa.kits.PickKit;
@@ -40,6 +41,9 @@ public class KitManager {
     private static Kit strengthKit = new StrengthKit();
     @Getter
     private static Kit tankKit = new TankKit();
+
+    @Getter
+    private static Kit snowballKit = new SnowBallEventKit();
 
     @Nullable
     public static Kit valueOf(@Nullable String value) {
@@ -103,5 +107,7 @@ public class KitManager {
         strengthKit = new StrengthKit();
 
         tankKit = new TankKit();
+
+        snowballKit = new SnowBallEventKit();
     }
 }
