@@ -38,8 +38,6 @@ import static java.util.concurrent.CompletableFuture.runAsync;
  * @since 3/23/2022
  */
 public class Utils {
-    @Getter
-    private static final Random RANDOM = new Random();
     private static final ConcurrentHashMap<UUID, ConcurrentHashMap<PotionEffectType, DelayedPotionEffect>> delayedPotionEffect = new ConcurrentHashMap<>();
 
     @NotNull
@@ -117,7 +115,7 @@ public class Utils {
         return set.testState(localPlayer, DefaultFlag.PVP);
     }
 
-    private static boolean addPotion(@NotNull Player player, @NotNull PotionEffect potionEffect) {
+    /*private static boolean addPotion(@NotNull Player player, @NotNull PotionEffect potionEffect) {
         // If the player doesn't have the same potion effect then apply it
         if (!player.hasPotionEffect(potionEffect.getType()))
             player.addPotionEffect(potionEffect);
@@ -174,7 +172,7 @@ public class Utils {
      * @param player       Player
      * @param potionEffect Potion Effect
      * @return true: Potion activated/delayed | false: Potion returned/cancelled
-     */
+     *//*
     public static boolean addPotionEffect(@NotNull Player player, @NotNull PotionEffect potionEffect) {
         if (delayedPotionEffect.containsKey(player.getUniqueId()) && delayedPotionEffect.get(player.getUniqueId()).containsKey(potionEffect.getType())) {
             ConcurrentHashMap<PotionEffectType, DelayedPotionEffect> delayedPotions = delayedPotionEffect.get(player.getUniqueId());
@@ -224,7 +222,7 @@ public class Utils {
         }
 
         return addPotion(player, potionEffect);
-    }
+    }*/
 
     public interface Task {
         void execute();

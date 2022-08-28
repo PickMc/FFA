@@ -3,11 +3,15 @@ package me.zxoir.pickmcffa.listener;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import me.zxoir.pickmcffa.managers.EventsManager;
+import me.zxoir.pickmcffa.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class KillActionListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(@NotNull PlayerDeathEvent event) {
         Player player = event.getEntity();
         Player killer;
@@ -45,65 +49,81 @@ public class KillActionListener implements Listener {
         if (player.equals(killer))
             return;
 
-        User playerUser = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
-        User killerUser = PickMcFFA.getCachedUsers().getIfPresent(killer.getUniqueId());
+        Bukkit.getScheduler().runTaskAsynchronously(PickMcFFA.getInstance(), () -> {
 
-        if (playerUser == null) {
-            player.kickPlayer(ConfigManager.getFailedProfileSave());
-        }
+            User playerUser = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
+            User killerUser = PickMcFFA.getCachedUsers().getIfPresent(killer.getUniqueId());
 
-        if (killerUser == null) {
-            killer.kickPlayer(ConfigManager.getFailedProfileSave());
-            return;
-        }
+            if (playerUser == null) {
+                player.kickPlayer(ConfigManager.getFailedProfileSave());
+            }
 
-        if (killerUser.getSelectedKit() != null)
-            killerUser.getSelectedKit().killAction(playerUser, killerUser);
+            if (killerUser == null) {
+                killer.kickPlayer(ConfigManager.getFailedProfileSave());
+                return;
+            }
 
-        boolean isPremiumPlus = killer.hasPermission("group.pickplus");
-        boolean isPremium = killer.hasPermission("group.pick");
-        boolean isInfluencer = killer.hasPermission("group.influencer");
-        ItemStack snowballs = getSnowballs(killer.getInventory());
+            if (killerUser.getSelectedKit() != null)
+                Utils.runTaskSync(() -> killerUser.getSelectedKit().killAction(playerUser, killerUser));
 
-        if (isPremiumPlus) {
+            boolean isPremiumPlus = killer.hasPermission("group.pickplus");
+            boolean isPremium = killer.hasPermission("group.pick");
+            boolean isInfluencer = killer.hasPermission("group.influencer");
+            ItemStack snowballs = getSnowballs(killer.getInventory());
 
-            killer.setHealth(Math.min(20, killer.getHealth() + 12));
-            if (snowballs == null)
-                killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 24));
-            else
-                snowballs.setAmount(24);
+            if (isPremiumPlus) {
 
-            if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
-                killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
+                Utils.runTaskSync(() -> killer.setHealth(Math.min(20, killer.getHealth() + 12)));
 
-        } else if (isPremium) {
-            killer.setHealth(Math.min(20, killer.getHealth() + 10));
-            if (snowballs == null)
-                killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 20));
-            else
-                snowballs.setAmount(20);
+                if (EventsManager.isEventActive())
+                    return;
+                if (snowballs == null)
+                    Utils.runTaskSync(() -> killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 24)));
+                else
+                    Utils.runTaskSync(() -> snowballs.setAmount(24));
 
-            if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
-                killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
-        } else if (isInfluencer) {
-            killer.setHealth(Math.min(20, killer.getHealth() + 10));
-            if (snowballs == null)
-                killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 20));
-            else
-                snowballs.setAmount(20);
+                if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
+                    Utils.runTaskSync(() -> killer.getInventory().addItem(new ItemStack(Material.ARROW, 2)));
 
-            if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
-                killer.getInventory().addItem(new ItemStack(Material.ARROW, 2));
-        } else {
-            killer.setHealth(Math.min(20, killer.getHealth() + 8));
-            if (snowballs == null)
-                killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 16));
-            else
-                snowballs.setAmount(16);
+            } else if (isPremium) {
+                Utils.runTaskSync(() -> killer.setHealth(Math.min(20, killer.getHealth() + 10)));
 
-            if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
-                killer.getInventory().addItem(new ItemStack(Material.ARROW, 1));
-        }
+                if (EventsManager.isEventActive())
+                    return;
+                if (snowballs == null)
+                    Utils.runTaskSync(() -> killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 20)));
+                else
+                    Utils.runTaskSync(() -> snowballs.setAmount(20));
+
+                if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
+                    Utils.runTaskSync(() -> killer.getInventory().addItem(new ItemStack(Material.ARROW, 2)));
+            } else if (isInfluencer) {
+                Utils.runTaskSync(() -> killer.setHealth(Math.min(20, killer.getHealth() + 10)));
+
+                if (EventsManager.isEventActive())
+                    return;
+                if (snowballs == null)
+                    Utils.runTaskSync(() -> killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 20)));
+                else
+                    Utils.runTaskSync(() -> snowballs.setAmount(20));
+
+                if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
+                    Utils.runTaskSync(() -> killer.getInventory().addItem(new ItemStack(Material.ARROW, 2)));
+            } else {
+                Utils.runTaskSync(() -> killer.setHealth(Math.min(20, killer.getHealth() + 8)));
+
+                if (EventsManager.isEventActive())
+                    return;
+                if (snowballs == null)
+                    Utils.runTaskSync(() -> killer.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 16)));
+                else
+                    Utils.runTaskSync(() -> snowballs.setAmount(16));
+
+                if (killer.getInventory().contains(Material.BOW) && !killer.getInventory().contains(Material.ARROW, 32))
+                    Utils.runTaskSync(() -> killer.getInventory().addItem(new ItemStack(Material.ARROW, 1)));
+            }
+
+        });
     }
 
     @Nullable

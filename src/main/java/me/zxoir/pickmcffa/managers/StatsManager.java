@@ -5,6 +5,7 @@ import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.listener.LeaderboardHeads;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -38,10 +39,13 @@ public class StatsManager {
         System.out.println("Cached Stats");
         PickMcFFA.getCachedUsers().asMap().values().forEach(user -> cachedStats.add(user.getStats()));
 
-        cachedStats.forEach(stat -> topDeaths.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getDeaths()));
-        cachedStats.forEach(stat -> topKills.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getKills().size()));
-        cachedStats.forEach(stat -> topKillStreak.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getMaxKillStreaks()));
-        cachedStats.forEach(stat -> topLevel.put(Bukkit.getOfflinePlayer(stat.getUuid()).getName(), stat.getLevel()));
+        cachedStats.forEach(stat -> {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(stat.getUuid());
+            topDeaths.put(offlinePlayer.getName(), stat.getDeaths());
+            topKills.put(offlinePlayer.getName(), stat.getKills().size());
+            topKillStreak.put(offlinePlayer.getName(), stat.getMaxKillStreaks());
+            topLevel.put(offlinePlayer.getName(), stat.getLevel());
+        });
         topDeaths = sortByValue(topDeaths);
         topKills = sortByValue(topKills);
         topKillStreak = sortByValue(topKillStreak);

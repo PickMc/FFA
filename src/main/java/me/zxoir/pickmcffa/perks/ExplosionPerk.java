@@ -33,15 +33,19 @@ public class ExplosionPerk extends Perk {
         float explosionChance = (float) ConfigManager.getExplosionChance() / 100;
 
         Player player = killer.getPlayer();
+        Player killedPlayer = killed.getPlayer();
 
-        if (killed.getPlayer().getLastDamage() <= 0)
+        if (player == null || killedPlayer == null)
+            return;
+
+        if (killedPlayer.getLastDamage() <= 0)
             return;
 
         if (chance >= explosionChance)
             return;
 
-        player.getWorld().playEffect(killer.getPlayer().getLocation(), Effect.EXPLOSION_HUGE, 10);
-        player.getWorld().playSound(killer.getPlayer().getLocation(), Sound.EXPLODE, 1, 1);
+        player.getWorld().playEffect(player.getLocation(), Effect.EXPLOSION_HUGE, 10);
+        player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 1, 1);
 
         if (!ConfigManager.getExplosionActivated().isEmpty())
             player.sendMessage(ConfigManager.getExplosionActivated());
@@ -49,7 +53,7 @@ public class ExplosionPerk extends Perk {
         if (!ConfigManager.getExplosionActivatedActionbar().isEmpty())
             Utils.sendActionText(player, ConfigManager.getExplosionActivatedActionbar());
 
-        List<Entity> entities = killer.getPlayer().getNearbyEntities(ConfigManager.getExplosionRadius(), ConfigManager.getExplosionRadius(), ConfigManager.getExplosionRadius());
+        List<Entity> entities = killedPlayer.getNearbyEntities(ConfigManager.getExplosionRadius(), ConfigManager.getExplosionRadius(), ConfigManager.getExplosionRadius());
         if (entities == null || entities.isEmpty())
             return;
 

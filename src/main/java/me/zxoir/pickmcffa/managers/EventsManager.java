@@ -1,4 +1,4 @@
-package me.zxoir.pickmcffa.menus;
+package me.zxoir.pickmcffa.managers;
 
 import com.Zrips.CMI.CMI;
 import com.sk89q.worldedit.*;
@@ -10,11 +10,11 @@ import lombok.Getter;
 import lombok.Setter;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.User;
-import me.zxoir.pickmcffa.listener.EventsListener;
 import me.zxoir.pickmcffa.listener.eventsListeners.SnowBallEventListener;
-import me.zxoir.pickmcffa.managers.KitManager;
+import me.zxoir.pickmcffa.menus.KitMenu;
 import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -58,6 +58,7 @@ public class EventsManager {
     @Getter
     @Setter
     private static EventsManager.EventType currentEventType;
+    @Setter
     private static BukkitTask scheduledAnnounceTask;
     private static BukkitTask scheduledStartTask;
     private static BukkitTask endEventTask;
@@ -66,40 +67,44 @@ public class EventsManager {
     private static boolean spawnedBarrierWall = false;
 
     private static void removeBarrierWall() {
-        if (barrierWall == null)
-            return;
+        Utils.runTaskSync(() -> {
+            if (barrierWall == null)
+                return;
 
-        spawnedBarrierWall = false;
+            spawnedBarrierWall = false;
 
-        LocalWorld localWorld = BukkitUtil.getLocalWorld(barrierWall.getWorld());
-        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(localWorld, -1);
-        try {
-            editSession.setBlocks(barrierWall.getRegionSelector().getRegion(), new BaseBlock(BlockID.AIR));
-        } catch (MaxChangedBlocksException | IncompleteRegionException e) {
-            // As of the blocks are unlimited this should not be called
-        }
+            LocalWorld localWorld = BukkitUtil.getLocalWorld(barrierWall.getWorld());
+            EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(localWorld, -1);
+            try {
+                editSession.setBlocks(barrierWall.getRegionSelector().getRegion(), new BaseBlock(BlockID.AIR));
+            } catch (MaxChangedBlocksException | IncompleteRegionException e) {
+                // As of the blocks are unlimited this should not be called
+            }
+        });
     }
 
     private static void spawnBarrierWall() {
-        if (barrierWall == null)
-            return;
+        Utils.runTaskSync(() -> {
+            if (barrierWall == null)
+                return;
 
-        spawnedBarrierWall = true;
+            spawnedBarrierWall = true;
 
-        LocalWorld localWorld = BukkitUtil.getLocalWorld(barrierWall.getWorld());
-        EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(localWorld, -1);
-        try {
-            editSession.setBlocks(barrierWall.getRegionSelector().getRegion(), new BaseBlock(BlockID.BARRIER));
-        } catch (MaxChangedBlocksException | IncompleteRegionException e) {
-            // As of the blocks are unlimited this should not be called
-        }
+            LocalWorld localWorld = BukkitUtil.getLocalWorld(barrierWall.getWorld());
+            EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(localWorld, -1);
+            try {
+                editSession.setBlocks(barrierWall.getRegionSelector().getRegion(), new BaseBlock(BlockID.BARRIER));
+            } catch (MaxChangedBlocksException | IncompleteRegionException e) {
+                // As of the blocks are unlimited this should not be called
+            }
+        });
     }
 
     private static EventsManager.EventType getRandomEvent() {
         return EventsManager.EventType.values()[random.nextInt(EventsManager.EventType.values().length)];
     }
 
-    private static BukkitTask getScheduledAnnounceTask() {
+    public static BukkitTask getScheduledAnnounceTask() {
         return Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), () -> {
             Bukkit.broadcastMessage(colorize("&a&lFFA Events &7> &9Event starting in 1 minute"));
             scheduledStartTask = getScheduledStartTask();
@@ -115,7 +120,7 @@ public class EventsManager {
     }
 
     private static BukkitTask getCountdownTask(int time) {
-        runTaskSync(() -> teleportPoint.getWorld().setPVP(false));
+        teleportPoint.getWorld().setPVP(false);
 
         return new BukkitRunnable() {
             int timer = time;
@@ -126,7 +131,7 @@ public class EventsManager {
                 if (timer == 0) {
                     cancel();
                     Bukkit.broadcastMessage(colorize("&a&lFFA Events &7> &9Pvp is enabled!"));
-                    runTaskSync(() -> teleportPoint.getWorld().setPVP(true));
+                    teleportPoint.getWorld().setPVP(true);
                     return;
                 }
 
@@ -196,6 +201,7 @@ public class EventsManager {
                     runTaskSync(() -> {
                         online.teleport(teleportPoint);
                         online.setHealth(online.getMaxHealth());
+                        online.setGameMode(GameMode.SURVIVAL);
                     });
                     playersAlive.add(online);
                     User user = PickMcFFA.getCachedUsers().getIfPresent(online.getUniqueId());

@@ -51,8 +51,13 @@ public class ScoreboardListener implements Listener {
 
         Stats stats = user.getStats();
 
+        final CachedMetaData metaData = PickMcFFA.getLuckPerms().getPlayerAdapter(Player.class).getMetaData(player);
+        final String group = metaData.getPrimaryGroup();
+        String rank = metaData.getPrefix() != null ? (group != null ? StringUtils.substringBefore(metaData.getPrefix(), " ") : "") : "";
+
         Scoreboard board = player.getScoreboard();
         //board.getTeam("onlineCounter").setPrefix(ChatColor.DARK_RED + "0" + ChatColor.RED + "/" + ChatColor.DARK_RED + Bukkit.getMaxPlayers());
+        updateTeam(board, "rank", colorize("&7» Rank: &8" + rank));
         updateTeam(board, "online", colorize("&7» Online: &e" + Bukkit.getOnlinePlayers().size() + " &l/&r&e " + Bukkit.getMaxPlayers()));
         updateTeam(board, "level", colorize("&7Level: &e" + stats.getLevel()));
         updateTeam(board, "coins", colorize("&7Coins: &e" + stats.getCoins()));

@@ -1,16 +1,16 @@
 package me.zxoir.pickmcffa.customclasses;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Synchronized;
-import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.managers.UserManager;
 import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -20,60 +20,96 @@ import java.util.*;
  */
 
 @AllArgsConstructor
-@Getter(onMethod_={@Synchronized})
-public class Stats {
+public class Stats implements Serializable {
     @NotNull
     UUID uuid;
-    int xp;
-    int level;
-    int coins;
-    int maxKillStreaks;
-    int killsStreak;
+    AtomicInteger xp;
+    AtomicInteger level;
+    AtomicInteger coins;
+    AtomicInteger maxKillStreaks;
+    AtomicInteger killsStreak;
     List<Kill> kills;
-    int deaths;
-    int eventsWon;
+    AtomicInteger deaths;
+    AtomicInteger eventsWon;
 
     public Stats(@NotNull UUID uuid) {
         this.uuid = uuid;
-        xp = 0;
-        level = 1;
-        coins = 0;
-        maxKillStreaks = 0;
-        killsStreak = 0;
+        xp = new AtomicInteger(0);
+        level = new AtomicInteger(1);
+        coins = new AtomicInteger(0);
+        maxKillStreaks = new AtomicInteger(0);
+        killsStreak = new AtomicInteger(0);
         kills = Collections.synchronizedList(new ArrayList<>());
-        deaths = 0;
-        eventsWon = 0;
+        deaths = new AtomicInteger(0);
+        eventsWon = new AtomicInteger(0);
     }
 
-    public synchronized void setLevel(int level) {
-        this.level = level;
+    @NotNull
+    public UUID getUuid() {
+        return uuid;
     }
 
-    public synchronized void setDeaths(int deaths) {
-        this.deaths = deaths;
+    public int getCoins() {
+        return coins.get();
     }
 
-    public synchronized void setKillsStreak(int killsStreak) {
-        this.killsStreak = killsStreak;
+    public int getDeaths() {
+        return deaths.get();
     }
 
-    public synchronized void setMaxKillStreaks(int maxKillStreaks) {
-        this.maxKillStreaks = maxKillStreaks;
+    public int getEventsWon() {
+        return eventsWon.get();
     }
 
-    public synchronized void setCoins(int coins) {
-        this.coins = coins;
+    public int getKillsStreak() {
+        return killsStreak.get();
     }
 
-    public synchronized void setXp(int xp) {
-        this.xp = xp;
+    public int getLevel() {
+        return level.get();
     }
 
-    public synchronized void addCoins(int coins) {
-        this.coins = this.coins + coins;
+    public int getMaxKillStreaks() {
+        return maxKillStreaks.get();
     }
 
-    public synchronized int addCoins(int minCoin, int maxCoin) {
+    public int getXp() {
+        return xp.get();
+    }
+
+    public List<Kill> getKills() {
+        return kills;
+    }
+
+    public void setLevel(int level) {
+        this.level.set(level);
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths.set(deaths);
+    }
+
+    public void setKillsStreak(int killsStreak) {
+        this.killsStreak.set(killsStreak);
+    }
+
+    public void setMaxKillStreaks(int maxKillStreaks) {
+        this.maxKillStreaks.set(maxKillStreaks);
+    }
+
+    public void setCoins(int coins) {
+        this.coins.set(coins);
+    }
+
+    public void setXp(int xp) {
+        this.xp.set(xp);
+    }
+
+    public void addCoins(int coins) {
+        this.coins.set(this.coins.get() + coins);
+    }
+
+    public int addCoins(int minCoin, int maxCoin) {
         int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
 
         Player player = Bukkit.getPlayer(uuid);
@@ -84,29 +120,29 @@ public class Stats {
         if (Booster.getGlobalCoin() != null && coinBoost == null)
             randomCoin = (int) (randomCoin * Booster.getGlobalCoin());
 
-        this.coins = this.coins + randomCoin;
+        this.coins.set(this.coins.get() + randomCoin);
         return randomCoin;
     }
 
-    public synchronized void deductCoins(int coins) {
-        this.coins = Math.max(0, this.coins - coins);
+    public void deductCoins(int coins) {
+        this.coins.set(Math.max(0, this.coins.get() - coins));
     }
 
-    public synchronized int deductCoins(int minCoin, int maxCoin) {
+    public int deductCoins(int minCoin, int maxCoin) {
         int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
-        this.coins = Math.max(0, this.coins - randomCoin);
+        this.coins.set(Math.max(0, this.coins.get() - randomCoin));
         return randomCoin;
     }
 
-    public synchronized void addXp(int xp) {
-        this.xp += xp;
+    public void addXp(int xp) {
+        this.xp.set(this.xp.get() + xp);
 
-        if (this.xp >= getLevelUpXp())
+        if (this.xp.get() >= getLevelUpXp())
             UserManager.levelUp(uuid);
     }
 
-    public synchronized int addXp(int minXp, int maxXp) {
-        int randomXp = Utils.getRANDOM().nextInt(maxXp - minXp) + minXp;
+    public int addXp(int minXp, int maxXp) {
+        int randomXp = ThreadLocalRandom.current().nextInt(maxXp - minXp) + minXp;
 
         Player player = Bukkit.getPlayer(uuid);
         Double xpBoost = UserManager.getXpBoost(Bukkit.getPlayer(uuid));
@@ -116,25 +152,25 @@ public class Stats {
         if (Booster.getGlobalXP() != null && xpBoost == null)
             randomXp = (int) (randomXp * Booster.getGlobalXP());
 
-        this.xp += randomXp;
+        this.xp.set(this.xp.get() + randomXp);
 
-        if (this.xp >= getLevelUpXp())
+        if (this.xp.get() >= getLevelUpXp())
             UserManager.levelUp(uuid);
 
         return randomXp;
     }
 
-    public synchronized void setEventsWon(int eventsWon) {
-        this.eventsWon = eventsWon;
+    public void setEventsWon(int eventsWon) {
+        this.eventsWon.set(eventsWon);
     }
 
-    public synchronized int getLevelUpXp() {
-        if (level >= 25)
+    public int getLevelUpXp() {
+        if (level.get() >= 25)
             return 12500;
-        return level * 500;
+        return level.get() * 500;
     }
 
-    public synchronized int getLevelUpXp(int level) {
+    public int getLevelUpXp(int level) {
         if (level >= 25)
             return 12500;
         return level * 500;

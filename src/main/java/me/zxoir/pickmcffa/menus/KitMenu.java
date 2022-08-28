@@ -7,6 +7,7 @@ import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.listener.KillStreakListener;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import me.zxoir.pickmcffa.managers.EventsManager;
 import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;

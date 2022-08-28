@@ -21,6 +21,7 @@ import me.zxoir.pickmcffa.listener.*;
 import me.zxoir.pickmcffa.listener.eventsListeners.LastManStandingEventListener;
 import me.zxoir.pickmcffa.listener.eventsListeners.SnowBallEventListener;
 import me.zxoir.pickmcffa.managers.ConfigManager;
+import me.zxoir.pickmcffa.managers.EventsManager;
 import me.zxoir.pickmcffa.managers.StatsManager;
 import me.zxoir.pickmcffa.menus.*;
 import net.luckperms.api.LuckPerms;
@@ -37,6 +38,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+
+import static java.util.concurrent.CompletableFuture.runAsync;
 
 public final class PickMcFFA extends JavaPlugin {
     @Getter
@@ -68,7 +72,7 @@ public final class PickMcFFA extends JavaPlugin {
         ffaLogger.info("Initializing database setup...");
         FFADatabase.createTable("CREATE TABLE IF NOT EXISTS users(" +
                 "uuid VARCHAR(36) PRIMARY KEY NOT NULL," +
-                "stats TEXT," +
+                "stats LONGTEXT," +
                 "selectedPerk VARCHAR(36)," +
                 "savedInventories TEXT," +
                 "firstJoinDate TEXT" +
@@ -84,6 +88,11 @@ public final class PickMcFFA extends JavaPlugin {
         ffaLogger.info("Caching users...");
         loadCachedUsers();
         ffaLogger.info("Cached users successfully. Took " + (System.currentTimeMillis() - start) + "ms");
+
+        start = System.currentTimeMillis();
+        ffaLogger.info("Starting events timer...");
+        EventsManager.setScheduledAnnounceTask(EventsManager.getScheduledAnnounceTask());
+        ffaLogger.info("Started events timer successfully. Took " + (System.currentTimeMillis() - start) + "ms");
 
         start = System.currentTimeMillis();
         ffaLogger.info("Loading saved pending vote rewards...");
@@ -180,21 +189,25 @@ public final class PickMcFFA extends JavaPlugin {
     @Override
     public void onDisable() {
         savePendingVoteRewards();
-        FFADatabase.getDataSource().close();
 
         if (SpawnShopCommand.getShopNPC() != null)
             SpawnShopCommand.getShopNPC().remove();
 
-        if (cachedUsers != null && cachedUsers.size() >= 1)
-            cachedUsers.asMap().forEach((uuid, user) -> {
-                user.setSelectedKit(null);
-                user.save();
-            });
+        if (cachedUsers != null && cachedUsers.size() >= 1) {
+            try {
+                runAsync(() -> cachedUsers.asMap().forEach((uuid, user) -> {
+                    user.save();
+                })).get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
 
         Collection<Hologram> holograms = HologramsAPI.getHolograms(this);
         if (holograms.isEmpty()) return;
         holograms.forEach(Hologram::delete);
 
+        FFADatabase.getDataSource().close();
         instance = null;
     }
 
@@ -253,7 +266,7 @@ public final class PickMcFFA extends JavaPlugin {
     private void registerCommands() {
         getCommand("kit").setExecutor(new KitCommand());
         getCommand("spawnshop").setExecutor(new SpawnShopCommand());
-        getCommand("pickmc").setExecutor(new MainCommand());
+        getCommand("ffa").setExecutor(new MainCommand());
         getCommand("stats").setExecutor(new StatsCommand());
         getCommand("perk").setExecutor(new PerkCommand());
         getCommand("topkills").setExecutor(new TopKillsCommand());

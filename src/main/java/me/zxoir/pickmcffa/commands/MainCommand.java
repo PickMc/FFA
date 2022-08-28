@@ -3,10 +3,14 @@ package me.zxoir.pickmcffa.commands;
 import lombok.SneakyThrows;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.Booster;
+import me.zxoir.pickmcffa.customclasses.Kill;
+import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.managers.UserManager;
 import me.zxoir.pickmcffa.utils.TimeManager;
+import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -16,6 +20,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static me.zxoir.pickmcffa.utils.Utils.*;
 
 /**
@@ -96,6 +107,74 @@ public class MainCommand implements CommandExecutor {
                 }
 
             }
+        }
+
+        // ffa addkills name amount
+        if (args.length == 3) {
+
+            if (args[0].equalsIgnoreCase("addkills") && Utils.isInteger(args[2])) {
+                OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+                int amount = Integer.parseInt(args[2]);
+
+                if (target == null || !target.hasPlayedBefore()) {
+                    sender.sendMessage("Invalid user");
+                    return true;
+                }
+
+                User user = PickMcFFA.getCachedUsers().getIfPresent(target.getUniqueId());
+
+                if (user == null) {
+                    sender.sendMessage("Invalid user");
+                    return true;
+                }
+
+                long start = System.currentTimeMillis();
+                runAsync(() -> {
+                    Kill kill = new Kill(null, null);
+                    for (int i = 0; i < amount; i++) {
+                        user.getStats().getKills().add(kill);
+                    }
+                    user.save();
+                }).get();
+                sender.sendMessage("Successfully added " + amount + " kills to " + target.getName() + "'s Stats Asynchronously. " + (System.currentTimeMillis() - start) + "ms");
+
+                return true;
+            }
+
+        }
+
+        // ffa addrecord uuid xp level coins maxKillStreaks killsStreak kills deaths eventsWon
+        if (args.length == 10) {
+
+            if (args[0].equalsIgnoreCase("addrecord")) {
+                UUID uuid = UUID.fromString(args[1]);
+
+                if (!Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
+                    sender.sendMessage("This player has never played before!");
+                    return true;
+                }
+
+                AtomicInteger xp = new AtomicInteger(Integer.parseInt(args[2]));
+                AtomicInteger level = new AtomicInteger(Integer.parseInt(args[3]));
+                AtomicInteger coins = new AtomicInteger(Integer.parseInt(args[4]));
+                AtomicInteger maxKillStreaks = new AtomicInteger(Integer.parseInt(args[5]));
+                AtomicInteger killsStreak = new AtomicInteger(Integer.parseInt(args[6]));
+                AtomicInteger kills = new AtomicInteger(Integer.parseInt(args[7]));
+                AtomicInteger deaths = new AtomicInteger(Integer.parseInt(args[8]));
+                AtomicInteger eventsWon = new AtomicInteger(Integer.parseInt(args[9]));
+
+                List<Kill> killList = Collections.synchronizedList(new ArrayList<>());
+                for (int i = 0; i < kills.get(); i++) {
+                    killList.add(new Kill(null, null));
+                }
+
+                Stats stats = new Stats(uuid, xp, level, coins, maxKillStreaks, killsStreak, killList, deaths, eventsWon);
+                User user = new User(uuid, stats);
+                UsersDBManager.saveToDB(user);
+                PickMcFFA.getCachedUsers().put(uuid, user);
+                sender.sendMessage("Added " + Bukkit.getOfflinePlayer(uuid).getName());
+            }
+
         }
 
         if (args.length == 4) {

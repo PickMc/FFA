@@ -2,6 +2,7 @@ package me.zxoir.pickmcffa.customclasses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 import java.util.UUID;
@@ -16,6 +17,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 public class Kill {
+    @Nullable
     UUID killed;
+    @Nullable
     Date date;
 }

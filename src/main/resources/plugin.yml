@@ -10,8 +10,8 @@ commands:
   spawnshop:
     usage: "/spawnshop"
     description: Spawnshop command
-  pickmc:
-    usage: "/pickmc"
+  ffa:
+    usage: "/ffa"
     description: Main server command
   stats:
     usage: "/stats"

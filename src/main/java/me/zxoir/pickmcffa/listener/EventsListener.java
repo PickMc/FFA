@@ -2,7 +2,7 @@ package me.zxoir.pickmcffa.listener;
 
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.User;
-import me.zxoir.pickmcffa.menus.EventsManager;
+import me.zxoir.pickmcffa.managers.EventsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,8 +11,6 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
-
-import static me.zxoir.pickmcffa.utils.Utils.colorize;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir

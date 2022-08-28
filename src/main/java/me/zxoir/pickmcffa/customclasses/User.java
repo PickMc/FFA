@@ -2,6 +2,7 @@ package me.zxoir.pickmcffa.customclasses;
 
 import lombok.Getter;
 import lombok.Synchronized;
+import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.utils.ItemDeserializer;
 import org.bukkit.Bukkit;
@@ -69,21 +70,25 @@ public class User {
     public User(@NotNull String uuid, @NotNull Stats stats, String firstJoinDate) {
         this.uuid = UUID.fromString(uuid);
         this.stats = stats;
+        this.firstJoinDate = firstJoinDate;
     }
 
     public User(@NotNull UUID uuid, @NotNull Stats stats) {
         this.uuid = uuid;
         this.stats = stats;
+        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
     }
 
     public User(@NotNull Player player, @NotNull Stats stats) {
         this.uuid = player.getUniqueId();
         this.stats = stats;
+        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
     }
 
     public User(@NotNull OfflinePlayer player, @NotNull Stats stats) {
         this.uuid = player.getUniqueId();
         this.stats = stats;
+        firstJoinDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
     }
 
     public Player getPlayer() {
@@ -115,6 +120,8 @@ public class User {
                 if (itemStack != null)
                     player.getInventory().addItem(itemStack);
 
+                Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), player::updateInventory, 1);
+
                 return;
             }
 
@@ -123,6 +130,8 @@ public class User {
 
             if (itemStack != null)
                 player.getInventory().addItem(itemStack);
+
+            Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), player::updateInventory, 1);
 
             if (selectedKit.getPermanentPotions() != null && !selectedKit.getPermanentPotions().isEmpty()) {
 

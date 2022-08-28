@@ -12,6 +12,7 @@ import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
 import me.zxoir.pickmcffa.utils.LocationAdapter;
+import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,22 +45,24 @@ public class StatsCommand implements CommandExecutor {
     Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationAdapter()).serializeNulls().create();
 
     public static void spawnStatsHologram(Player player, Stats stats) {
-        if (statsLocation == null) return;
+        Utils.runTaskSync(() -> {
+            if (statsLocation == null) return;
 
-        Hologram hologram = HologramsAPI.createHologram(PickMcFFA.getInstance(), statsLocation);
-        VisibilityManager visibilityManager = hologram.getVisibilityManager();
-        visibilityManager.showTo(player);
-        visibilityManager.setVisibleByDefault(false);
+            Hologram hologram = HologramsAPI.createHologram(PickMcFFA.getInstance(), statsLocation);
+            VisibilityManager visibilityManager = hologram.getVisibilityManager();
+            visibilityManager.showTo(player);
+            visibilityManager.setVisibleByDefault(false);
 
-        hologram.appendTextLine(colorize("&bStats for &b&l" + player.getName()));
-        hologram.appendTextLine(colorize("&aCoins: &7" + stats.getCoins()));
-        hologram.appendTextLine(colorize("&aKills: &7" + stats.getKills().size()));
-        hologram.appendTextLine(colorize("&aDeaths: &7" + stats.getDeaths()));
-        hologram.appendTextLine(colorize("&aKillStreak: &7" + stats.getKillsStreak()));
-        hologram.appendTextLine(colorize("&aBest KillStreak: &7" + stats.getMaxKillStreaks()));
-        hologram.appendItemLine(new ItemStackBuilder(Material.DIAMOND_SWORD).withEnchantment(Enchantment.ARROW_DAMAGE, 4).build());
+            hologram.appendTextLine(colorize("&bStats for &b&l" + player.getName()));
+            hologram.appendTextLine(colorize("&aCoins: &7" + stats.getCoins()));
+            hologram.appendTextLine(colorize("&aKills: &7" + stats.getKills().size()));
+            hologram.appendTextLine(colorize("&aDeaths: &7" + stats.getDeaths()));
+            hologram.appendTextLine(colorize("&aKillStreak: &7" + stats.getKillsStreak()));
+            hologram.appendTextLine(colorize("&aBest KillStreak: &7" + stats.getMaxKillStreaks()));
+            hologram.appendItemLine(new ItemStackBuilder(Material.DIAMOND_SWORD).withEnchantment(Enchantment.ARROW_DAMAGE, 4).build());
 
-        holograms.put(player, hologram);
+            holograms.put(player, hologram);
+        });
     }
 
     public static void refreshPlayerHologram(Player player) {
@@ -70,8 +73,10 @@ public class StatsCommand implements CommandExecutor {
             return;
 
         Hologram hologram = holograms.get(player);
-        hologram.delete();
-        spawnStatsHologram(player, user.getStats());
+        Utils.runTaskSync(() -> {
+            hologram.delete();
+            spawnStatsHologram(player, user.getStats());
+        });
     }
 
     @Override

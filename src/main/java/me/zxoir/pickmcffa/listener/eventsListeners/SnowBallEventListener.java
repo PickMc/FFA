@@ -1,25 +1,23 @@
 package me.zxoir.pickmcffa.listener.eventsListeners;
 
 import me.zxoir.pickmcffa.PickMcFFA;
-import me.zxoir.pickmcffa.listener.EventsListener;
-import me.zxoir.pickmcffa.menus.EventsManager;
+import me.zxoir.pickmcffa.customclasses.User;
+import me.zxoir.pickmcffa.managers.EventsManager;
+import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -55,6 +53,7 @@ public class SnowBallEventListener implements Listener {
         }
     }
 
+    @NotNull
     public static ArrayList<Block> getBlocks(@NotNull Block start, int radius){
         ArrayList<Block> blocks = new ArrayList<>();
         for(double x = start.getLocation().getX() - radius; x <= start.getLocation().getX() + radius; x++){

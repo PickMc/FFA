@@ -1,13 +1,7 @@
 package me.zxoir.pickmcffa.commands;
 
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.bukkit.RegionContainer;
-import com.sk89q.worldguard.bukkit.RegionQuery;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.zxoir.pickmcffa.managers.ConfigManager;
-import me.zxoir.pickmcffa.menus.EventsManager;
+import me.zxoir.pickmcffa.managers.EventsManager;
 import me.zxoir.pickmcffa.menus.KitMenu;
 import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.command.Command;

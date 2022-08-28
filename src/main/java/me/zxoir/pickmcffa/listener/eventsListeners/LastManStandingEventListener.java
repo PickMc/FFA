@@ -2,10 +2,9 @@ package me.zxoir.pickmcffa.listener.eventsListeners;
 
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.User;
-import me.zxoir.pickmcffa.menus.EventsManager;
+import me.zxoir.pickmcffa.managers.EventsManager;
 import me.zxoir.pickmcffa.menus.KitMenu;
 import me.zxoir.pickmcffa.menus.MenuHolder;
-import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

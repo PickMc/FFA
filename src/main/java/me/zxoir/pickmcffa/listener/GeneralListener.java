@@ -1,5 +1,7 @@
 package me.zxoir.pickmcffa.listener;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import me.neznamy.tab.shared.TAB;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.commands.StatsCommand;
@@ -9,7 +11,7 @@ import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.database.UsersDBManager;
 import me.zxoir.pickmcffa.managers.ConfigManager;
-import me.zxoir.pickmcffa.menus.EventsManager;
+import me.zxoir.pickmcffa.managers.EventsManager;
 import me.zxoir.pickmcffa.menus.KitInventoryHolder;
 import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.*;
@@ -18,8 +20,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.InventoryView;
@@ -27,7 +31,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static me.zxoir.pickmcffa.utils.Utils.colorize;
 
 /**
@@ -69,6 +75,11 @@ public class GeneralListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onCraft(@NotNull PrepareItemCraftEvent event) {
+        event.getInventory().setResult(new ItemStack(Material.AIR));
+    }
+
     /* Register new User */
     @EventHandler
     public void onJoin(@NotNull PlayerJoinEvent event) {
@@ -76,12 +87,13 @@ public class GeneralListener implements Listener {
 
         event.setJoinMessage(colorize("&a+ &7| &a" + player.getName()));
 
-        if (PickMcFFA.getCachedUsers().asMap().containsKey(player.getUniqueId())) {
-            PickMcFFA.getCachedUsers().asMap().get(player.getUniqueId()).setSelectedKit(null);
+        User user = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
+        if (user != null) {
+            user.setSelectedKit(null);
             return;
         }
 
-        User user = new User(player);
+        user = new User(player);
         UsersDBManager.saveToDB(user);
         PickMcFFA.getCachedUsers().put(player.getUniqueId(), user);
     }
@@ -126,64 +138,6 @@ public class GeneralListener implements Listener {
         event.setCancelled(true);
     }
 
-    /*@EventHandler
-    public void onChat(@NotNull AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-
-        if (event.getMessage().equalsIgnoreCase("pot")) {
-            if (player.getActivePotionEffects().isEmpty())
-                return;
-
-            for (PotionEffect effect : player.getActivePotionEffects()) {
-                player.sendMessage(effect.getDuration() + "");
-            }
-        }
-
-        if (event.getMessage().equalsIgnoreCase("arrows")) {
-            player.sendMessage(player.getInventory().contains(Material.ARROW, 32) + "");
-        }
-
-        if (event.getMessage().equalsIgnoreCase("tnt")) {
-            player.getInventory().addItem(KillStreakListener.getTntItem());
-        }
-
-        if (event.getMessage().equalsIgnoreCase("testi")) {
-            BukkitTask task = new BukkitRunnable() {
-
-                public void run() {
-                    PacketPlayOutWorldParticles packet =
-                            new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, true, (float) player.getLocation().getX(), (float) player.getLocation().getY(), (float) player.getLocation().getZ(),
-                                    0.5f, 0.5f, 0.5f, 5, 60);
-
-                    for (Player online : Bukkit.getOnlinePlayers()) {
-                        ((CraftPlayer) online).getHandle().playerConnection.sendPacket(packet);
-                    }
-                }
-            }.runTaskTimerAsynchronously(PickMcFFA.getInstance(), 0, 5);
-
-            Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), task::cancel, 20 * 10);
-        }
-
-        if (event.getMessage().equalsIgnoreCase("serialize")) {
-            try {
-                ItemStack itemStack = ItemDeserializer.itemStackFromBase64("rO0ABXNyABpvcmcuYnVra2l0LnV0aWwuaW8uV3JhcHBlcvJQR+zxEm8FAgABTAADbWFwdAAPTGphdmEvdXRpbC9NYXA7eHBzcgA1Y29tLmdvb2dsZS5jb21tb24uY29sbGVjdC5JbW11dGFibGVNYXAkU2VyaWFsaXplZEZvcm0AAAAAAAAAAAIAAlsABGtleXN0ABNbTGphdmEvbGFuZy9PYmplY3Q7WwAGdmFsdWVzcQB+AAR4cHVyABNbTGphdmEubGFuZy5PYmplY3Q7kM5YnxBzKWwCAAB4cAAAAAR0AAI9PXQABHR5cGV0AAZkYW1hZ2V0AARtZXRhdXEAfgAGAAAABHQAHm9yZy5idWtraXQuaW52ZW50b3J5Lkl0ZW1TdGFja3QAClNLVUxMX0lURU1zcgAPamF2YS5sYW5nLlNob3J0aE03EzRg2lICAAFTAAV2YWx1ZXhyABBqYXZhLmxhbmcuTnVtYmVyhqyVHQuU4IsCAAB4cAADc3EAfgAAc3EAfgADdXEAfgAGAAAABHEAfgAIdAAJbWV0YS10eXBldAAMZGlzcGxheS1uYW1ldAAIaW50ZXJuYWx1cQB+AAYAAAAEdAAISXRlbU1ldGF0AAVTS1VMTHQADVF1ZXN0aW9uIE1hcmt0AWRINHNJQUFBQUFBQUFBRTJPeTJxRFFCaEcveFlLVnZvWTNRcGVvdFpscWNhTVpMUXhSaDEzWHNib09LYkJhSWcrVlIreExydjhPT2ZBSndLSThIYnNKczYvaDUrNjVWU0FaMVRCdTI2YXF2SlI2cEpxV3JtMEtkVkNzdkthU21wVlZCdkZvcWFsbVNLSWEzU2x3OWpTMnlzSUkzMk0wMEJ2SWdBOENmQVM1M3lpOEV0blQ4N1NScTVTajVjek10WWRIV1VlSUhZMTBTV2VpeTlrb0g3bHUwOWpQMXYvWEgzTUU1MFR6V3V5eTJFcStsamVheUdudTFBcCs5TTlTM3ptUncwajdLUVF0bTF3dE9WK2Y5Z0VMcDR6Tyt4dzRxaDRJU3BaMEJMWVp5MXpZNDRaV2JBZHRwbnJ5RGp5bU84NkNvN09zNStRUnhCMWJaMHExdm9lL2dDRXo0aVlHQUVBQUE9PQ==");
-                player.getInventory().addItem(itemStack);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        if (event.getMessage().equalsIgnoreCase("deserialize")) {
-            if (player.getItemInHand() != null) {
-                ItemStack itemStack = player.getItemInHand();
-                String deserializedItem = ItemDeserializer.itemStackToBase64(itemStack);
-                PickMcFFA.getDataFile().getConfig().set("Text", deserializedItem.replaceAll("\\s+", ""));
-                PickMcFFA.getDataFile().saveConfig();
-            }
-        }
-    }*/
-
     /* Disable Snowball/Bow/FlintnSteel in Spawn */
     @EventHandler
     public void onSnowball(@NotNull PlayerInteractEvent event) {
@@ -200,11 +154,24 @@ public class GeneralListener implements Listener {
         Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), player::updateInventory, 1);
     }
 
-    /* Registering stats */
+    /* Insta kill Player when enterting void */
     @EventHandler
+    public void onVoidDeath(@NotNull EntityDamageEvent event) {
+        Entity entity = event.getEntity();
+
+        if (entity instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+            event.setCancelled(true);
+            ((Player) entity).setHealth(0);
+        }
+    }
+
+    /* Registering stats */
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onDeath(@NotNull PlayerDeathEvent event) {
         Player player = event.getEntity();
         Player killer;
+
+        event.setDeathMessage(null);
 
         if (player.getKiller() == null) {
 
@@ -223,60 +190,71 @@ public class GeneralListener implements Listener {
         } else
             killer = player.getKiller();
 
-        event.setDeathMessage(null);
-
         if (player.equals(killer))
             return;
 
-        User playerUser = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
-        User killerUser = PickMcFFA.getCachedUsers().getIfPresent(killer.getUniqueId());
+        try {
+            runAsync(() -> {
 
-        if (EventsManager.isEventActive() && EventsManager.getPlayersAlive().contains(player))
-            EventsManager.eliminate(player, killer);
+                User playerUser = PickMcFFA.getCachedUsers().getIfPresent(player.getUniqueId());
+                User killerUser = PickMcFFA.getCachedUsers().getIfPresent(killer.getUniqueId());
 
-        if (EventsManager.isEventActive())
-            return;
+                if (EventsManager.isEventActive() && EventsManager.getPlayersAlive().contains(player))
+                    EventsManager.eliminate(player, killer);
 
-        if (playerUser == null)
-            player.kickPlayer(ConfigManager.getFailedProfileSave());
-        else {
-            Stats stats = playerUser.getStats();
-            stats.setDeaths(stats.getDeaths() + 1);
-            int deductedCoins = stats.deductCoins(5, 10);
-            playerUser.save();
-            StatsCommand.refreshPlayerHologram(player);
-            ScoreboardListener.updateScoreBoard(player);
-            player.sendMessage(ConfigManager.getKilledMessage(killer.getName(), player.getName(), deductedCoins, killer.getHealth()));
-            Utils.sendActionText(player, ConfigManager.getKilledActionbar(killer.getName(), player.getName(), deductedCoins));
-        }
-
-        if (killerUser == null)
-            killer.kickPlayer(ConfigManager.getFailedProfileSave());
-        else {
-            if (KillStreakListener.getKillStreak().containsKey(killerUser)) {
-                KillStreak killStreak = KillStreakListener.getKillStreak().get(killerUser);
-                if (killStreak.getSameUserCount() == 4 || killStreak.getSameUserCount2() == 4)
+                if (EventsManager.isEventActive())
                     return;
-            }
 
-            Stats stats = killerUser.getStats();
-            Kill kill = new Kill(player.getUniqueId(), new Date());
-            stats.getKills().add(kill);
-            int gainedCoins = stats.addCoins(15, 20);
-            int xpGained = stats.addXp(50, 150);
-            if (KillStreakListener.getBountyList().containsKey(player.getUniqueId())) {
-                gainedCoins = stats.addCoins(45, 60);
-                xpGained = stats.addXp(150, 450);
-                KillStreakListener.getBountyList().get(player.getUniqueId()).cancel();
-                KillStreakListener.getBountyList().remove(player.getUniqueId());
-                TAB.getInstance().getTeamManager().resetPrefix(TAB.getInstance().getPlayer(player.getUniqueId()));
-            }
-            killerUser.save();
-            StatsCommand.refreshPlayerHologram(killer);
-            ScoreboardListener.updateScoreBoard(killer);
-            killer.sendMessage(ConfigManager.getKillMessage(killer.getName(), player.getName(), gainedCoins, xpGained));
-            Utils.sendActionText(killer, ConfigManager.getKillActionbar(killer.getName(), player.getName(), gainedCoins, xpGained));
+                if (playerUser == null)
+                    Utils.runTaskSync(() -> player.kickPlayer(ConfigManager.getFailedProfileSave()));
+                else {
+                    Stats stats = playerUser.getStats();
+                    stats.setDeaths(stats.getDeaths() + 1);
+                    int deductedCoins = stats.deductCoins(5, 10);
+                    playerUser.save();
+                    StatsCommand.refreshPlayerHologram(player);
+                    ScoreboardListener.updateScoreBoard(player);
+                    Utils.runTaskSync(() -> player.sendMessage(ConfigManager.getKilledMessage(killer.getName(), player.getName(), deductedCoins, killer.getHealth())));
+                    Utils.sendActionText(player, ConfigManager.getKilledActionbar(killer.getName(), player.getName(), deductedCoins));
+                }
+
+                if (killerUser == null)
+                    Utils.runTaskSync(() -> killer.kickPlayer(ConfigManager.getFailedProfileSave()));
+                else {
+                    if (KillStreakListener.getKillStreak().containsKey(killerUser)) {
+                        KillStreak killStreak = KillStreakListener.getKillStreak().get(killerUser);
+                        if (killStreak.getSameUserCount() == 4 || killStreak.getSameUserCount2() == 4)
+                            return;
+                    }
+
+                    Stats stats = killerUser.getStats();
+                    Kill kill = new Kill(player.getUniqueId(), new Date());
+                    stats.getKills().add(kill);
+                    int gainedCoins;
+                    int xpGained;
+                    if (KillStreakListener.getBountyList().containsKey(player.getUniqueId())) {
+                        gainedCoins = stats.addCoins(45, 60);
+                        xpGained = stats.addXp(150, 450);
+                        KillStreakListener.getBountyList().get(player.getUniqueId()).cancel();
+                        KillStreakListener.getBountyList().remove(player.getUniqueId());
+                        TAB.getInstance().getTeamManager().resetPrefix(TAB.getInstance().getPlayer(player.getUniqueId()));
+                    } else {
+                        gainedCoins = stats.addCoins(15, 20);
+                        xpGained = stats.addXp(50, 150);
+                    }
+                    killerUser.save();
+                    StatsCommand.refreshPlayerHologram(killer);
+                    ScoreboardListener.updateScoreBoard(killer);
+                    Utils.runTaskSync(() -> killer.sendMessage(ConfigManager.getKillMessage(killer.getName(), player.getName(), gainedCoins, xpGained)));
+                    Utils.sendActionText(killer, ConfigManager.getKillActionbar(killer.getName(), player.getName(), gainedCoins, xpGained));
+                }
+
+            }).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            player.sendMessage("A bug has occured! Please DM Zxoir on Discord about this bug!");
         }
+
     }
 
     /* Show player hearts on Arrow Hit */

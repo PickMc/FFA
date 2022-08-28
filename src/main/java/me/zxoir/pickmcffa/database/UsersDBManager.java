@@ -148,15 +148,10 @@ public class UsersDBManager {
 
             PreparedStatement statement = conn.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?, ?)");
             statement.setString(1, user.getUuid().toString());
-
             statement.setString(2, adapter.toJson(user.getStats()));
-
             statement.setString(3, user.getSelectedPerk() == null ? null : user.getSelectedPerk().getName());
-
             statement.setString(4, user.getSavedInventories().isEmpty() ? null : adapter.toJson(user.getDeserializedSavedInventories()));
-
             statement.setString(5, user.getFirstJoinDate());
-
             statement.execute();
 
             double finish = (double) (System.currentTimeMillis() - start) / 1000.0;
