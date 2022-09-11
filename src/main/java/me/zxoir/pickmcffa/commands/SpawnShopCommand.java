@@ -28,7 +28,7 @@ public class SpawnShopCommand implements CommandExecutor {
         if (sender instanceof ConsoleCommandSender) return true;
         Player player = (Player) sender;
 
-        if (!player.isOp()) { // TODO: Change to permission check
+        if (!player.hasPermission("staff.admin")) {
             player.sendMessage(ConfigManager.getInvalidPermission());
             return true;
         }

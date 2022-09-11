@@ -2,7 +2,7 @@ name: PickMcFFA
 version: '${project.version}'
 main: me.zxoir.pickmcffa.PickMcFFA
 author: Zxoir
-depend: [ WorldGuard, WorldEdit, LuckPerms, TAB, HolographicDisplays, PlaceholderAPI, Votifier ]
+depend: [ WorldGuard, WorldEdit, TAB, HolographicDisplays, PlaceholderAPI, Votifier ]
 commands:
   kit:
     usage: "/kit"
