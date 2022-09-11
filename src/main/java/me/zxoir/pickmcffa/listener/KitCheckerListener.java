@@ -1,11 +1,5 @@
 package me.zxoir.pickmcffa.listener;
 
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.bukkit.RegionContainer;
-import com.sk89q.worldguard.bukkit.RegionQuery;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;

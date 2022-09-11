@@ -1,9 +1,7 @@
 package me.zxoir.pickmcffa.listener.eventsListeners;
 
 import me.zxoir.pickmcffa.PickMcFFA;
-import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.EventsManager;
-import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -23,7 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -54,11 +51,11 @@ public class SnowBallEventListener implements Listener {
     }
 
     @NotNull
-    public static ArrayList<Block> getBlocks(@NotNull Block start, int radius){
+    public static ArrayList<Block> getBlocks(@NotNull Block start, int radius) {
         ArrayList<Block> blocks = new ArrayList<>();
-        for(double x = start.getLocation().getX() - radius; x <= start.getLocation().getX() + radius; x++){
-            for(double y = start.getLocation().getY() - radius; y <= start.getLocation().getY() + radius; y++){
-                for(double z = start.getLocation().getZ() - radius; z <= start.getLocation().getZ() + radius; z++){
+        for (double x = start.getLocation().getX() - radius; x <= start.getLocation().getX() + radius; x++) {
+            for (double y = start.getLocation().getY() - radius; y <= start.getLocation().getY() + radius; y++) {
+                for (double z = start.getLocation().getZ() - radius; z <= start.getLocation().getZ() + radius; z++) {
                     Location loc = new Location(start.getWorld(), x, y, z);
                     blocks.add(loc.getBlock());
                 }
@@ -81,11 +78,11 @@ public class SnowBallEventListener implements Listener {
             if (topBlock.getType().equals(Material.GRASS) || topBlock.getType().equals(Material.DIRT))
                 return false;
 
-                    Bukkit.getScheduler().runTask(PickMcFFA.getInstance(), () -> {
-                        if (validTopBlock)
-                            topBlock.setType(Material.AIR);
-                        block.setType(Material.PACKED_ICE);
-                    });
+            Bukkit.getScheduler().runTask(PickMcFFA.getInstance(), () -> {
+                if (validTopBlock)
+                    topBlock.setType(Material.AIR);
+                block.setType(Material.PACKED_ICE);
+            });
 
             //player.sendBlockChange(block.getLocation(), Material.PACKED_ICE, (byte) 0);
             if (!blockHashMap.containsKey(block))
@@ -119,7 +116,7 @@ public class SnowBallEventListener implements Listener {
             if (!blockHashMap.get(block)) {
                 changeBlockLater(block, material, data, delay);
                 blockHashMap.put(block, true);
-            }  else {
+            } else {
                 Bukkit.getScheduler().runTask(PickMcFFA.getInstance(), () -> {
                     block.setType(material);
                     block.setData(data);
@@ -148,8 +145,7 @@ public class SnowBallEventListener implements Listener {
             if (!blockHashMap.get(block)) {
                 changeBlockLater(block, material, data, material2, data2, delay);
                 blockHashMap.put(block, true);
-            }
-            else {
+            } else {
                 Bukkit.getScheduler().runTask(PickMcFFA.getInstance(), () -> {
                     block.setType(material);
                     block.setData(data);
@@ -195,7 +191,7 @@ public class SnowBallEventListener implements Listener {
     @EventHandler
     public void onSnowBallHit(@NotNull EntityDamageByEntityEvent event) {
 
-        if(event.getDamager() instanceof Snowball) {
+        if (event.getDamager() instanceof Snowball) {
 
             if (EventsManager.isEventActive() && EventsManager.getCurrentEventType().equals(EventsManager.EventType.SNOWBALL)) {
 

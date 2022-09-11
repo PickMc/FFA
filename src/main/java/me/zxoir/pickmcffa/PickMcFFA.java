@@ -24,7 +24,6 @@ import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.managers.EventsManager;
 import me.zxoir.pickmcffa.managers.StatsManager;
 import me.zxoir.pickmcffa.menus.*;
-import net.luckperms.api.LuckPerms;
 import net.minecraft.server.v1_8_R3.EntityVillager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,8 +51,6 @@ public final class PickMcFFA extends JavaPlugin {
     @Getter
     private static Cache<UUID, User> cachedUsers;
     @Getter
-    private static LuckPerms luckPerms;
-    @Getter
     private static WorldEditPlugin worldEditPlugin;
 
     @Override
@@ -67,7 +64,6 @@ public final class PickMcFFA extends JavaPlugin {
         dataFile = new DataFile();
         dataFile.setup();
         cachedUsers = CacheBuilder.newBuilder().build();
-        luckPerms = getServer().getServicesManager().load(LuckPerms.class);
 
         ffaLogger.info("Initializing database setup...");
         FFADatabase.createTable("CREATE TABLE IF NOT EXISTS users(" +

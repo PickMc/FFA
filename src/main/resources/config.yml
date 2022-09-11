@@ -1,4 +1,4 @@
-debug: true
+debug: false
 
 # MYSQL Database
 username: root
@@ -7,11 +7,13 @@ password: password
 ip: localhost
 port: 3306
 
+# Permission: boost.xp
 XpBoosts:
   permission: 1.7
   pick: 1.5
   pickplus+: 1.7
 
+# Permission: boost.coin
 CoinBoosts:
   permission: 1.7
   pick: 1.5

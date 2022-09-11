@@ -3,7 +3,6 @@ package me.zxoir.pickmcffa.listener;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.Stats;
 import me.zxoir.pickmcffa.customclasses.User;
-import net.luckperms.api.cacheddata.CachedMetaData;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,13 +50,8 @@ public class ScoreboardListener implements Listener {
 
         Stats stats = user.getStats();
 
-        final CachedMetaData metaData = PickMcFFA.getLuckPerms().getPlayerAdapter(Player.class).getMetaData(player);
-        final String group = metaData.getPrimaryGroup();
-        String rank = metaData.getPrefix() != null ? (group != null ? StringUtils.substringBefore(metaData.getPrefix(), " ") : "") : "";
 
         Scoreboard board = player.getScoreboard();
-        //board.getTeam("onlineCounter").setPrefix(ChatColor.DARK_RED + "0" + ChatColor.RED + "/" + ChatColor.DARK_RED + Bukkit.getMaxPlayers());
-        updateTeam(board, "rank", colorize("&7» Rank: &8" + rank));
         updateTeam(board, "online", colorize("&7» Online: &e" + Bukkit.getOnlinePlayers().size() + " &l/&r&e " + Bukkit.getMaxPlayers()));
         updateTeam(board, "level", colorize("&7Level: &e" + stats.getLevel()));
         updateTeam(board, "coins", colorize("&7Coins: &e" + stats.getCoins()));
@@ -93,17 +87,10 @@ public class ScoreboardListener implements Listener {
         Objective obj = board.registerNewObjective(colorize("&3&lFFA"), "dummy");
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        final CachedMetaData metaData = PickMcFFA.getLuckPerms().getPlayerAdapter(Player.class).getMetaData(player);
-        final String group = metaData.getPrimaryGroup();
-        String rank = metaData.getPrefix() != null ? (group != null ? StringUtils.substringBefore(metaData.getPrefix(), " ") : "") : "";
-
-        String chatColor = group != null ? StringUtils.substringAfter(metaData.getPrefix() != null ? metaData.getPrefix() : "", "| ") : "";
-
         MAX_CHAR = 0;
 
         addTeam(board, obj, " ", "space", 13, 1);
-        addTeam(board, obj, colorize("&7» IGN: &8" + chatColor + player.getName()), "ign", 12, 2);
-        addTeam(board, obj, colorize("&7» Rank: &8" + rank), "rank", 11, 3);
+        addTeam(board, obj, colorize("&7» IGN: &8" + player.getName()), "ign", 12, 2);
         addTeam(board, obj, colorize("&7» Online: &e" + Bukkit.getOnlinePlayers().size() + " &l/&r&e " + Bukkit.getMaxPlayers()), "online", 10, 4);
         addTeam(board, obj, "  ", "space2", 9, 5);
         addTeam(board, obj, colorize("&7Level: &e" + stats.getLevel()), "level", 8, 'e');

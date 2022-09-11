@@ -3,7 +3,6 @@ package me.zxoir.pickmcffa.listener;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.ConfigManager;
-import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

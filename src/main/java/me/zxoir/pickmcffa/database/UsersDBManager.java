@@ -12,7 +12,6 @@ import me.zxoir.pickmcffa.customclasses.User;
 import me.zxoir.pickmcffa.managers.KitManager;
 import me.zxoir.pickmcffa.managers.PerkManager;
 import me.zxoir.pickmcffa.utils.ItemDeserializer;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;

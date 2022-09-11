@@ -3,14 +3,12 @@ package me.zxoir.pickmcffa.eventkits;
 import me.zxoir.pickmcffa.customclasses.Effect;
 import me.zxoir.pickmcffa.customclasses.Kit;
 import me.zxoir.pickmcffa.customclasses.User;
-import me.zxoir.pickmcffa.managers.ConfigManager;
 import me.zxoir.pickmcffa.utils.ItemStackBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashSet;

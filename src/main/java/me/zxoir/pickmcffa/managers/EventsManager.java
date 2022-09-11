@@ -1,6 +1,5 @@
 package me.zxoir.pickmcffa.managers;
 
-import com.Zrips.CMI.CMI;
 import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.blocks.BlockID;
@@ -45,7 +44,6 @@ public class EventsManager {
     private static final Random random = new Random();
     private static final int delayPerEvent = 72000;
     private static final int eventDuration = 12000;
-    private static final Location spawnPoint = CMI.getInstance().getConfigManager().getFirstSpawnPoint();
     @Getter
     @Setter
     private static Selection barrierWall;
@@ -253,7 +251,7 @@ public class EventsManager {
         Bukkit.getScheduler().runTaskLater(PickMcFFA.getInstance(), () -> Bukkit.getOnlinePlayers().forEach(online -> {
             User user = PickMcFFA.getCachedUsers().getIfPresent(online.getUniqueId());
             runTaskSync(() -> {
-                online.teleport(spawnPoint);
+                online.teleport(online.getWorld().getSpawnLocation());
                 online.setHealth(online.getMaxHealth());
             });
 

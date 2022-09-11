@@ -29,9 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static me.zxoir.pickmcffa.managers.KitManager.*;
-import static me.zxoir.pickmcffa.utils.Utils.*;
+import static me.zxoir.pickmcffa.utils.Utils.colorize;
+import static me.zxoir.pickmcffa.utils.Utils.duplicateInventory;
 
 /**
  * MIT License Copyright (c) 2022 Zxoir
@@ -248,7 +250,7 @@ public class KitMenu implements Listener {
         if (KitManager.hasKit(user, getStrengthKit()))
             kits.add(getStrengthKit());
 
-        return kits.get(getRANDOM().nextInt(kits.size()));
+        return kits.get(ThreadLocalRandom.current().nextInt(kits.size()));
     }
 
     private void setSnowballAmount(User user, Kit kit) {

@@ -2,13 +2,15 @@ package me.zxoir.pickmcffa.customclasses;
 
 import lombok.AllArgsConstructor;
 import me.zxoir.pickmcffa.managers.UserManager;
-import me.zxoir.pickmcffa.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -110,7 +112,7 @@ public class Stats implements Serializable {
     }
 
     public int addCoins(int minCoin, int maxCoin) {
-        int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
+        int randomCoin = ThreadLocalRandom.current().nextInt(maxCoin - minCoin) + minCoin;
 
         Player player = Bukkit.getPlayer(uuid);
         Double coinBoost = UserManager.getCoinBoost(Bukkit.getPlayer(uuid));
@@ -129,7 +131,7 @@ public class Stats implements Serializable {
     }
 
     public int deductCoins(int minCoin, int maxCoin) {
-        int randomCoin = Utils.getRANDOM().nextInt(maxCoin - minCoin) + minCoin;
+        int randomCoin = ThreadLocalRandom.current().nextInt(maxCoin - minCoin) + minCoin;
         this.coins.set(Math.max(0, this.coins.get() - randomCoin));
         return randomCoin;
     }

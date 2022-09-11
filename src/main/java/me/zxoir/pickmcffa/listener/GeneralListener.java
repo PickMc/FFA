@@ -1,7 +1,5 @@
 package me.zxoir.pickmcffa.listener;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import me.neznamy.tab.shared.TAB;
 import me.zxoir.pickmcffa.PickMcFFA;
 import me.zxoir.pickmcffa.commands.StatsCommand;
