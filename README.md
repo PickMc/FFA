@@ -1,3 +1,3 @@
 # FFA
 
-Idk....
+FFA Plugin for PickMC
